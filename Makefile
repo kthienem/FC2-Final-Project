@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = pokeMap.cpp
+OBJS = animation.cpp
 
 #CC specifies which compiler we're using
 CC = g++
@@ -12,7 +12,7 @@ CC = g++
 LINKER_FLAGS = -lSDL2
 
 #OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = pokeMap
+OBJ_NAME = animation
 
 #This is the target that compiles our executable
 all : $(OBJS)
