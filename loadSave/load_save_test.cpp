@@ -24,7 +24,7 @@ void load_save_test::loadVars(string myinFile) {
 }
 
 void load_save_test::saveVars() {
-	outFile.open("newFile.txt", ios::out);
+	outFile.open("teststats.txt", ios::out);
 
 	outFile << level << endl;
 	outFile << spriteMap << endl;
