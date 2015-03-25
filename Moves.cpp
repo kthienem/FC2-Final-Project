@@ -1,20 +1,20 @@
 #include "Moves.h"
 
-enum moveList{
+/*enum moveList{
 	MOVE_TACKLE,
 	MOVE_SCRATCH,
 	MOVE_EMBER,
 	MOVE_WATERGUN,
 	MOVE_CUT,
 	MOVE_SHOCK
-};
+};*/
 
 Moves::Moves() {
 
 }
 
-void Moves::attack(int attackStat) {
-	switch(myAttack) {
+int Moves::attack(int attackStat) {
+	/*switch(myAttack) {
 		case: MOVE_TACKLE
 			tackle(attackStat);
 			break;
@@ -36,7 +36,7 @@ void Moves::attack(int attackStat) {
 		default:
 			noMove();
 			break;
-	}
+	} */
 }
 
 void levelUp() {

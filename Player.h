@@ -4,6 +4,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "Pokemon.h"
+using namespace std;
 
 class Player {
 
@@ -15,7 +16,21 @@ class Player {
 
 	private:
 		Pokemon *myPoke[6]; // array of pointers to pokemon of player's pokemon		
-
+		Pokemon Pika;
 };
+Player::Player() {
+//	Pokemon Pika;
+	myPoke[0] = &Pika;
+
+}
+
+void Player::Battle() {
+//	myPoke[0]->attack(1);
+	(*myPoke[0]).attack(1);
+}
+
+void Player::Roam() {
+	cout << "Roam" << endl;
+}
 
 #endif
