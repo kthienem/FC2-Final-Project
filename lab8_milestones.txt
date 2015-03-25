@@ -1,0 +1,7 @@
+Rubric (40 points total)
+
+1. Do lazyfoo tutorials for at least one graphics library and select one to use for the project. (20 pts)
+
+2. Get a character/object embedded on a surface/map. (10 pts)
+
+3. Get the character/object to respond/change somehow due to pressing the arrow keys. (10 pts)
