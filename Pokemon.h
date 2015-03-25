@@ -1,3 +1,11 @@
+//Nicholas Lombardo
+//3_25_15
+//pokemon.h
+//Implementation file for Pokemon class, this class has moves as objects through composition
+//Constructor right now gives four basic moves to the pokemon
+//
+//Eventually you can set up what pokemon gets what moves through this class, to do this maybe take in an int and it will set the rest up.
+
 #ifndef POKEMON_H
 #define POKEMON_H
 
