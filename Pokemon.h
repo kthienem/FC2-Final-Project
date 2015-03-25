@@ -1,16 +1,20 @@
 #ifndef POKEMON_H
 #define POKEMON_H
 
+#include <string>
+#include <vector>
+#include <iostream>
 #include "Moves.h"
 using namespace std;
 
 class Pokemon{
 	public:
 		Pokemon();
-		levelUp();	// level+1, add attack,def,reset exp
-		virtual void attack() = 0;
-		swapAttack(int);// input will be index of attackName for the attack being added. This will ask the user if they want to swap attackName[x] with attackName[y] and then executes the swap
-		changeHealth();//edits current health in battle mode
+		void levelUp();	// level+1, add attack,def,reset exp
+		//virtual void attack() = 0;
+		void attack(int); //takes in input for what move to use
+		void swapAttack(int);// input will be index of attackName for the attack being added. This will ask the user if they want to swap attackName[x] with attackName[y] and then executes the swap
+		void changeHealth();//edits current health in battle mode
 	private:
 		int maxHealth;
 		int currHealth;
@@ -28,9 +32,8 @@ class Pokemon{
 		vector <Moves> myMoves;// then we can use for example myMoves[2].attack()
 };
 
-#endif
-
-pickPoke() {
+/*
+void pickPoke(string whichPoke) {
 	switch(whichPoke) {
 		case: POKE_PIKACHU
 			pikachu();
@@ -46,7 +49,32 @@ pickPoke() {
 			break;
 	};
 }
-
-pikachu() {
-	//set level,exp,health,att,def,etc
+*/
+//void pikachu() {
+	//set level,exp,health,att,def,etc and moves too
+//}
+Pokemon::Pokemon(){
+	//initalize moves
+	Moves move1(0), move2(1), move3(2), move4(3);
+//create a move //0 stands for tackle, 1 scratch, 2 ember, 3 watergun
+	myMoves.push_back(move1); //push move into pokemon myMove vector
+	myMoves.push_back(move2);
+	myMoves.push_back(move3);
+	myMoves.push_back(move4);
+	maxAttack = 10; //set maxAttack
 }
+
+void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumber
+	int userNum; //input by user, can be removed
+	while (userNum != -1){ //just a way to check each attack
+		cout << "What attack would you like to use (1-4): "; //1-2 right now
+		cin >> userNum; //user enters attack
+	if(userNum > 0 && userNum < 5){ //makes sure attack is in vector and 1 - 4
+		cout << "Move number "<< userNum <<" is " << myMoves[userNum-1].display() << endl;
+		int damage = myMoves[userNum-1].attack(maxAttack); //calculate damage eventually take into account weaknesses and such
+		cout << "The attack did " << damage << " damage!" << endl; //display results
+		}
+	}
+}
+
+#endif
