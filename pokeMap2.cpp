@@ -4,8 +4,9 @@ and may not be redistributed without written permission.*/
 //Using SDL, standard IO, and strings
 #include <iostream>
 #include <SDL2/SDL.h>
-#include <stdio.h>
-#include <string>
+#include <SDL2/SDL_image.h>
+//#include <stdio.h>
+//#include <string>
 using namespace std;
 
 //Screen dimension constants
@@ -16,7 +17,7 @@ const int SCREEN_HEIGHT = 600;
 enum pokeSprites
 {
 	POKE_SPRITE_ROUTE1,	//=0
-	POKE_SPRITE_PALLET,	//=1
+//	POKE_SPRITE_PALLET,	//=1
 	POKE_SPRITE_SIZE	//=number of variables above. used to index gPokeSprites
 };
 
@@ -66,8 +67,18 @@ bool init()
 		}
 		else
 		{
-			//Get window surface
-			gScreenSurface = SDL_GetWindowSurface( gWindow );
+			//Initialize map loading
+			int imgFlags = IMG_INIT_PNG;
+			if( !( IMG_Init( imgFlags ) & imgFlags ) )
+			{
+				cout << "SDL_image could not initialize! SDL_image error: " << IMG_GetError()<<endl;
+				success = false;
+			}
+			else
+			{
+				//Get window surface
+				gScreenSurface = SDL_GetWindowSurface( gWindow );
+			}
 		}
 	}
 
@@ -80,20 +91,20 @@ bool loadMedia()
 	bool success = true;
 
 	//Load stretching surface
-	gPokeSprites[ POKE_SPRITE_ROUTE1 ] = loadSurface( "Game_Boy_Advance_-_Pokemon_Fire_Red_Leaf_Green_-_R.bmp" );
+	gPokeSprites[ POKE_SPRITE_ROUTE1 ] = loadSurface( "pokeMap2.png" );
 	if( gPokeSprites[ POKE_SPRITE_ROUTE1 ] == NULL )
 	{
 		printf( "Failed to load Route1 image!\n" );
 		success = false;
 	}
-
+/*
 	gPokeSprites[ POKE_SPRITE_PALLET ] = loadSurface( "PalletTown.bmp" );
 	if( gPokeSprites[ POKE_SPRITE_PALLET ] == NULL )
 	{
 		printf( "Failed to load Pallet image!\n" );
 		success = false;
 	}
-
+*/
 	return success;
 }
 
@@ -122,7 +133,7 @@ SDL_Surface* loadSurface( string path )
 	SDL_Surface* optimizedSurface = NULL;
 
 	//Load image at specified path
-	SDL_Surface* loadedSurface = SDL_LoadBMP( path.c_str() );
+	SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
 	if( loadedSurface == NULL )
 	{
 		printf( "Unable to load image %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
@@ -130,7 +141,7 @@ SDL_Surface* loadSurface( string path )
 	else
 	{
 		//Convert surface to screen format
-		optimizedSurface = SDL_ConvertSurface( loadedSurface, gScreenSurface->format, NULL );
+		optimizedSurface = SDL_ConvertSurface( loadedSurface, gScreenSurface->format, 0 );
 		if( optimizedSurface == NULL )
 		{
 			printf( "Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
@@ -145,7 +156,7 @@ SDL_Surface* loadSurface( string path )
 
 int main( int argc, char* args[] )
 {
-	int x=105, y=435;
+	int x=0, y=0;
 	//Start up SDL and create window
 	if( !init() )
 	{
@@ -196,8 +207,8 @@ int main( int argc, char* args[] )
 					}
 				}
 
-				if(x>75 && x<105 && y<15) gStretchedSurface=gPokeSprites[ POKE_SPRITE_PALLET ];
-				else gStretchedSurface=gPokeSprites[ POKE_SPRITE_ROUTE1 ];
+//				if(x>75 && x<105 && y<15) gStretchedSurface=gPokeSprites[ POKE_SPRITE_PALLET ];
+				gStretchedSurface=gPokeSprites[ POKE_SPRITE_ROUTE1 ];
 //cout << "x: " << x << endl << "y: " << y << endl;
 
 				//Apply the image stretched
@@ -208,8 +219,8 @@ int main( int argc, char* args[] )
 				stretchRect.h = SCREEN_HEIGHT;
 				stretchRect2.x = x;
 				stretchRect2.y = y;
-				stretchRect2.w = 200;
-				stretchRect2.h = 200;
+				stretchRect2.w = 300;
+				stretchRect2.h = 300;
 //WE SHOULD BE ABLE TO USE THE SECOND ARGUMENT OF SDL_BLITSCALED() TO MAKE A SCROLLING MAP
 				SDL_BlitScaled( gStretchedSurface, &stretchRect2, gScreenSurface, &stretchRect );
 			

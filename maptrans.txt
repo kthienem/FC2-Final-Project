@@ -1,0 +1,9 @@
+write indivivual fxns for each map sprite?
+	-if so, have a char input of n/e/s/w for the direction the player is entering from. Then based on that char, define the starting x,y coords of the player on that map.
+	-place the user one step ahead of the entrance/exit, so then we can just say that whenever the player steps on the actual exit, the sprite transitions to the next map(and we wouldnt need a condition for if the user just entered the map or not)
+
+PROBLEM: how will we call these functions? If we just have a list of each possible maps and then call the next map from inside the current map function, then we will go into hundreds of levels of functions.
+	-how can we call different map fxns while only staying one level deep?
+
+ALTERNATIVE IDEA:
+	have a single function that allows you to move around a map, but pass in an array of coords that are ob or have some functionality(like entering a building)
