@@ -59,10 +59,10 @@ int main()
 			gCurrentClip = &gWalkDown[0];//sets first image to be used for the walking player
 			int frame = 0;//count for the current frame being used for the animation
 			SDL_Rect stretchRect1;//rectangle used for where to place the character
-			stretchRect1.x = SCREEN_WIDTH/2;//place at center of screen
-			stretchRect1.y = SCREEN_HEIGHT/2;//place at center of screen
-			stretchRect1.w = 300;//size of portion of sprite sheet taken up by character
-			stretchRect1.h = 300;//size of portion of sprite sheet taken up by character
+			stretchRect1.x = SCREEN_WIDTH/2 - 9;//place at center of screen
+			stretchRect1.y = SCREEN_HEIGHT/2 + 14;//place at center of screen
+			stretchRect1.w = 55;//size of portion of sprite sheet taken up by character
+			stretchRect1.h = 55;//size of portion of sprite sheet taken up by character
 			SDL_Rect stretchRect2;//rectangle to stretch the background image to fit to window
 			stretchRect2.x = 0;//begin image at top corner of winow
 			stretchRect2.y = 0;
@@ -92,7 +92,7 @@ int main()
 									stretchRect3.y--;
 									usleep(30000);
 									SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-									SDL_BlitSurface(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+									SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 									SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 								}
 								break;
@@ -106,7 +106,7 @@ int main()
 									stretchRect3.y++;
 									usleep(30000);
 									SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-									SDL_BlitSurface(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+									SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 									SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 								}
 								break;
@@ -120,7 +120,7 @@ int main()
 									stretchRect3.x--;
 									usleep(30000);
 									SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-									SDL_BlitSurface(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+									SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 									SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 								}
 								break;
@@ -134,7 +134,7 @@ int main()
 									stretchRect3.x++;
 									usleep(30000);
 									SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-									SDL_BlitSurface(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+									SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 									SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 								}
 								//cout<<"x: "<<stretchRect3.x<<"\ny: "<<stretchRect3.y<<endl<<endl;
@@ -147,7 +147,7 @@ int main()
 					gBackground = gPokeMaps[ POKE_MAP_ROUTE1 ];
 
 					SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-					SDL_BlitSurface(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+					SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 
 					SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 					frame++;//increment frame
