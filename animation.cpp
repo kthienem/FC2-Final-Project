@@ -86,6 +86,7 @@ int main()
 							case SDLK_UP://up arrow key
 								frame=0;
 								for( int i=0; i<16; i++){
+		//use (16-i)/4 ? so that we end at zero
 									if(i%4==0) frame++;
 									if(frame>3) frame=0;
 									gCurrentClip = &gWalkUp[frame];//set equal to proper frame of walking right sprites
