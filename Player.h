@@ -26,7 +26,7 @@ Player::Player() {
 
 void Player::Battle() {
 //	myPoke[0]->attack(1);
-	(*myPoke[0]).attack(1);
+	(*myPoke[0]).attack(1); // test using attack 1
 }
 
 void Player::Roam() {
