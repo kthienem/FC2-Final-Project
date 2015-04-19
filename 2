@@ -15,7 +15,6 @@
 #include <vector>
 #include <fstream>
 #include <map>
-#include <cmath>
 using namespace std;
 
 //screen is exactly twice the stretching size of the zoomed in map so that we can match coordinates of screen with pixels of surface
@@ -30,41 +29,6 @@ enum pokeMaps
 	POKE_MAP_ROUTE1,	//=0
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
 };
-//Color code contents
-enum cellColorCode
-{
-	BRIDGE_CELL,
-	CAVE_ENT_CELL,
-	FLOWER_CELL,
-	NORM_GRASS_CELL,
-	PATH_EDGE_CELL,
-	PATH_CELL,
-	PLATEAU_CELL,
-	PLATFORM_CELL,
-	POKEBALL_CELL,
-	SKINNYPATH_CELL,
-	STAIRS_CELL,
-	WATER_CELL,
-	WILD_GRASS_2_CELL,
-	WILD_GRASS_CELL,
-	COLOR_CELL_SIZE
-};
-
-double cellColorThreshold[20]={	.55,	// bridge
-				.85,	// cave entrance
-				.55,	// flower
-				.62,	// normal grass
-				.40,	// path edge
-				.50,	// path
-				.49,	// plateau
-				.62,	// platform
-				.22,	// pokeball
-				.39,	// skinnypath
-				.90,	// stairs
-				.25,	// water
-				.60,	// wild grass 2
-				.60	// wild grass
-};
 
 bool init();		//initialize the display window
 bool loadMedia();	//load the images to be used
@@ -73,11 +37,7 @@ SDL_Surface* loadSurface(string path);//optimize the loaded images
 
 void putpixel( int, int, int );			// inputs: x,y,color
 uint32_t getpixel( int, int, SDL_Surface*);	// output: color; inputs: x,y,surface
-double cellComp( int,int,map<int,int>,SDL_Surface* );// output: %match; inputs: x1,y1,cellColormap,surface
-void writeColorCodes(int,int,SDL_Surface*);
-vector<map<int,int> > readColorCodes();
-
-void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect, int);
+double cellComp( int,int,int,int,SDL_Surface* );// output: %match; inputs: x1,y1,x2,y2,surface
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
 SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the images to be displayed
@@ -94,7 +54,6 @@ SDL_Rect gWalkDown[WALKING_ANIMATION_FRAMES];	//animate walking down the screen
 
 int main()
 {
-	srand(time(NULL));
 	if(!init()){//initializes the window, if it fails display error message
 		cout << "Failed to initialize!" << endl;
 	}
@@ -122,22 +81,15 @@ int main()
 
 			SDL_Rect stretchRect3;			// rectangle that zooms in on current viewable map
 			//starting x,y MUST be x=1+16a, y=1+16b
-			stretchRect3.x = 1841;			//begin image in middle of map
-			stretchRect3.y = 385;
-//			stretchRect3.x = 1777;			//begin image in middle of map
-//			stretchRect3.y = 625;
-//			stretchRect3.x = 705;			//begin image in middle of map
-//			stretchRect3.y = 257;
+			stretchRect3.x = 1793;			//begin image in middle of map
+			stretchRect3.y = 305;
+//			stretchRect3.x = 337;			//begin image in middle of map
+//			stretchRect3.y = 17;
 			stretchRect3.w = 384;
 			stretchRect3.h = 288;
 
-			int caveChoice;
-			int caveMapX[4]= {	1777,	1761,	1809,	1761};
-			int caveMapY[4]= {	609,	721,	545,	561};
-			int caveCharX[4]= {	343,	343,	375,	279};
-			int caveCharY[4]= {	302,	334,	302,	302};
-
 			int sleeptime=5000;	// sleeptime*16 == time for trainer to take one step
+			uint32_t colorss;
 			int canWalk=1;		// boolean - false if trainer attempts to walk into a tree, wall, etc
 			int white= 16777215;	// return of getpixel for white background
 			int whiteCount=0;	// counter
@@ -152,12 +104,6 @@ int main()
 			int trainerCelly= stretchRect1.y+16;
 			int cellShift= 32;
 
-			int steponWildGrass= 0;
-			int isCave= 0;
-
-			vector<map<int,int> > colorCodes;
-
-			colorCodes= readColorCodes();
 
 			while(!quit){//while the user has not entered the event to quit
 				while(SDL_PollEvent(&e) != 0){//while there remains user entered events
@@ -180,62 +126,22 @@ int main()
 											if( whiteCount>10 ) isOB=1;
 										}
 									}
-									for( int i=0; i<COLOR_CELL_SIZE; i++ ){
-										if( i!= POKEBALL_CELL && i!= WATER_CELL )
-											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
-												canWalk= 1;
-											}
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
-									}
-									if( cellColorThreshold[CAVE_ENT_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[CAVE_ENT_CELL], gScreenSurface) ) isCave= 1;
 									for( int i=0; i<16; i++){
 		//use (16-i)/4 ? so that we end at zero
 										if(i%4==0) frame++;
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkUp[frame];//set equal to proper frame of walking right sprites
-										if( canWalk==1 ) {
-											if(stretchRect1.y>SCREEN_HEIGHT/2+14 || isOB==1) {
-												stretchRect1.y-=2;//move char
-												//NOTE: trainer is moved twice as many times as the screen. This is because the character image is shifted n "coordinates" on the window, while the screen is shifted n "pixels" on the background/map image
-											} else {
-												stretchRect3.y--;//move screen
-											}
+										if(stretchRect1.y>SCREEN_HEIGHT/2+14 || isOB==1) {
+											stretchRect1.y-=2;//move char
+											//NOTE: trainer is moved twice as many times as the screen. This is because the character image is shifted n "coordinates" on the window, while the screen is shifted n "pixels" on the background/map image
+										} else {
+											stretchRect3.y--;//move screen
 										}
 										usleep(sleeptime);
-										if( ! isCave ) {
-											SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-											SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
-											SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
-										}else{
-											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i);
-										}
+										SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
+										SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+										SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 									}
-									if(isCave) {
-										caveChoice= rand()%4;
-										stretchRect1.x= caveCharX[caveChoice];
-										stretchRect1.y= caveCharY[caveChoice];
-										stretchRect3.x= caveMapX[caveChoice];
-										stretchRect3.y= caveMapY[caveChoice];
-										for( int i=16; i<32; i++){//indexed 16-32 in order to keep transition smooth(since we are passing in a counter and the walk up uses 0-15
-											if(i%4==0) frame++;
-											if(frame>3) frame=0;
-											gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
-											if( canWalk==1 ) {
-												if(stretchRect1.y<SCREEN_HEIGHT/2+14 || isOB==1) {
-													stretchRect1.y+=2;//move char
-													//NOTE: trainer is moved twice as many times as the screen. This is because the character image is shifted n "coordinates" on the window, while the screen is shifted n "pixels" on the background/map image
-												} else {
-													stretchRect3.y++;//move screen
-												}
-											}
-											usleep(sleeptime);
-											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i);
-										}
-											SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-											SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
-											SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
-
-									} 
 								}
 								break;
 							
@@ -250,20 +156,14 @@ int main()
 											if( whiteCount>10 ) isOB=1;
 										}
 									}
-									for( int i=0; i<COLOR_CELL_SIZE; i++ )
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL )
-											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ) canWalk= 1;
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
-										if( canWalk==1 ) {
-											if(isOB==1 || stretchRect1.y<SCREEN_HEIGHT/2+14) {
-												stretchRect1.y+=2;//move char
-											} else {
-												stretchRect3.y++;//move screen
-											}
+										if(isOB==1 || stretchRect1.y<SCREEN_HEIGHT/2+14) {
+											stretchRect1.y+=2;//move char
+										} else {
+											stretchRect3.y++;//move screen
 										}
 										usleep(sleeptime);
 										SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
@@ -284,10 +184,12 @@ int main()
 											if( whiteCount>10 ) isOB=1;
 										}
 									}
-									for( int i=0; i<COLOR_CELL_SIZE; i++ )
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL )
-											if( cellColorThreshold[i] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									for( int i=0; i<32; i++ ) {	
+										for( int j=0; j<32; j++ ) {	
+											colorss= getpixel( stretchRect1.x-23+i, stretchRect1.y+20+j, gScreenSurface );
+											if( colorss==12319370 || colorss==14024604 || colorss==9200742 ) canWalk=0;
+										}
+									}
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
 										if(frame>3) frame=0;
@@ -295,7 +197,8 @@ int main()
 										if( canWalk==1 ) {
 											if(isOB==1 || stretchRect1.x>SCREEN_WIDTH/2-9) {
 												stretchRect1.x-=2;//move char
-											} else { 
+												cout<<i<<endl;
+											} else if (canWalk==1) { 
 												stretchRect3.x--;//move screen
 											}
 										}
@@ -318,10 +221,12 @@ int main()
 											if( whiteCount>10 ) isOB=1;
 										}
 									}
-									for( int i=0; i<COLOR_CELL_SIZE; i++ )
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL )
-											if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									for( int i=0; i<32; i++ ) {	
+										for( int j=0; j<32; j++ ) {	
+											colorss= getpixel( stretchRect1.x+44+i, stretchRect1.y+20+j, gScreenSurface );
+											if( colorss==12319370 || colorss==14024604 || colorss==9200742 ) canWalk=0;
+										}
+									}
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
 										if(frame>3) frame=0;
@@ -344,38 +249,33 @@ int main()
 							default://do nothing when any other keys are pressed
 								break;
 						}
-	cout<<"Map:\n";
+	canWalk=1;
+	for( int i=0; i<32; i++ ) {	
+		for( int j=0; j<32; j++ ) {	
+			colorss= getpixel( stretchRect1.x-23+i, stretchRect1.y+20+j, gScreenSurface );
+			//light green at top of tree || slightly darker green || trunk brown
+			if( colorss==12319370 || colorss==14024604 || colorss==9200742 ) canWalk=0;
+		}
+	}
+//	if(canWalk==0) cout<<"DONT WALK THERE"<<endl;
+//	else cout<<"u good"<<endl;
+	canWalk=1;
+
 	cout<<"x: "<<stretchRect3.x<<endl;
 	cout<<"y: "<<stretchRect3.y<<endl;
-	cout<<"Trainer:\n";
-	cout<<"x: "<<stretchRect1.x<<endl;
-	cout<<"y: "<<stretchRect1.y<<endl;
 
 	trainerCellx= stretchRect1.x+7;
 	trainerCelly= stretchRect1.y+16;
 
-//  write values for block to right
-	cout<<"bridge:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[BRIDGE_CELL], gScreenSurface)<<endl;
-	cout<<"cave:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[CAVE_ENT_CELL], gScreenSurface)<<endl;
-	cout<<"flower:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[FLOWER_CELL], gScreenSurface)<<endl;
-	cout<<"normal grass:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[NORM_GRASS_CELL], gScreenSurface)<<endl;
-	cout<<"pathedge:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[PATH_EDGE_CELL], gScreenSurface)<<endl;
-	cout<<"path:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[PATH_CELL], gScreenSurface)<<endl;
-	cout<<"plateau:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[PLATEAU_CELL], gScreenSurface)<<endl;
-	cout<<"platform:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[PLATFORM_CELL], gScreenSurface)<<endl;
-	cout<<"pokeball:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[POKEBALL_CELL], gScreenSurface)<<endl;
-	cout<<"skinnypath:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[SKINNYPATH_CELL], gScreenSurface)<<endl;
-	cout<<"stairs:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[STAIRS_CELL], gScreenSurface)<<endl;
-	cout<<"water:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface)<<endl;
-	cout<<"wild grass2:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_2_CELL], gScreenSurface)<<endl;
-	cout<<"wild grass:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface)<<endl;
+	cout<<cellComp(trainerCellx+cellShift, trainerCelly, trainerCellx+cellShift, trainerCelly, gScreenSurface)<<" match"<<endl;
 
-	if(steponWildGrass){
-		cout<<"WATCHOUT!\n";
-		if(rand()%100 < 15) cout<<"Pokemon Encounter!"<<endl;
-//transparency
-//		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3);
-	}
+	unsigned int *ptr = (unsigned int*)gBackground->pixels;
+	int lineoffset = (stretchRect3.y+stretchRect3.h+15) * (gBackground->pitch / 4);
+//	ptr[ lineoffset + (stretchRect3.x+stretchRect3.w+15) ] = 0xff0000;
+//	cout << "White? "<<ptr[ lineoffset + (stretchRect3.x+stretchRect3.w+15) ] <<endl;
+
+//	if( getpixel( SCREEN_WIDTH+16, SCREEN_HEIGHT+16 )==16777215 ) cout<<"White!"<<endl;
+//	cout<< getpixel( 1, 1 )<<" White!"<<endl;
 
 						//This will save all events (to e) that occured while the trainer was taking a step. As long as the event was not a quit, then the event will be arbitrarily stored and then overwritten. This is done so that the user playing may hold down an arrow key, and then the trainer will stop walking as soon as the user releases the key 
 						while(SDL_PollEvent(&e) != 0){//while there remains user entered events
@@ -389,21 +289,30 @@ int main()
 					SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
 					SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 
-/*	for( int i=0; i<32; i++ ) putpixel( 2*cellShift+trainerCellx+i,trainerCelly,0xff0000 );	
+	for( int i=0; i<32; i++ ) putpixel( 2*cellShift+trainerCellx+i,trainerCelly,0xff0000 );	
 	for( int i=0; i<32; i++ ) putpixel( 2*cellShift+trainerCellx,trainerCelly+i,0xff0000 );	
 	for( int i=0; i<32; i++ ) putpixel( 2*cellShift+trainerCellx+i,trainerCelly+32,0xff0000 );	
 	for( int i=0; i<32; i++ ) putpixel( 2*cellShift+trainerCellx+32,trainerCelly+i,0xff0000 );	
+/*	putpixel( stretchRect1.x-23+1,stretchRect1.y+20+16,0xff0000 );	
+	putpixel( stretchRect1.x-23+1,stretchRect1.y+20+16+2,0xff0000 );	
+	putpixel( stretchRect1.x-23+1+2,stretchRect1.y+20+16,0xff0000 );	
+	putpixel( stretchRect1.x-23+1+2,stretchRect1.y+20+16+2,0xff0000 );	
 */
 
 					SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+
+//	colorss = getpixel( stretchRect1.x-23+14+1,stretchRect1.y+20+14+1 );
+	colorss = getpixel( stretchRect1.x-23+1+1,stretchRect1.y+20+16+1, gScreenSurface );
+//	cout<<colorss<<endl;
 
 
 					frame=0;//reset frame for updated animation
 					isOB=0;
 					whiteCount=0;
-					steponWildGrass=0;
-					canWalk=0;
-					isCave=0;
+/*					if (frame == WALKING_ANIMATION_FRAMES){//set frames to zero when number of walking animation frames is reached to cycle through images
+						frame = 0;
+					}
+*/
 				}
 			}
 		}
@@ -598,76 +507,33 @@ uint32_t getpixel( int x, int y, SDL_Surface *surface ) {
 	return ( ptr[ lineoffset + x ] );
 }
 
-double cellComp( int x1, int y1, map<int,int> cellCode, SDL_Surface *surface ){
+double cellComp( int x1, int y1, int x2, int y2, SDL_Surface *surface ){
 	double match= 0;
-	map<int,int> localColors;
+	vector<int> colors1, colors2;	//will store 1024(=32*32) colors - the color of each pixel in the cell
 
+//ofstream outFile;
+//outFile.open( "cellPixelColors.txt", ios::out );
+ifstream inFile;
+inFile.open( "cellPixelColors.txt", ios::in );
+int temp;
+
+map<int,int> colors11, colors22;
 	for( int i=0; i<32; i++ ) {	
 		for( int j=0; j<32; j++ ) {	
-			localColors[ getpixel( x1+i, y1+j, gScreenSurface ) ]++;
+			colors1.push_back( getpixel( x1+i, y1+j, gScreenSurface ) );
+			colors2.push_back( getpixel( x2+i, y2+j, gScreenSurface ) );
+	//		if( colors1.back()==colors2.back() ) match++;
+//inFile>>temp;
+//if( colors1.back()==temp ) match++;
+//outFile<<colors1.back()<<" ";
+
+			colors11[ getpixel( x1+i, y1+j, gScreenSurface ) ]++;
+			colors22[ getpixel( x2+i, y2+j, gScreenSurface ) ]++;
 		}
 	}
-	for( map<int,int>::const_iterator i=localColors.begin(); i!=localColors.end(); i++){
-		match+= (localColors[i->first] < cellCode[i->first]) ? localColors[i->first] : cellCode[i->first];
+	for( map<int,int>::const_iterator i=colors11.begin(); i!=colors11.end(); i++){
+		match+= (colors11[i->first] < colors22[i->first]) ? colors11[i->first] : colors22[i->first];
 	}
 
 	return (match/1024);
-}
-
-void writeColorCodes(int x, int y, SDL_Surface *surface){
-
-	ofstream outFile;
-	outFile.open( "foo.txt", ios::out );
-	map<int,int> colors;
-
-	for( int i=0; i<32; i++ ) {	
-		for( int j=0; j<32; j++ ) {	
-			colors[ getpixel( x+i, y+j, gScreenSurface ) ]++;
-		}
-	}
-
-	for( map<int,int>::const_iterator i=colors.begin(); i!=colors.end(); i++){
-		outFile<< i->first << " " << i->second <<" ";
-	}
-	outFile << -1 << " " << -1 << endl;
-
-	outFile.close();
-}
-
-vector<map<int,int> > readColorCodes(){
-	ifstream inFile;
-	inFile.open( "cellPixelColors.txt",ios::in );
-	vector<map<int,int> > colorCodes;
-	map<int,int> tempMap;
-	int tempKey, tempVal, i=0;
-
-	while(inFile>>tempKey && inFile>>tempVal){
-		if( tempKey!= -1){
-			tempMap.insert(map<int,int>::value_type(tempKey, tempVal) );
-		} else {
-			colorCodes.push_back(tempMap);
-			tempMap.clear();
-		}
-	}
-
-	inFile.close();
-
-	return colorCodes;
-}
-
-void transitionGraphic(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackground, SDL_Surface *gSpriteSheet, SDL_Rect *gCurrentClip, SDL_Rect stretchRect1, SDL_Rect stretchRect2, SDL_Rect stretchRect3, int counter) {
-	SDL_Surface* transsurface;
-	for( int i=(16*counter); i<=(16*counter+16); i+=7 ){
-		#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-			transsurface = SDL_CreateRGBSurface(SDL_SWSURFACE,stretchRect2.w,stretchRect2.h,32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-		#else
-			transsurface = SDL_CreateRGBSurface(SDL_SWSURFACE,stretchRect2.w,stretchRect2.h,32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-		#endif
-		SDL_FillRect(transsurface, NULL, SDL_MapRGBA(transsurface->format, 0, 0, 0, 255-abs(255-i) ) );
-		SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-		SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
-		SDL_BlitSurface(transsurface,NULL,screen,&stretchRect2);
-		SDL_UpdateWindowSurface(window);//update the window with the current surface
-		if(255-abs(255-i) > 200) SDL_Delay(1);	// extend pause when screen is at its darkest
-	}
 }
