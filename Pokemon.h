@@ -22,7 +22,8 @@ class Pokemon{
 		//virtual void attack() = 0;
 		void attack(int); //takes in input for what move to use
 		void swapAttack(int);// input will be index of attackName for the attack being added. This will ask the user if they want to swap attackName[x] with attackName[y] and then executes the swap
-		void changeHealth(int);//edits current health in battle mode
+		void subHealth(int); // decrements health of Pokemon
+		void addHealth(int); // increments health of Pokemon
 		int getcurrHealth(); // return current health
 		void setcurrHealth(int); // sets a new current health
 	private:
@@ -92,14 +93,14 @@ void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumb
 		cout << "Move number "<< userNum <<" is " << myMoves[userNum-1].display() << endl;
 		int damage = myMoves[userNum-1].attack(maxAttack); //calculate damage eventually take into account weaknesses and such
 		cout << "The attack did " << damage << " damage!" << endl; //display results
-		changeHealth(damage); // change health based on damage dealt
+		subHealth(damage); // subtract health based on damage dealt
 		}
 	}
 }
 
-void Pokemon::changeHealth(int dam) {
-	//cout << "Health was: " << getcurrHealth() << endl;
-	int damage = dam + currAttack - currDef; // calculate damage 
+void Pokemon::subHealth(int dam) {
+	cout << "Health was: " << getcurrHealth() << endl;
+	int damage = dam - currDef; // calculate damage 
 	if(damage > 0) {
 		setcurrHealth((getcurrHealth() - damage)); // reduce current health
 	}
@@ -109,6 +110,13 @@ void Pokemon::changeHealth(int dam) {
 	if(getcurrHealth() <= 0) { // check if pokemon is KO'd
 		KO = 1; // if health falls below 0, Pokemon becomes KO'd
 	}
-	//cout << "Health is now: " << getcurrHealth() << endl;
+	cout << "Health is now: " << getcurrHealth() << endl;
 }
+
+void Pokemon::addHealth(int add) {
+	if(add >= 0) {
+		setcurrHealth((getcurrHealth() + add)); // increments health
+	}	
+}
+
 #endif
