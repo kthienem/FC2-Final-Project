@@ -28,6 +28,7 @@ const int WALKING_ANIMATION_FRAMES = 4;//number of frames used to create animati
 enum pokeMaps
 {
 	POKE_MAP_ROUTE1,	//=0
+	POKE_CENTER_MAP,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
 };
 //Color code contents
@@ -42,15 +43,26 @@ enum cellColorCode
 	PLATEAU_CELL,
 	PLATFORM_CELL,
 	POKEBALL_CELL,
+	POKE_CENTER_CELL,
 	SKINNYPATH_CELL,
 	STAIRS_CELL,
 	WATER_CELL,
 	WILD_GRASS_2_CELL,
 	WILD_GRASS_CELL,
+	CENTER_BOX_CELL,
+	CENTER_CUSHION1_CELL,
+	CENTER_CUSHION2_CELL,
+	CENTER_DOOR2_CELL,
+	CENTER_DOOR_CELL,
+	CENTER_EXIT_CELL,
+	CENTER_FLOOR1_CELL,
+	CENTER_FLOOR2_CELL,
+	CENTER_FLOOR3_CELL,
+	CENTER_HEALER_CELL,
 	COLOR_CELL_SIZE
 };
 
-double cellColorThreshold[20]={	.55,	// bridge
+double cellColorThreshold[30]={	.55,	// bridge
 				.85,	// cave entrance
 				.55,	// flower
 				.62,	// normal grass
@@ -59,11 +71,22 @@ double cellColorThreshold[20]={	.55,	// bridge
 				.49,	// plateau
 				.62,	// platform
 				.22,	// pokeball
+				.92,	// poke center
 				.39,	// skinnypath
 				.90,	// stairs
 				.25,	// water
 				.60,	// wild grass 2
-				.60	// wild grass
+				.60,	// wild grass
+				.8,	// center box
+				.8,	// center cushion1
+				.8,	// center cushion2
+				.8,	// center door2
+				.8,	// center door
+				.9,	// center exit
+				.6,	// center floor1
+				.6,	// center floor2
+				.6,	// center floor3
+				.9	// center healer
 };
 
 bool init();		//initialize the display window
@@ -130,8 +153,13 @@ int main()
 //			stretchRect3.y = 257;
 			stretchRect3.w = 384;
 			stretchRect3.h = 288;
+//PokeCenter Testing...
+		stretchRect1.x = 599;			//begin image in middle of map
+		stretchRect1.y = 462;
+		stretchRect3.x = 1841;			//begin image in middle of map
+		stretchRect3.y = 721;
 
-			int caveChoice;
+			int caveChoice=0;
 			int caveMapX[4]= {	1777,	1761,	1809,	1761};
 			int caveMapY[4]= {	609,	721,	545,	561};
 			int caveCharX[4]= {	343,	343,	375,	279};
@@ -154,6 +182,9 @@ int main()
 
 			int steponWildGrass= 0;
 			int isCave= 0;
+			int isPokeCenter= 0;
+			int enteringCenter= 0;
+			int exitingCenter= 0;
 
 			vector<map<int,int> > colorCodes;
 
@@ -185,7 +216,11 @@ int main()
 											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
 												canWalk= 1;
 											}
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+										if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+										if( cellColorThreshold[POKE_CENTER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[POKE_CENTER_CELL], gScreenSurface) ) {
+											isPokeCenter=1;
+											enteringCenter=1;
+										}
 									}
 									if( cellColorThreshold[CAVE_ENT_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[CAVE_ENT_CELL], gScreenSurface) ) isCave= 1;
 									for( int i=0; i<16; i++){
@@ -194,15 +229,16 @@ int main()
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkUp[frame];//set equal to proper frame of walking right sprites
 										if( canWalk==1 ) {
-											if(stretchRect1.y>SCREEN_HEIGHT/2+14 || isOB==1) {
+											if(stretchRect1.y>SCREEN_HEIGHT/2+14 || isOB==1 || isPokeCenter) {
 												stretchRect1.y-=2;//move char
 												//NOTE: trainer is moved twice as many times as the screen. This is because the character image is shifted n "coordinates" on the window, while the screen is shifted n "pixels" on the background/map image
 											} else {
 												stretchRect3.y--;//move screen
 											}
 										}
+									//	if(isPokeCenter && ! enteringCenter) stretchRect1.y-=2;
 										usleep(sleeptime);
-										if( ! isCave ) {
+										if( ! isCave && ! enteringCenter ) {
 											SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
 											SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 											SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
@@ -210,8 +246,26 @@ int main()
 											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i);
 										}
 									}
+									if(enteringCenter){
+										stretchRect3.x = 0;	//begin image in middle of map
+										stretchRect3.y = 0;
+										stretchRect1.x = 360;	//place at entrance
+										stretchRect1.y = 430;	//place at entrance
+										gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+										for( int i=16; i<32; i++){//indexed 16-32 in order to keep transition smooth(since we are passing in a counter and the walk up uses 0-15
+											if(i%4==0) frame++;
+											if(frame>3) frame=0;
+											gCurrentClip = &gWalkUp[frame];//set equal to proper frame of walking right sprites
+											stretchRect1.y-=2;//move screen
+											usleep(sleeptime);
+											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i);
+										}
+									}
 									if(isCave) {
-										caveChoice= rand()%4;
+										int prevCave= caveChoice;
+										do{
+											caveChoice= rand()%4;
+										}while(prevCave==caveChoice);
 										stretchRect1.x= caveCharX[caveChoice];
 										stretchRect1.y= caveCharY[caveChoice];
 										stretchRect3.x= caveMapX[caveChoice];
@@ -221,7 +275,7 @@ int main()
 											if(frame>3) frame=0;
 											gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
 											if( canWalk==1 ) {
-												if(stretchRect1.y<SCREEN_HEIGHT/2+14 || isOB==1) {
+												if(stretchRect1.y<SCREEN_HEIGHT/2+14 || isOB==1 || isPokeCenter) {
 													stretchRect1.y+=2;//move char
 													//NOTE: trainer is moved twice as many times as the screen. This is because the character image is shifted n "coordinates" on the window, while the screen is shifted n "pixels" on the background/map image
 												} else {
@@ -231,9 +285,9 @@ int main()
 											usleep(sleeptime);
 											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i);
 										}
-											SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
-											SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
-											SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+										SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
+										SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+										SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 
 									} 
 								}
@@ -254,21 +308,47 @@ int main()
 										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL )
 											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ) canWalk= 1;
 									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[CENTER_EXIT_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[CENTER_EXIT_CELL], gScreenSurface) ) exitingCenter=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
 										if( canWalk==1 ) {
-											if(isOB==1 || stretchRect1.y<SCREEN_HEIGHT/2+14) {
+											if(isOB==1 || stretchRect1.y<SCREEN_HEIGHT/2+14 || isPokeCenter) {
 												stretchRect1.y+=2;//move char
 											} else {
 												stretchRect3.y++;//move screen
 											}
 										}
+									//	if(isPokeCenter) stretchRect1.y+=2;
 										usleep(sleeptime);
+										if( ! exitingCenter ) {
+											SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
+											SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+											SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+										}else{
+											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i);
+										}
+									}
+									if(exitingCenter) {
+										gBackground = gPokeMaps[ POKE_MAP_ROUTE1 ];
+										stretchRect1.x= 599;
+										stretchRect1.y= 430;
+										stretchRect3.x= 1841;
+										stretchRect3.y= 721;
+										for( int i=16; i<32; i++){//indexed 16-32 in order to keep transition smooth(since we are passing in a counter and the walk up uses 0-15
+											if(i%4==0) frame++;
+											if(frame>3) frame=0;
+											gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
+											stretchRect1.y+=2;//move char
+											usleep(sleeptime);
+											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i);
+										}
+
 										SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
 										SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 										SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+										isPokeCenter= 0;
 									}
 								}
 								break;
@@ -293,12 +373,13 @@ int main()
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkLeft[frame];//set equal to proper frame of walking right sprites
 										if( canWalk==1 ) {
-											if(isOB==1 || stretchRect1.x>SCREEN_WIDTH/2-9) {
+											if(isOB==1 || stretchRect1.x>SCREEN_WIDTH/2-9 || isPokeCenter) {
 												stretchRect1.x-=2;//move char
 											} else { 
 												stretchRect3.x--;//move screen
 											}
 										}
+									//	if(isPokeCenter) stretchRect1.x-=2;
 										usleep(sleeptime);
 										SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
 										SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
@@ -327,18 +408,23 @@ int main()
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkRight[frame];//set equal to proper frame of walking right sprites
 										if(canWalk==1){
-											if(isOB==1 || stretchRect1.x<SCREEN_WIDTH/2-9) {
+											if(isOB==1 || stretchRect1.x<SCREEN_WIDTH/2-9 || isPokeCenter) {
 												stretchRect1.x+=2;
 											} else {
 												stretchRect3.x++;//move screen
 											}
 										}
+									//	if(isPokeCenter) stretchRect1.x+=2;
 										usleep(sleeptime);
 										SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
 										SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 										SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 									}
 								}
+								break;
+
+							case SDLK_SPACE://space bar
+			//					writeColorCodes(trainerCellx,trainerCelly+cellShift, gScreenSurface);
 								break;
 				
 							default://do nothing when any other keys are pressed
@@ -351,8 +437,8 @@ int main()
 	cout<<"x: "<<stretchRect1.x<<endl;
 	cout<<"y: "<<stretchRect1.y<<endl;
 
-	trainerCellx= stretchRect1.x+7;
-	trainerCelly= stretchRect1.y+16;
+						trainerCellx= stretchRect1.x+7;
+						trainerCelly= stretchRect1.y+16;
 
 //  write values for block to right
 	cout<<"bridge:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[BRIDGE_CELL], gScreenSurface)<<endl;
@@ -384,7 +470,10 @@ int main()
 							}
 						}
 					}
-					gBackground = gPokeMaps[ POKE_MAP_ROUTE1 ];
+					if(isPokeCenter)
+						gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+					else
+						gBackground = gPokeMaps[ POKE_MAP_ROUTE1 ];
 
 					SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
 					SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
@@ -404,6 +493,9 @@ int main()
 					steponWildGrass=0;
 					canWalk=0;
 					isCave=0;
+					//isPokeCenter=0;
+					enteringCenter=0;
+					exitingCenter=0;
 				}
 			}
 		}
@@ -453,6 +545,11 @@ bool loadMedia()
 
 	gPokeMaps[ POKE_MAP_ROUTE1 ] = loadSurface("pokeMap3.png");//load background image
 	if(gPokeMaps[ POKE_MAP_ROUTE1 ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_CENTER_MAP ] = loadSurface("pokeCenter.png");//load background image
+	if(gPokeMaps[ POKE_CENTER_MAP ] == NULL){//if not loaded properly return unsuccessful 
 		success = false;
 	}
 
