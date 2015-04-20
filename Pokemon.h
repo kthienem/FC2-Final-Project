@@ -98,8 +98,8 @@ void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumb
 }
 
 void Pokemon::changeHealth(int dam) {
-	cout << "Health was: " << getcurrHealth() << endl;
-	int damage = dam - currDef; // calculate damage by subtracting defense value
+	//cout << "Health was: " << getcurrHealth() << endl;
+	int damage = dam + currAttack - currDef; // calculate damage 
 	if(damage > 0) {
 		setcurrHealth((getcurrHealth() - damage)); // reduce current health
 	}
@@ -109,6 +109,6 @@ void Pokemon::changeHealth(int dam) {
 	if(getcurrHealth() <= 0) { // check if pokemon is KO'd
 		KO = 1; // if health falls below 0, Pokemon becomes KO'd
 	}
-	cout << "Health is now: " << getcurrHealth() << endl;
+	//cout << "Health is now: " << getcurrHealth() << endl;
 }
 #endif
