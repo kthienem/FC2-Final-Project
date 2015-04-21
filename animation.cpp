@@ -71,7 +71,7 @@ double cellColorThreshold[30]={	.55,	// bridge
 				.49,	// plateau
 				.62,	// platform
 				.22,	// pokeball
-				.92,	// poke center
+				.87,	// poke center
 				.39,	// skinnypath
 				.90,	// stairs
 				.25,	// water
@@ -179,6 +179,10 @@ int main()
 			int trainerCellx= stretchRect1.x+7;
 			int trainerCelly= stretchRect1.y+16;
 			int cellShift= 32;
+			int leaveMap1x= 0;
+			int leaveMap1y= 0;
+			int leaveMap3x= 0;
+			int leaveMap3y= 0;
 
 			int steponWildGrass= 0;
 			int isCave= 0;
@@ -247,6 +251,10 @@ int main()
 										}
 									}
 									if(enteringCenter){
+										leaveMap1x= stretchRect1.x;
+										leaveMap1y= stretchRect1.y;
+										leaveMap3x= stretchRect3.x;
+										leaveMap3y= stretchRect3.y;
 										stretchRect3.x = 0;	//begin image in middle of map
 										stretchRect3.y = 0;
 										stretchRect1.x = 360;	//place at entrance
@@ -332,10 +340,10 @@ int main()
 									}
 									if(exitingCenter) {
 										gBackground = gPokeMaps[ POKE_MAP_ROUTE1 ];
-										stretchRect1.x= 599;
-										stretchRect1.y= 430;
-										stretchRect3.x= 1841;
-										stretchRect3.y= 721;
+										stretchRect1.x= leaveMap1x;
+										stretchRect1.y= leaveMap1y;
+										stretchRect3.x= leaveMap3x;
+										stretchRect3.y= leaveMap3y;
 										for( int i=16; i<32; i++){//indexed 16-32 in order to keep transition smooth(since we are passing in a counter and the walk up uses 0-15
 											if(i%4==0) frame++;
 											if(frame>3) frame=0;
@@ -425,6 +433,7 @@ int main()
 
 							case SDLK_SPACE://space bar
 			//					writeColorCodes(trainerCellx,trainerCelly+cellShift, gScreenSurface);
+				cout<<"pokeCenter:		"<<cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[POKE_CENTER_CELL], gScreenSurface)<<endl;
 								break;
 				
 							default://do nothing when any other keys are pressed
