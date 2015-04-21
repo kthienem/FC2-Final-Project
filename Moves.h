@@ -20,7 +20,15 @@ enum moveList{
 	MOVE_EMBER,
 	MOVE_WATERGUN,
 	MOVE_CUT,
-	MOVE_SHOCK
+	MOVE_SHOCK,
+	MOVE_DOUBLESLAP,
+	MOVE_GUST,
+	MOVE_HEADBUTT,
+	MOVE_BITE,
+	MOVE_BUBBLEBEAM,
+	MOVE_RAZORLEAF,
+	MOVE_CONFUSION,
+	MOVE_QUICKATTACK
 };
 
 class Moves{
@@ -76,6 +84,54 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			modify = 1.2;
 			type.assign("normal");
 			break;
+		case MOVE_DOUBLESLAP:
+			moveName.assign("doubleslap");
+			base = 30;
+			modify = 2;
+			type.assign("normal");
+			break;
+		case MOVE_GUST:
+			moveName.assign("gust");
+			base = 40;
+			modify = 2;
+			type.assign("flying");
+			break;
+		case MOVE_HEADBUTT:
+			moveName.assign("headbutt");
+			base = 70;
+			modify = 1.4;
+			type.assign("normal");
+			break;
+		case MOVE_BITE:
+			moveName.assign("bite");
+			base = 60;
+			modify = 2;
+			type.assign("dark");
+			break;
+		case MOVE_BUBBLEBEAM:
+			moveName.assign("bubblebeam");
+			base = 65;
+			modify = 1.6;
+			type.assign("water");
+			break;
+		case MOVE_RAZORLEAF:
+			moveName.assign("razorleaf");
+			base = 55;
+			modify = 1.4;
+			type.assign("grass");
+			break;
+		case MOVE_CONFUSION:
+			moveName.assign("confusion");
+			base = 50;
+			modify = 1;
+			type.assign("psychic");
+			break;
+		case MOVE_QUICKATTACK:
+			moveName.assign("quick attack");
+			base = 40;
+			modify = 1.8;
+			type.assign("normal");
+			break;	
 		default:
 			cout << "default";
 			noMove();
