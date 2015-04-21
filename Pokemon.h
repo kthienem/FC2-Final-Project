@@ -17,7 +17,7 @@ using namespace std;
 
 class Pokemon{
 	public:
-		Pokemon();
+		Pokemon(int=0);
 		void levelUp();	// level+1, add attack,def,reset exp
 		//virtual void attack() = 0;
 		void attack(int); //takes in input for what move to use
@@ -26,6 +26,7 @@ class Pokemon{
 		void addHealth(int); // increments health of Pokemon
 		int getcurrHealth(); // return current health
 		void setcurrHealth(int); // sets a new current health
+		void inccurrHealth(int);
 	private:
 		int maxHealth;
 		int currHealth;
@@ -64,15 +65,42 @@ void pickPoke(string whichPoke) {
 //void pikachu() {
 	//set level,exp,health,att,def,etc and moves too
 //}
-Pokemon::Pokemon(){
+Pokemon::Pokemon(int pokeNum){
 	//initalize moves
-	Moves move1(0), move2(1), move3(2), move4(3);
+	int mv1, mv2, mv3, mv4;
+	switch(pokeNum) {
+		case 0: //pika
+			mv1 = 0;
+			mv2 = 5;
+			mv3 = 10;
+			mv4 = 7;
+			break;
+		case 1: //char
+			mv1 = 6;
+			mv2 = 2;
+			mv3 = 0;
+			mv4 = 1;
+			break;
+		case 2: //squirtle
+			mv1 = 3;
+			mv2 = 6;
+			mv3 = 8;
+			mv4 = 4;
+			break;
+	};
+//here is where we set for each type of pokemon
+	
 //create a move //0 stands for tackle, 1 scratch, 2 ember, 3 watergun
+
+	Moves move1(mv1), move2(mv2), move3(mv3), move4(mv4);
+	
 	myMoves.push_back(move1); //push move into pokemon myMove vector
 	myMoves.push_back(move2);
 	myMoves.push_back(move3);
 	myMoves.push_back(move4);
 	maxAttack = 10; //set maxAttack
+	currHealth = 100;
+	KO = 0;
 }
 
 int Pokemon::getcurrHealth() {
@@ -82,6 +110,12 @@ int Pokemon::getcurrHealth() {
 void Pokemon::setcurrHealth(int h) {
 	if(h > 0) 
 		currHealth = h; // sets new health
+	else
+		currHealth = 0;
+}
+
+void Pokemon::inccurrHealth(int add) {
+	currHealth += add; //inc health for potion and other increases
 }
 
 void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumber
@@ -109,6 +143,7 @@ void Pokemon::subHealth(int dam) {
 	}
 	if(getcurrHealth() <= 0) { // check if pokemon is KO'd
 		KO = 1; // if health falls below 0, Pokemon becomes KO'd
+		cout << "KO" << endl;
 	}
 	cout << "Health is now: " << getcurrHealth() << endl;
 }
