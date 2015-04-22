@@ -12,7 +12,10 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "Moves.h"
+
 using namespace std;
 
 class Pokemon{
@@ -89,6 +92,9 @@ Pokemon::Pokemon(int pokeNum){
 			break;
 	};
 //here is where we set for each type of pokemon
+
+// Allow for randomization
+srand(time(NULL)); // seed rand
 	
 //create a move //0 stands for tackle, 1 scratch, 2 ember, 3 watergun
 
@@ -101,6 +107,30 @@ Pokemon::Pokemon(int pokeNum){
 	maxAttack = 10; //set maxAttack
 	currHealth = 100;
 	KO = 0;
+
+}
+
+void Pokemon::levelUp() {
+	maxHealth+=10; // increment max health
+	currHealth = maxHealth; // leveling up fully restores health
+	level++; // increment level by 1
+	exp = 0; // set experience back to zero
+	maxAttack += rand() % 5; // add a random attack stat amount
+	// Don't increment current attack?
+	maxDef += rand() % 5; // increment defense by a random stat amount
+	// Don't increment current def?
+	maxSpeed += rand() % 5; // increment speed
+	// Don't increment current Speed?
+	// KO does not change
+	
+	// If necessary, add a new move
+/*
+	myMoves[0] = myMoves[1];
+	myMoves[1] = myMoves[2];
+	myMoves[2] = myMoves[3];
+	myMoves.pop_back(); // remove move from back
+	myMoves.push_back(newmove); // add new move to the back
+*/
 }
 
 int Pokemon::getcurrHealth() {
