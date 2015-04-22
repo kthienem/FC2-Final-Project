@@ -18,6 +18,7 @@ class Player {
 	private:
 		int createPokemon;
 		Pokemon *myPoke[6]; // array of pointers to pokemon of player's pokemon		
+		Pokemon *otherPoke[6];
 		//Pokemon Pika(1);
 };
 Player::Player(){
@@ -31,7 +32,7 @@ void Player::Battle(){
 	cout << "What pokemon would you like to use: ";
 	cin >> pokeNum;
 	pokeNum--;
-	}while(((pokeNum) < createPokemon) && ((pokeNum)>=0)); ??
+	}while(((pokeNum) < createPokemon) && ((pokeNum)>=0));
 	(*myPoke[pokeNum]).attack(1); // test using attack 1
 }
 
