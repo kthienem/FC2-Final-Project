@@ -4,6 +4,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "Pokemon.h"
+#include "Pikachu.h"
 using namespace std;
 
 class Player {
@@ -11,10 +12,9 @@ class Player {
 	public:
 		Player(); // constructor
 		void Battle(); // initiate battle sequence
-		void endBattle(); // end the battle sequence
 		void Menu(); // initiate menu interface
 		void Roam(); // initiate field interface (free roam)
-		void add_pokemon(int);
+		Pokemon* add_pokemon(int);
 		void add_wild(Pokemon&);
 	private:
 		int createPokemon; // number of pokemon owned by player
@@ -41,20 +41,11 @@ void Player::Battle(){
 	(*myPoke[pokeNum]).attack(1); // test using attack 1
 }
 
-void Player::endBattle() {
-/*	// First case: Player losses
-	int KOCount = 0; // keeps track of number of KO'd pokemon
-	for(int i = 0; i < createPokemon ; i++) {
-		if(myPoke[i].getKO())
-			KOCount++; // increment KO count if Pokemon is KO'd
-	}
-*/
-}
-
 //function for adding a new pokemon into players array
-void Player::add_pokemon(int PokeNum){
+Pokemon* Player::add_pokemon(int PokeNum){
 	if(createPokemon < 5){
-		myPoke[createPokemon++] = new Pokemon(PokeNum);
+		//myPoke[createPokemon++] = new Pokemon(PokeNum);
+		myPoke[createPokemon++] = new Pikachu;
 	}
 	else{
 		cout << "No more room" << endl;

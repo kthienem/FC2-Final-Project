@@ -28,8 +28,30 @@ class Pokemon{
 		void subHealth(int); // decrements health of Pokemon
 		void addHealth(int); // increments health of Pokemon
 		int getcurrHealth(); // return current health
+		void setmaxHealth(int);
 		void setcurrHealth(int); // sets a new current health
 		void inccurrHealth(int);
+		void setlevel(int);
+		int getlevel();
+		void setexp(int);
+		int getexp();
+		void setmaxAttack(int);
+		int getmaxAttack();
+		void setcurrAttack(int);
+		int getcurrAttack();
+		void setmaxDef(int);
+		int getmaxDef();
+		void setcurrDef(int);
+		int getcurrDef();
+		void setmaxSpeed(int);
+		int getmaxSpeed();
+		void setcurrSpeed(int);
+		int getcurrSpeed();
+		void setKO(int);
+		int getKO();
+		void settype(string);
+		string gettype();
+		void setMoves(int,int,int,int,int);
 	private:
 		int maxHealth;
 		int currHealth;
@@ -70,7 +92,7 @@ void pickPoke(string whichPoke) {
 //}
 Pokemon::Pokemon(int pokeNum){
 	//initalize moves
-	int mv1, mv2, mv3, mv4;
+/*	int mv1, mv2, mv3, mv4;
 	switch(pokeNum) {
 		case 0: //pika
 			mv1 = 0;
@@ -91,13 +113,14 @@ Pokemon::Pokemon(int pokeNum){
 			mv4 = 4;
 			break;
 	};
+*/
 //here is where we set for each type of pokemon
 
 // Allow for randomization
 srand(time(NULL)); // seed rand
 	
 //create a move //0 stands for tackle, 1 scratch, 2 ember, 3 watergun
-
+/*
 	Moves move1(mv1), move2(mv2), move3(mv3), move4(mv4);
 	
 	myMoves.push_back(move1); //push move into pokemon myMove vector
@@ -107,7 +130,7 @@ srand(time(NULL)); // seed rand
 	maxAttack = 10; //set maxAttack
 	currHealth = 100;
 	KO = 0;
-
+*/
 }
 
 void Pokemon::levelUp() {
@@ -135,6 +158,10 @@ void Pokemon::levelUp() {
 
 int Pokemon::getcurrHealth() {
 	return currHealth; // returns current health
+}
+
+void Pokemon::setmaxHealth(int h) {
+	maxHealth = h;
 }
 
 void Pokemon::setcurrHealth(int h) {
@@ -182,6 +209,97 @@ void Pokemon::addHealth(int add) {
 	if(add >= 0) {
 		setcurrHealth((getcurrHealth() + add)); // increments health
 	}	
+}
+
+void Pokemon::setlevel(int lv) {
+	level = lv;
+}
+
+int Pokemon::getlevel() {
+	return level;
+}
+
+void Pokemon::setexp(int e) {
+	exp = e;
+}
+
+int Pokemon::getexp() {
+	return exp;
+}
+
+void Pokemon::setmaxAttack(int a) {
+	maxAttack = a;
+}
+
+int Pokemon::getmaxAttack() {
+	return maxAttack;
+}
+
+void Pokemon::setcurrAttack(int a) {
+	currAttack = a;
+}
+
+int Pokemon::getcurrAttack() {
+	return currAttack;
+}
+
+void Pokemon::setmaxDef(int d) {
+	maxDef = d;
+}
+
+int Pokemon::getmaxDef() {
+	return maxDef;
+}
+
+void Pokemon::setcurrDef(int d) {
+	currDef = d;
+}
+
+int Pokemon::getcurrDef() {
+	return currDef;
+}
+
+void Pokemon::setmaxSpeed(int s) {
+	maxSpeed = s;
+}
+
+int Pokemon::getmaxSpeed() {
+	return maxSpeed;
+}
+
+void Pokemon::setcurrSpeed(int s) {
+	currSpeed = s;
+}
+
+int Pokemon::getcurrSpeed() {
+	return currSpeed;
+}
+
+void Pokemon::setKO(int k) {
+	KO = k;
+}
+
+int Pokemon::getKO() {
+	return KO;
+}
+
+void Pokemon::settype(string t) {
+	type = t;
+}
+
+string Pokemon::gettype() {
+	return type;
+}
+
+void Pokemon::setMoves(int mv1, int mv2, int mv3, int mv4, int mv5) {
+
+	Moves move1(mv1), move2(mv2), move3(mv3), move4(mv4), move5(mv5);
+
+	myMoves.push_back(move1); // push moves into myMoves
+	myMoves.push_back(move2);
+	myMoves.push_back(move3);
+	myMoves.push_back(move4);
+	myMoves.push_back(move5); // potential move to learn
 }
 
 #endif
