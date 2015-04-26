@@ -31,7 +31,7 @@ void Player::Battle(){
 	cout << "What pokemon would you like to use: ";
 	cin >> pokeNum;
 	pokeNum--;
-	}while(((pokeNum) < createPokemon) && ((pokeNum)>=0)); ??
+	}while(((pokeNum) < createPokemon) && ((pokeNum)>=0));
 	(*myPoke[pokeNum]).attack(1); // test using attack 1
 }
 

@@ -33,7 +33,6 @@ enum pokeMaps
 	POKE_CENTER_NO_MAP,
 	POKE_CENTER_HEALING_MAP,
 	POKE_GYM_MAP,
-	POKE_GYM_ANSWERS_MAP,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
 };
 //Color code contents
@@ -64,17 +63,11 @@ enum cellColorCode
 	CENTER_FLOOR2_CELL,
 	CENTER_FLOOR3_CELL,
 	CENTER_HEALER_CELL,
-	GYM_DOOR_CELL,
-	GYM_FLOOR1_CELL,
-	GYM_FLOOR_EXIT_CELL,
-	GYM_FLOOR_SHADOW_CELL,
-	GYM_FLOOR_WARP_CELL,
-	GYM_LEADER_CELL,
-	GYM_PILLAR_CELL,
+	GYM_DOOR,
 	COLOR_CELL_SIZE
 };
 
-double cellColorThreshold[40]={	.55,	// bridge
+double cellColorThreshold[30]={	.55,	// bridge
 				.85,	// cave entrance
 				.55,	// flower
 				.62,	// normal grass
@@ -99,13 +92,7 @@ double cellColorThreshold[40]={	.55,	// bridge
 				.6,	// center floor2
 				.6,	// center floor3
 				.9,	// center healer
-				.99,	// gym door
-				.70,	// gym floor 1
-				.95,	// gym exit
-				.60,	// gym floor shadow(with wall sticking out)
-				.70,	// gym warp
-				.99,	// gym leader
-				.90	// gym pillar
+				.99	// gym door
 };
 
 bool init();		//initialize the display window
@@ -121,8 +108,6 @@ vector<map<int,int> > readColorCodes();
 
 void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect, int, int);
 void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect);
-SDL_Rect determineWarpLoc(SDL_Rect);
-void talkToPillar(SDL_Rect,int *,int *);
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
 SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the images to be displayed
@@ -209,15 +194,9 @@ int main()
 			int steponWildGrass= 0;
 			int isCave= 0;
 			int isPokeCenter= 0;
-			int enteringBuilding= 0;
-			int exitingBuilding= 0;
+			int enteringCenter= 0;
+			int exitingCenter= 0;
 			int isHealer= 0;
-			int isGym= 0;
-			int isWarpTile= 0;
-
-			int gymAnswers=0;
-			int firstPillarx=0;
-			
 
 			int transitionSpeed= 7;
 
@@ -247,19 +226,14 @@ int main()
 										}
 									}
 									for( int i=0; i<COLOR_CELL_SIZE; i++ ){
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CENTER_HEALER_CELL && i!= GYM_PILLAR_CELL)
+										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CENTER_HEALER_CELL )
 											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
 												canWalk= 1;
 											}
 										if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
-										if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 										if( cellColorThreshold[POKE_CENTER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[POKE_CENTER_CELL], gScreenSurface) ) {
 											isPokeCenter=1;
-											enteringBuilding=1;
-										}
-										if( cellColorThreshold[GYM_DOOR_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_DOOR_CELL], gScreenSurface) ) {
-											isGym=1;
-											enteringBuilding=1;
+											enteringCenter=1;
 										}
 									}
 									if( cellColorThreshold[CAVE_ENT_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[CAVE_ENT_CELL], gScreenSurface) ) isCave= 1;
@@ -276,9 +250,9 @@ int main()
 												stretchRect3.y--;//move screen
 											}
 										}
-									//	if(isPokeCenter && ! enteringBuilding) stretchRect1.y-=2;
+									//	if(isPokeCenter && ! enteringCenter) stretchRect1.y-=2;
 										usleep(sleeptime);
-										if( ! isCave && ! enteringBuilding ) {
+										if( ! isCave && ! enteringCenter ) {
 											SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
 											SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 											SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
@@ -286,24 +260,16 @@ int main()
 											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i, transitionSpeed);
 										}
 									}
-									if(enteringBuilding){
+									if(enteringCenter){
 										leaveMap1x= stretchRect1.x;
 										leaveMap1y= stretchRect1.y;
 										leaveMap3x= stretchRect3.x;
 										leaveMap3y= stretchRect3.y;
-										if(isPokeCenter) {
-											stretchRect3.x = 0;	//begin image in middle of map
-											stretchRect3.y = 0;
-											stretchRect1.x = 360;	//place at entrance
-											stretchRect1.y = 430;	//place at entrance
-											gBackground = gPokeMaps[ POKE_CENTER_MAP ];
-										}else if(isGym) {
-											stretchRect3.x = 0;	//begin image in middle of map
-											stretchRect3.y = 0;
-											stretchRect1.x = 343;	//place at entrance
-											stretchRect1.y = 560;	//place at entrance
-											gBackground = gPokeMaps[ POKE_GYM_MAP ];
-										}
+										stretchRect3.x = 0;	//begin image in middle of map
+										stretchRect3.y = 0;
+										stretchRect1.x = 360;	//place at entrance
+										stretchRect1.y = 430;	//place at entrance
+										gBackground = gPokeMaps[ POKE_CENTER_MAP ];
 										for( int i=16; i<32; i++){//indexed 16-32 in order to keep transition smooth(since we are passing in a counter and the walk up uses 0-15
 											if(i%4==0) frame++;
 											if(frame>3) frame=0;
@@ -327,7 +293,7 @@ int main()
 											if(frame>3) frame=0;
 											gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
 											if( canWalk==1 ) {
-												if(stretchRect1.y<SCREEN_HEIGHT/2+14 || isOB==1 || isGym || isPokeCenter) {
+												if(stretchRect1.y<SCREEN_HEIGHT/2+14 || isOB==1 || isPokeCenter) {
 													stretchRect1.y+=2;//move char
 													//NOTE: trainer is moved twice as many times as the screen. This is because the character image is shifted n "coordinates" on the window, while the screen is shifted n "pixels" on the background/map image
 												} else {
@@ -357,20 +323,16 @@ int main()
 										}
 									}
 									for( int i=0; i<COLOR_CELL_SIZE; i++ )
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!=GYM_PILLAR_CELL)
+										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL )
 											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ) canWalk= 1;
 									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
-									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) {
-										isWarpTile=1;
-									}
-									if( cellColorThreshold[CENTER_EXIT_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[CENTER_EXIT_CELL], gScreenSurface) ) exitingBuilding=1;
-									if( cellColorThreshold[GYM_FLOOR_EXIT_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[GYM_FLOOR_EXIT_CELL], gScreenSurface) ) exitingBuilding=1;
+									if( cellColorThreshold[CENTER_EXIT_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[CENTER_EXIT_CELL], gScreenSurface) ) exitingCenter=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
 										if( canWalk==1 ) {
-											if(isOB==1 || stretchRect1.y<SCREEN_HEIGHT/2+14 || isGym || isPokeCenter) {
+											if(isOB==1 || stretchRect1.y<SCREEN_HEIGHT/2+14 || isPokeCenter) {
 												stretchRect1.y+=2;//move char
 											} else {
 												stretchRect3.y++;//move screen
@@ -378,7 +340,7 @@ int main()
 										}
 									//	if(isPokeCenter) stretchRect1.y+=2;
 										usleep(sleeptime);
-										if( ! exitingBuilding ) {
+										if( ! exitingCenter ) {
 											SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
 											SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 											SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
@@ -386,7 +348,7 @@ int main()
 											transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i, transitionSpeed);
 										}
 									}
-									if(exitingBuilding) {
+									if(exitingCenter) {
 										gBackground = gPokeMaps[ POKE_MAP_ROUTE1 ];
 										stretchRect1.x= leaveMap1x;
 										stretchRect1.y= leaveMap1y;
@@ -405,7 +367,6 @@ int main()
 										SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 										SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 										isPokeCenter= 0;
-										isGym= 0;
 									}
 								}
 								break;
@@ -422,16 +383,15 @@ int main()
 										}
 									}
 									for( int i=0; i<COLOR_CELL_SIZE; i++ )
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!=GYM_PILLAR_CELL)
+										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL )
 											if( cellColorThreshold[i] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
 									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
-									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkLeft[frame];//set equal to proper frame of walking right sprites
 										if( canWalk==1 ) {
-											if(isOB==1 || stretchRect1.x>SCREEN_WIDTH/2-9 || isGym || isPokeCenter) {
+											if(isOB==1 || stretchRect1.x>SCREEN_WIDTH/2-9 || isPokeCenter) {
 												stretchRect1.x-=2;//move char
 											} else { 
 												stretchRect3.x--;//move screen
@@ -458,16 +418,15 @@ int main()
 										}
 									}
 									for( int i=0; i<COLOR_CELL_SIZE; i++ )
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!= GYM_PILLAR_CELL)
+										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL )
 											if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
 									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
-									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkRight[frame];//set equal to proper frame of walking right sprites
 										if(canWalk==1){
-											if(isOB==1 || stretchRect1.x<SCREEN_WIDTH/2-9 || isGym || isPokeCenter) {
+											if(isOB==1 || stretchRect1.x<SCREEN_WIDTH/2-9 || isPokeCenter) {
 												stretchRect1.x+=2;
 											} else {
 												stretchRect3.x++;//move screen
@@ -483,15 +442,12 @@ int main()
 								break;
 
 							case SDLK_SPACE://space bar
-					//			writeColorCodes(trainerCellx,trainerCelly+cellShift, gScreenSurface);
+								writeColorCodes(trainerCellx,trainerCelly+cellShift, gScreenSurface);
 								//if hes facing up and the cell he is facing is the center healer
 								if( gCurrentClip==&gWalkUp[0] && cellColorThreshold[CENTER_HEALER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[CENTER_HEALER_CELL], gScreenSurface) )
 									healMyPokemon(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3);
 
-								if( gCurrentClip==&gWalkUp[0] && cellColorThreshold[GYM_PILLAR_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_PILLAR_CELL], gScreenSurface) )
-									talkToPillar(stretchRect1, &gymAnswers, &firstPillarx);
-
-				cout<<"pokeCenter:		"<<cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_DOOR_CELL], gScreenSurface)<<endl;
+				cout<<"pokeCenter:		"<<cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[POKE_CENTER_CELL], gScreenSurface)<<endl;
 								break;
 				
 							default://do nothing when any other keys are pressed
@@ -508,11 +464,11 @@ int main()
 						trainerCelly= stretchRect1.y+16;
 
 //  write values for block to right
-	cout<<"floor1:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[GYM_FLOOR1_CELL], gScreenSurface)<<endl;
-	cout<<"shadow:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[GYM_FLOOR_SHADOW_CELL], gScreenSurface)<<endl;
-	cout<<"warp:		"<<cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface)<<endl;
-	cout<<"pillar:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[GYM_PILLAR_CELL], gScreenSurface)<<endl;
-	cout<<"exit:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[GYM_FLOOR_EXIT_CELL], gScreenSurface)<<endl;
+	cout<<"bridge:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[BRIDGE_CELL], gScreenSurface)<<endl;
+	cout<<"cave:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[CAVE_ENT_CELL], gScreenSurface)<<endl;
+	cout<<"flower:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[FLOWER_CELL], gScreenSurface)<<endl;
+	cout<<"normal grass:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[NORM_GRASS_CELL], gScreenSurface)<<endl;
+	cout<<"pathedge:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[PATH_EDGE_CELL], gScreenSurface)<<endl;
 	cout<<"path:		"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[PATH_CELL], gScreenSurface)<<endl;
 	cout<<"plateau:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[PLATEAU_CELL], gScreenSurface)<<endl;
 	cout<<"platform:	"<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[PLATFORM_CELL], gScreenSurface)<<endl;
@@ -530,22 +486,6 @@ int main()
 //		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3);
 	}
 
-	if(isWarpTile==1) {
-		frame= 0;
-		for( int i=0; i<32; i++){//indexed 16-32 in order to keep transition smooth(since we are passing in a counter and the walk up uses 0-15
-			if(i%4==0) gCurrentClip = &gWalkLeft[frame];//set equal to proper frame of walking right sprites
-			if(i%4==1) gCurrentClip = &gWalkUp[frame];//set equal to proper frame of walking right sprites
-			if(i%4==2) gCurrentClip = &gWalkRight[frame];//set equal to proper frame of walking right sprites
-			if(i%4==3) gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
-			usleep(2*sleeptime);
-			transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i, transitionSpeed);
-
-			if(i==15) {
-				stretchRect1= determineWarpLoc(stretchRect1);
-			}
-		}
-	}
-
 						//This will save all events (to e) that occured while the trainer was taking a step. As long as the event was not a quit, then the event will be arbitrarily stored and then overwritten. This is done so that the user playing may hold down an arrow key, and then the trainer will stop walking as soon as the user releases the key 
 						while(SDL_PollEvent(&e) != 0){//while there remains user entered events
 							if (e.type == SDL_QUIT){//entered event is equal to pressing red x in top right hand corner of window
@@ -555,11 +495,6 @@ int main()
 					}
 					if(isPokeCenter)
 						gBackground = gPokeMaps[ POKE_CENTER_MAP ];
-					else if(isGym)
-						if(gymAnswers==2)
-							gBackground = gPokeMaps[ POKE_GYM_ANSWERS_MAP ];
-						else
-							gBackground = gPokeMaps[ POKE_GYM_MAP ];
 					else
 						gBackground = gPokeMaps[ POKE_MAP_ROUTE1 ];
 
@@ -582,9 +517,8 @@ int main()
 					canWalk=0;
 					isCave=0;
 					//isPokeCenter=0;
-					enteringBuilding=0;
-					exitingBuilding=0;
-					isWarpTile=0;
+					enteringCenter=0;
+					exitingCenter=0;
 				}
 			}
 		}
@@ -657,13 +591,8 @@ bool loadMedia()
 		success = false;
 	}
 
-	gPokeMaps[ POKE_GYM_MAP ] = loadSurface("gymBase2.png");//load background image
+	gPokeMaps[ POKE_GYM_MAP ] = loadSurface("gymBase.png");//load background image
 	if(gPokeMaps[ POKE_GYM_MAP ] == NULL){//if not loaded properly return unsuccessful 
-		success = false;
-	}
-
-	gPokeMaps[ POKE_GYM_ANSWERS_MAP ] = loadSurface("gymBase.png");//load background image
-	if(gPokeMaps[ POKE_GYM_ANSWERS_MAP ] == NULL){//if not loaded properly return unsuccessful 
 		success = false;
 	}
 
@@ -828,7 +757,7 @@ double cellComp( int x1, int y1, map<int,int> cellCode, SDL_Surface *surface ){
 void writeColorCodes(int x, int y, SDL_Surface *surface){
 
 	ofstream outFile;
-	outFile.open( "foo.txt", ios::out );
+	outFile.open( "gymDoor.txt", ios::out );
 	map<int,int> colors;
 
 	for( int i=0; i<32; i++ ) {	
@@ -935,152 +864,4 @@ void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackgr
 					}
 				}
 			}
-}
-
-SDL_Rect determineWarpLoc( SDL_Rect stretchRect1 ) {
-	int gymWarpRow[6]={	80,	144,	272,	336,	464,	528};		// row holds Y coords
-	int gymWarpCol[7]={	23,	183,	279,	407,	471,	535,	695};	// col holds X coords
-
-	if(stretchRect1.y==gymWarpRow[0]){
-		if(stretchRect1.x==gymWarpCol[0]){
-			stretchRect1.y= gymWarpRow[1];
-			stretchRect1.x= gymWarpCol[5];
-		}
-		else if(stretchRect1.x==gymWarpCol[1]){
-			stretchRect1.y= gymWarpRow[0];
-			stretchRect1.x= gymWarpCol[3];
-		}
-		else if(stretchRect1.x==gymWarpCol[2]){
-			stretchRect1.y= gymWarpRow[3];
-			stretchRect1.x= gymWarpCol[5];
-		}
-		else if(stretchRect1.x==gymWarpCol[3]){
-			stretchRect1.y= gymWarpRow[0];
-			stretchRect1.x= gymWarpCol[1];
-		}
-		else if(stretchRect1.x==gymWarpCol[5]){
-			stretchRect1.y= gymWarpRow[2];
-			stretchRect1.x= gymWarpCol[5];
-		}
-		else if(stretchRect1.x==gymWarpCol[6]){
-			stretchRect1.y= gymWarpRow[4];
-			stretchRect1.x= gymWarpCol[5];
-		}
-	}else if(stretchRect1.y==gymWarpRow[1]){
-		if(stretchRect1.x==gymWarpCol[0]){
-			stretchRect1.y= gymWarpRow[3];
-			stretchRect1.x= gymWarpCol[4];
-		}
-		else if(stretchRect1.x==gymWarpCol[1]){
-			stretchRect1.y= gymWarpRow[3];
-			stretchRect1.x= gymWarpCol[0];
-		}
-		else if(stretchRect1.x==gymWarpCol[2]){
-			stretchRect1.y= gymWarpRow[2];
-			stretchRect1.x= gymWarpCol[1];
-		}
-		else if(stretchRect1.x==gymWarpCol[3]){
-			stretchRect1.y= gymWarpRow[5];
-			stretchRect1.x= gymWarpCol[0];
-		}
-		else if(stretchRect1.x==gymWarpCol[5]){
-			stretchRect1.y= gymWarpRow[0];
-			stretchRect1.x= gymWarpCol[0];
-		}
-		else if(stretchRect1.x==gymWarpCol[6]){
-			stretchRect1.y= gymWarpRow[4];
-			stretchRect1.x= gymWarpCol[0];
-		}
-	}else if(stretchRect1.y==gymWarpRow[2]){
-		if(stretchRect1.x==gymWarpCol[0]){
-			stretchRect1.y= gymWarpRow[2];
-			stretchRect1.x= gymWarpCol[7];
-		}
-		else if(stretchRect1.x==gymWarpCol[1]){
-			stretchRect1.y= gymWarpRow[1];
-			stretchRect1.x= gymWarpCol[2];
-		}
-		else if(stretchRect1.x==gymWarpCol[5]){
-			stretchRect1.y= gymWarpRow[0];
-			stretchRect1.x= gymWarpCol[5];
-		}
-		else if(stretchRect1.x==gymWarpCol[6]){
-			stretchRect1.y= gymWarpRow[4];
-			stretchRect1.x= gymWarpCol[6];
-		}
-	}else if(stretchRect1.y==gymWarpRow[3]){
-		if(stretchRect1.x==gymWarpCol[0]){
-			stretchRect1.y= gymWarpRow[1];
-			stretchRect1.x= gymWarpCol[1];
-		}
-		else if(stretchRect1.x==gymWarpCol[1]){
-			stretchRect1.y= gymWarpRow[5];
-			stretchRect1.x= gymWarpCol[1];
-		}
-		else if(stretchRect1.x==gymWarpCol[4]){	// Make warp tile from leader go back to entrance warp
-			stretchRect1.y= gymWarpRow[4];
-			stretchRect1.x= gymWarpCol[4];
-		}
-		else if(stretchRect1.x==gymWarpCol[5]){
-			stretchRect1.y= gymWarpRow[0];
-			stretchRect1.x= gymWarpCol[2];
-		}
-		else if(stretchRect1.x==gymWarpCol[6]){
-			stretchRect1.y= gymWarpRow[2];
-			stretchRect1.x= gymWarpCol[0];
-		}
-	}else if(stretchRect1.y==gymWarpRow[4]){
-		if(stretchRect1.x==gymWarpCol[0]){
-			stretchRect1.y= gymWarpRow[1];
-			stretchRect1.x= gymWarpCol[6];
-		}
-		else if(stretchRect1.x==gymWarpCol[1]){
-			stretchRect1.y= gymWarpRow[5];
-			stretchRect1.x= gymWarpCol[5];
-		}
-		else if(stretchRect1.x==gymWarpCol[4]){
-cout<<"halp"<<endl;
-			stretchRect1.y= gymWarpRow[5];
-			stretchRect1.x= gymWarpCol[6];
-		}
-		else if(stretchRect1.x==gymWarpCol[5]){
-			stretchRect1.y= gymWarpRow[0];
-			stretchRect1.x= gymWarpCol[6];
-		}
-		else if(stretchRect1.x==gymWarpCol[6]){
-			stretchRect1.y= gymWarpRow[2];
-			stretchRect1.x= gymWarpCol[6];
-		}
-	}else if(stretchRect1.y==gymWarpRow[5]){
-		if(stretchRect1.x==gymWarpCol[0]){
-			stretchRect1.y= gymWarpRow[1];
-			stretchRect1.x= gymWarpCol[3];
-		}
-		else if(stretchRect1.x==gymWarpCol[1]){
-			stretchRect1.y= gymWarpRow[3];
-			stretchRect1.x= gymWarpCol[1];
-		}
-		else if(stretchRect1.x==gymWarpCol[5]){
-			stretchRect1.y= gymWarpRow[4];
-			stretchRect1.x= gymWarpCol[1];
-		}
-		else if(stretchRect1.x==gymWarpCol[6]){
-			stretchRect1.y= gymWarpRow[4];
-			stretchRect1.x= gymWarpCol[4];
-		}
-	}
-
-	return(stretchRect1);
-
-}
-
-void talkToPillar(SDL_Rect stretchRect1, int *gymAnswers, int *firstPillarx ) {
-	if(*gymAnswers==0){
-		*firstPillarx= stretchRect1.x;
-		(*gymAnswers)++;
-	}else if(*gymAnswers==1) {
-		if( stretchRect1.x!=*firstPillarx ){
-			(*gymAnswers)++;
-		}
-	}
 }
