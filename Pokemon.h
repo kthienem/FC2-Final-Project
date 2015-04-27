@@ -15,7 +15,6 @@
 #include <cstdlib>
 #include <ctime>
 #include "Moves.h"
-
 using namespace std;
 
 class Pokemon{
@@ -23,7 +22,7 @@ class Pokemon{
 		Pokemon(int=0);
 		void levelUp();	// level+1, add attack,def,reset exp
 		//virtual void attack() = 0;
-		void attack(int); //takes in input for what move to use
+		void attack(Pokemon*); //takes in input for what move to use
 		void swapAttack(int);// input will be index of attackName for the attack being added. This will ask the user if they want to swap attackName[x] with attackName[y] and then executes the swap
 		void subHealth(int); // decrements health of Pokemon
 		void addHealth(int); // increments health of Pokemon
@@ -174,8 +173,7 @@ void Pokemon::setcurrHealth(int h) {
 void Pokemon::inccurrHealth(int add) {
 	currHealth += add; //inc health for potion and other increases
 }
-
-void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumber
+/*void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumber
 	int userNum; //input by user, can be removed
 	while (userNum != -1){ //just a way to check each attack
 		cout << "What attack would you like to use (1-4): "; //1-2 right now
@@ -187,6 +185,20 @@ void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumb
 		subHealth(damage); // subtract health based on damage dealt
 		}
 	}
+}*/
+
+void Pokemon::attack(Pokemon* poke_damage_ptr){ //attack function that calls certain moveNumber
+	int userNum; //input by user, can be removed
+	//while (userNum != -1){ //just a way to check each attack
+		cout << "What attack would you like to use (1-4): "; //1-2 right now
+		cin >> userNum; //user enters attack
+	if(userNum > 0 && userNum < 5){ //makes sure attack is in vector and 1 - 4
+		cout << "Move number "<< userNum <<" is " << myMoves[userNum-1].display() << endl;
+		int damage = myMoves[userNum-1].attack(maxAttack); //calculate damage eventually take into account weaknesses and such
+		cout << "The attack did " << damage << " damage!" << endl; //display results
+		(*poke_damage_ptr).subHealth(damage); // subtract health based on damage dealt
+		}
+	//}
 }
 
 void Pokemon::subHealth(int dam) {
