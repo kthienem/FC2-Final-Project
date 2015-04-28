@@ -44,6 +44,9 @@ enum pokeMaps
 	POKE_MESSAGE_6b,
 	POKE_MESSAGE_CAVE,
 	POKE_MESSAGE_MART,
+	POKE_MESSAGE_START,
+	POKE_MESSAGE_CANT_PAUSE,
+	POKE_MENU_MAIN,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
 };
 //Color code contents
@@ -147,7 +150,11 @@ void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, 
 void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect);
 SDL_Rect determineWarpLoc(SDL_Rect);
 void talkToPillar(SDL_Rect,int *,int *);
-void dispMessage(SDL_Rect, SDL_Rect, int, int);
+void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int);
+bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect);
+void saveGame(SDL_Rect, SDL_Rect);
+void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);
+//int goFish();
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
 SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the images to be displayed
@@ -173,6 +180,11 @@ int main()
 			cout << "Failed to load media!" << endl;
 		}
 		else{//if media is successfully loaded begin displaying images
+//LOADINGSEQUENCE HERE - RETURNS NEW GAME
+			int newGame=0;
+
+
+
 			bool quit = false;		//boolean variable for when the user wants to quit
 			SDL_Event e;			//variable for keyboard events entered by user
 			gCurrentClip = &gWalkDown[0];	//sets first image to be used for the walking player
@@ -193,8 +205,8 @@ int main()
 
 			SDL_Rect stretchRect3;			// rectangle that zooms in on current viewable map
 			//starting x,y MUST be x=1+16a, y=1+16b
-			stretchRect3.x = 1185;			//begin image in middle of map
-			stretchRect3.y = 17;
+//			stretchRect3.x = 1185;			//begin image in middle of map
+//			stretchRect3.y = 17;
 //			stretchRect3.x = 1777;			//begin image in middle of map
 //			stretchRect3.y = 625;
 //			stretchRect3.x = 705;			//begin image in middle of map
@@ -202,10 +214,10 @@ int main()
 			stretchRect3.w = 384;
 			stretchRect3.h = 288;
 //PokeCenter Testing...
-//		stretchRect1.x = 599;			//begin image in middle of map
-//		stretchRect1.y = 462;
-//		stretchRect3.x = 1841;			//begin image in middle of map
-//		stretchRect3.y = 721;
+		stretchRect1.x = 599;			//begin image in middle of map
+		stretchRect1.y = 462;
+		stretchRect3.x = 1841;			//begin image in middle of map
+		stretchRect3.y = 721;
 
 			int caveChoice=0;
 			int caveMapX[4]= {	1777,	1761,	1809,	1761};
@@ -225,8 +237,6 @@ int main()
 			int rightEdge= 2240;
 			int botEdge= 1168;
 
-			int trainerCellx= stretchRect1.x+7;
-			int trainerCelly= stretchRect1.y+16;
 			int cellShift= 32;
 			int leaveMap1x= 0;
 			int leaveMap1y= 0;
@@ -252,6 +262,14 @@ int main()
 
 			colorCodes= readColorCodes();
 
+
+	if(!newGame){
+		loadGame(&gCurrentClip, &stretchRect1, &stretchRect3);
+	}
+
+			int trainerCellx= stretchRect1.x+7;
+			int trainerCelly= stretchRect1.y+16;
+
 			while(!quit){//while the user has not entered the event to quit
 				while(SDL_PollEvent(&e) != 0){//while there remains user entered events
 					if (e.type == SDL_QUIT){//entered event is equal to pressing red x in top right hand corner of window
@@ -265,6 +283,8 @@ int main()
 							case SDLK_UP://up arrow key
 								if( gCurrentClip!=&gWalkUp[0] ) {	// ie. if he is NOT already walking up, change the direction he is facing to up
 									gCurrentClip= &gWalkUp[0];
+								}else if(stretchRect3.x==1 && stretchRect3.y==1 && stretchRect1.y==14 && (stretchRect1.x==247 || stretchRect1.x==279)){
+														dispMessage(stretchRect1, stretchRect3, isCave, 0, 1, 0);
 								} else {	// else, make him continue walking up
 									if( stretchRect3.y-15 < topEdge ) isOB=1;
 									if( isOB==0 ){
@@ -278,9 +298,9 @@ int main()
 											if( i== DOOR_BLUE_N_CELL || i== DOOR_BLUE_SE_CELL || i== DOOR_GREEN_S_CELL || i== DOOR_RED_NW_CELL || i== DOOR_RED_S_CELL || i== DOOR_WOOD_CELL || i== DOOR_MART_CELL){
 												if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface)) {
 													if( i==DOOR_MART_CELL )
-														dispMessage(stretchRect1, stretchRect3, isCave, 1);
+														dispMessage(stretchRect1, stretchRect3, isCave, 1, 0, 0);
 													else
-														dispMessage(stretchRect1, stretchRect3, isCave, 0);
+														dispMessage(stretchRect1, stretchRect3, isCave, 0, 0, 0);
 												}
 											}else if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
 												canWalk= 1;
@@ -350,7 +370,7 @@ int main()
 									}
 									if(isCave) {
 										if(stretchRect3.x<=833) {
-											dispMessage(stretchRect1, stretchRect3, isCave, 0);
+											dispMessage(stretchRect1, stretchRect3, isCave, 0, 0, 0);
 											SDL_Delay(3000);
 										}else{
 											int prevCave= caveChoice;
@@ -499,8 +519,10 @@ int main()
 										}
 									}
 									for( int i=0; i<COLOR_CELL_SIZE; i++ )
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!= GYM_PILLAR_CELL)
+										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!= GYM_PILLAR_CELL){
 											if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
+											if(i==PATH_CELL)cout<<cellColorThreshold[i]<<" - "<<cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface)<<endl;
+										}
 									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 									for( int i=0; i<16; i++){
@@ -535,6 +557,13 @@ int main()
 				cout<<"MART:		"<<cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[DOOR_MART_CELL], gScreenSurface)<<endl;
 								break;
 				
+							case SDLK_p://space bar
+								if(isPokeCenter || isGym)
+									dispMessage(stretchRect1, stretchRect3, isCave, 0, 0, 1);
+								else
+									quit=pauseMenu(stretchRect1, stretchRect2, stretchRect3);
+								break;
+
 							default://do nothing when any other keys are pressed
 								break;
 						}
@@ -755,6 +784,21 @@ bool loadMedia()
 
 	gPokeMaps[ POKE_MESSAGE_MART ] = loadSurface("pokeFrameMart.png");//load background image
 	if(gPokeMaps[ POKE_MESSAGE_MART ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_START ] = loadSurface("pokeFrameStart.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_START ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_CANT_PAUSE ] = loadSurface("pokeFrameCantPause.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_CANT_PAUSE ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MENU_MAIN ] = loadSurface("pokeFrameTall.png");//load background image
+	if(gPokeMaps[ POKE_MENU_MAIN ] == NULL){//if not loaded properly return unsuccessful 
 		success = false;
 	}
 
@@ -1176,7 +1220,7 @@ void talkToPillar(SDL_Rect stretchRect1, int *gymAnswers, int *firstPillarx ) {
 	}
 }
 
-void dispMessage(SDL_Rect stretchRect1, SDL_Rect stretchRect3, int isCave, int isMart) {
+void dispMessage(SDL_Rect stretchRect1, SDL_Rect stretchRect3, int isCave, int isMart, int isStart, int isInside) {
 
 	SDL_Rect stretchRect4;			//rectangle used for
 	stretchRect4.w = (SCREEN_WIDTH/6)*4;			//size of portion of sprite sheet taken up by character
@@ -1189,8 +1233,12 @@ void dispMessage(SDL_Rect stretchRect1, SDL_Rect stretchRect3, int isCave, int i
 		
 	if(isCave)
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_CAVE ], NULL, gScreenSurface, &stretchRect4);
+	else if(isStart)
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_START ], NULL, gScreenSurface, &stretchRect4);
 	else if(isMart)
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_MART ], NULL, gScreenSurface, &stretchRect4);
+	else if(isInside)
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_CANT_PAUSE ], NULL, gScreenSurface, &stretchRect4);
 	else if(stretchRect3.x<529)
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_1 ], NULL, gScreenSurface, &stretchRect4);
 	else if(stretchRect1.x>535){
@@ -1203,5 +1251,155 @@ void dispMessage(SDL_Rect stretchRect1, SDL_Rect stretchRect3, int isCave, int i
 		SDL_BlitScaled(gPokeMaps[ message ], NULL, gScreenSurface, &stretchRect4);
 	}
 	SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
-	SDL_Delay(3000);
+	SDL_Delay(4000);
 }
+
+bool pauseMenu(SDL_Rect stretchRect1, SDL_Rect stretchRect2, SDL_Rect stretchRect3) {
+	SDL_Rect stretchRect4;			//rectangle used for
+	stretchRect4.w = SCREEN_WIDTH/4;			//size of portion of sprite sheet taken up by character
+	stretchRect4.h = (SCREEN_HEIGHT/2);			//size of portion of sprite sheet taken up by character
+	stretchRect4.x = 2*(SCREEN_WIDTH/3);	//place at center of screen
+	stretchRect4.y = SCREEN_HEIGHT/15;	//place at center of screen
+
+	SDL_Rect stretchRect5;			//rectangle used for
+	stretchRect5.w = stretchRect4.w-30;			//size of portion of sprite sheet taken up by character
+	stretchRect5.h = (stretchRect4.h-30)/4;			//size of portion of sprite sheet taken up by character
+	stretchRect5.x = stretchRect4.x+15;	//place at center of screen
+	stretchRect5.y = stretchRect4.y+16;	//place at center of screen
+
+	SDL_Surface* transsurface;
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		transsurface = SDL_CreateRGBSurface(SDL_SWSURFACE,stretchRect2.w,stretchRect2.h,32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	#else
+		transsurface = SDL_CreateRGBSurface(SDL_SWSURFACE,stretchRect2.w,stretchRect2.h,32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+	#endif
+	SDL_FillRect(transsurface, &stretchRect5, SDL_MapRGBA(transsurface->format, 143, 200, 255, 120));
+//		SDL_BlitScaled(gBackground, &stretchRect3, gScreenSurface, &stretchRect2);//put the background image onto gScreenSurface
+//		SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
+
+	SDL_BlitScaled(gPokeMaps[ POKE_MENU_MAIN ], NULL, gScreenSurface, &stretchRect4);
+	SDL_BlitSurface(transsurface,NULL,gScreenSurface,&stretchRect2);
+	SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+
+	bool quitMenu = false;		//boolean variable for when the user wants to quit
+	bool quitGame = false;		//boolean variable for when the user wants to quit
+	SDL_Event e;			//variable for keyboard events entered by user
+
+	while(!quitMenu && !quitGame){//while the user has not entered the event to quit
+		while(SDL_PollEvent(&e) != 0){//while there remains user entered events
+			if (e.type == SDL_QUIT){//entered event is equal to pressing red x in top right hand corner of window
+				quitGame = true;//set quit to true to exit the while loop
+			}
+			else if(e.type == SDL_KEYDOWN){//a key has been pressed
+				switch(e.key.keysym.sym)//switch with key type parameter
+				{
+					//frame is reset to zero after the switch. Thus each for loop will loop through the stages of walking sprites as gWalkx[1,2,3,0] in that order. Since gCurrentClip will end in gWalkx[0], we can check the direction the trainer is facing by seeing if the gCurrentClip == gWalkx[0]
+					case SDLK_UP://right arrow key
+						if(stretchRect5.y>stretchRect4.y+16){
+							SDL_FillRect(transsurface, &stretchRect5, SDL_MapRGBA(transsurface->format, 0, 0, 0, 0));
+							stretchRect5.y -= stretchRect5.h;	//place at center of screen
+							SDL_FillRect(transsurface, &stretchRect5, SDL_MapRGBA(transsurface->format, 143, 200, 255, 120));
+							SDL_BlitScaled(gPokeMaps[ POKE_MENU_MAIN ], NULL, gScreenSurface, &stretchRect4);
+							SDL_BlitSurface(transsurface,NULL,gScreenSurface,&stretchRect2);
+							SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+						}
+						break;
+					case SDLK_DOWN://left arrow key
+						if(stretchRect5.y<(stretchRect4.y+16)+3*stretchRect5.h){
+							SDL_FillRect(transsurface, &stretchRect5, SDL_MapRGBA(transsurface->format, 0, 0, 0, 0));
+							stretchRect5.y += stretchRect5.h;	//place at center of screen
+							SDL_FillRect(transsurface, &stretchRect5, SDL_MapRGBA(transsurface->format, 143, 200, 255, 120));
+							SDL_BlitScaled(gPokeMaps[ POKE_MENU_MAIN ], NULL, gScreenSurface, &stretchRect4);
+							SDL_BlitSurface(transsurface,NULL,gScreenSurface,&stretchRect2);
+							SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+						}
+						break;
+					case SDLK_SPACE://space bar
+					//Pokemon
+						if(stretchRect5.y==(stretchRect4.y+16)+0*stretchRect5.h){
+
+					//Save
+						}else if(stretchRect5.y==(stretchRect4.y+16)+1*stretchRect5.h){
+							saveGame(stretchRect1, stretchRect3);
+					//Quit Game
+						}else if(stretchRect5.y==(stretchRect4.y+16)+2*stretchRect5.h){
+							quitGame = true;
+					//Exit Menu
+						}else if(stretchRect5.y==(stretchRect4.y+16)+3*stretchRect5.h){
+							quitMenu = true;
+						}
+						break;
+				}
+				while(SDL_PollEvent(&e) != 0){//while there remains user entered events
+					if (e.type == SDL_QUIT){//entered event is equal to pressing red x in top right hand corner of window
+						quitGame = true;//set quit to true to exit the while loop
+					}
+				}
+				cout<<stretchRect5.y<<endl;
+				cout<<stretchRect4.h+16<<endl;
+			}
+		}
+	}
+	return quitGame;
+}
+
+void saveGame(SDL_Rect stretchRect1, SDL_Rect stretchRect3) {
+
+	ofstream outFile;
+	outFile.open( "savedGame.txt", ios::out );
+
+	for(int i=0; i<4; i++){
+		if(&gWalkLeft[i]==gCurrentClip){
+			outFile << "Left" << endl;
+			outFile << i << endl;
+		}else if(&gWalkRight[i]==gCurrentClip){
+			outFile << "Right" << endl;
+			outFile << i << endl;
+		}else if(&gWalkUp[i]==gCurrentClip){
+			outFile << "Up" << endl;
+			outFile << i << endl;
+		}else if(&gWalkDown[i]==gCurrentClip){
+			outFile << "Down" << endl;
+			outFile << i << endl;
+		}
+	}
+
+	outFile << stretchRect1.x << endl;
+	outFile << stretchRect1.y << endl;
+	outFile << stretchRect3.x << endl;
+	outFile << stretchRect3.y << endl;
+
+	outFile.close();
+}
+
+void loadGame(SDL_Rect **gCurrentClip, SDL_Rect *stretchRect1, SDL_Rect *stretchRect3) {
+
+	ifstream inFile;
+	inFile.open( "savedGame.txt",ios::in );
+
+	string temp1;
+	int temp2;
+	inFile>>temp1;
+	inFile>>temp2;
+	if(temp1=="Right") *gCurrentClip= &gWalkRight[temp2];
+	if(temp1=="Left") *gCurrentClip= &gWalkLeft[temp2];
+	if(temp1=="Up") *gCurrentClip= &gWalkUp[temp2];
+	if(temp1=="Down") *gCurrentClip= &gWalkDown[temp2];
+
+	int temp;
+	inFile>>temp;
+	(*stretchRect1).x= temp;
+	inFile>>temp;
+	(*stretchRect1).y= temp;
+	inFile>>temp;
+	(*stretchRect3).x= temp;
+	inFile>>temp;
+	(*stretchRect3).y= temp;
+
+	inFile.close();
+
+}
+
+//int goFish() {
+//	return
+//}
