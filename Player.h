@@ -203,8 +203,7 @@ void Player::wild_battle(){
 }
 void Player::player_battle(){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
-	add_pokemon(1,0); // comp rand
-	add_pokemon(2,0); // comp rand
+	create_trainer(1);
 	int op = 0; //opponent poke
 	int	battleOn = 1;
 	int userMove;
