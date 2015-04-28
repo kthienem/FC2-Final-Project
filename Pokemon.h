@@ -95,10 +95,10 @@ void Pokemon::heal(){ //pokeCenter and other healing uses
 }
 
 void Pokemon::levelUp() {
+	level++; // increment level by 1
 	cout << endl << "Level UP!!!" << "Now level: " << level << endl << endl;
 	maxHealth+=7; // increment max health
 	currHealth+=7; // leveling up heals by 7
-	level++; // increment level by 1
 	exp = exp - maxLevelExp; // set exp to the overflow 
 	maxLevelExp+=30; //increase max exp to next level up
 	maxAttack += rand() % 5; // add a random attack stat amount
