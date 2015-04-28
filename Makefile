@@ -23,5 +23,5 @@ animation : animation.cpp
 pokeMap2 : pokeMap2.cpp
 	$(CC) pokeMap2.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $@
 
-pokeTest : Pokemon.h Player.h Moves.h main.cpp
-	$(CC) main.cpp Player.h Pokemon.h Moves.h -o pokeTest
+pokeTest : main.cpp Player.h Pokemon.h Moves.h
+	$(CC) main.cpp Player.h -o pokeTest

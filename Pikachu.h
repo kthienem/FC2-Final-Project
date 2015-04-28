@@ -22,24 +22,25 @@ class Pikachu: public Pokemon {
 
 #endif
 
-Pikachu::Pikachu() { // default constructor
+Pikachu::Pikachu(){ // default constructor
 	
 	// SET STATS
 	
-	Pokemon::setmaxHealth(100); // set max health
-	Pokemon::setcurrHealth(100); // set curr to max Health
+	Pokemon::setmaxHealth(32); // set max health
+	Pokemon::setcurrHealth(32); // set curr to max Health
 	Pokemon::setlevel(1);
 	Pokemon::setexp(0);
 	Pokemon::setmaxAttack(rand() % 7); // random attack stat
 	Pokemon::setcurrAttack(Pokemon::getmaxAttack()); // set curr to max
 	Pokemon::setmaxDef(rand() % 7); // random def stat
 	Pokemon::setcurrDef(Pokemon::getmaxDef()); // set curr to random
-	Pokemon::setmaxSpeed(rand() % 7); // random speed stat
+	Pokemon::setmaxSpeed(rand() % 7 + 3); // random speed stat
 	Pokemon::setcurrSpeed(Pokemon::getmaxSpeed()); // set curr to max
 	Pokemon::setKO(0); // not KO'd
 	Pokemon::setmoveLevel(7); // learns new move at lv 7
 	Pokemon::settype("electric");
-
+	Pokemon::setname("Pikachu");
+	//Pokemon::setmaxLevelExp(20);
 	// SET MOVES
 
 	Pokemon::setMoves(0, 5, 6, 13, 8); // tackle, shock, doubleslap, quickattack, headbutt

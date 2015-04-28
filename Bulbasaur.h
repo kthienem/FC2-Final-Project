@@ -26,8 +26,8 @@ Bulbasaur::Bulbasaur() { // default constructor
 	
 	// SET STATS
 	
-	Pokemon::setmaxHealth(120); // set max health
-	Pokemon::setcurrHealth(120); // set curr to max Health
+	Pokemon::setmaxHealth(35); // set max health
+	Pokemon::setcurrHealth(35); // set curr to max Health
 	Pokemon::setlevel(1);
 	Pokemon::setexp(0);
 	Pokemon::setmaxAttack(rand() % 7); // random attack stat
@@ -39,6 +39,7 @@ Bulbasaur::Bulbasaur() { // default constructor
 	Pokemon::setKO(0); // not KO'd
 	Pokemon::setmoveLevel(6); // learns new move at lv 6
 	Pokemon::settype("grass");
+	Pokemon::setname("Bulbsaur");
 
 	// SET MOVES
 

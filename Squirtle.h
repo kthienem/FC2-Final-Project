@@ -26,8 +26,8 @@ Squirtle::Squirtle() { // default constructor
 	
 	// SET STATS
 	
-	Pokemon::setmaxHealth(100); // set max health
-	Pokemon::setcurrHealth(100); // set curr to max Health
+	Pokemon::setmaxHealth(30); // set max health
+	Pokemon::setcurrHealth(30); // set curr to max Health
 	Pokemon::setlevel(1);
 	Pokemon::setexp(0);
 	Pokemon::setmaxAttack(rand() % 7); // random attack stat
@@ -39,6 +39,7 @@ Squirtle::Squirtle() { // default constructor
 	Pokemon::setKO(0); // not KO'd
 	Pokemon::setmoveLevel(8); // learns new move at lv 8
 	Pokemon::settype("water");
+	Pokemon::setname("Squirtle");
 
 	// SET MOVES
 

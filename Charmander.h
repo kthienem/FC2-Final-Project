@@ -26,8 +26,8 @@ Charmander::Charmander() { // default constructor
 	
 	// SET STATS
 	
-	Pokemon::setmaxHealth(100); // set max health
-	Pokemon::setcurrHealth(100); // set curr to max Health
+	Pokemon::setmaxHealth(27); // set max health
+	Pokemon::setcurrHealth(27); // set curr to max Health
 	Pokemon::setlevel(1);
 	Pokemon::setexp(0);
 	Pokemon::setmaxAttack((rand() % 7) + 3); // random attack stat
@@ -39,6 +39,7 @@ Charmander::Charmander() { // default constructor
 	Pokemon::setKO(0); // not KO'd
 	Pokemon::setmoveLevel(9); // learns new move at lv 9
 	Pokemon::settype("fire");
+	Pokemon::setname("Charmander");
 
 	// SET MOVES
 
