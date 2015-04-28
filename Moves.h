@@ -21,16 +21,17 @@ enum moveList{
 	MOVE_WATERGUN,    //3
 	MOVE_CUT,         //4
 	MOVE_SHOCK,       //5
-	MOVE_DOUBLESLAP,  //6
+	MOVE_KARATECHOP,  //6
 	MOVE_GUST,        //7
 	MOVE_HEADBUTT,    //8
 	MOVE_BITE,        //9 
 	MOVE_BUBBLEBEAM,  //10
 	MOVE_RAZORLEAF,   //11
-	MOVE_CONFUSION,   //12
+	MOVE_WINGATTACK,  //12
 	MOVE_QUICKATTACK, //13
 	MOVE_FLAMETHROWER,//14
-	MOVE_VINEWHIP     //15
+	MOVE_VINEWHIP,    //15
+	MOVE_THUNDERBOLT  //16
 };
 
 class Moves{
@@ -84,13 +85,13 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			moveName.assign("shock");
 			base = 13;
 			modify = 1.2;
-			type.assign("normal");
+			type.assign("electric");
 			break;
-		case MOVE_DOUBLESLAP:
-			moveName.assign("doubleslap");
-			base = 9;
+		case MOVE_KARATECHOP:
+			moveName.assign("karate chop");
+			base = 14;
 			modify = 2;
-			type.assign("normal");
+			type.assign("fighting");
 			break;
 		case MOVE_GUST:
 			moveName.assign("gust");
@@ -122,11 +123,11 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			modify = 1.4;
 			type.assign("grass");
 			break;
-		case MOVE_CONFUSION:
-			moveName.assign("confusion");
+		case MOVE_WINGATTACK:
+			moveName.assign("wing attack");
 			base = 20;
-			modify = 1;
-			type.assign("psychic");
+			modify = 1.4;
+			type.assign("flying");
 			break;
 		case MOVE_QUICKATTACK:
 			moveName.assign("quick attack");
@@ -146,6 +147,11 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			modify = 1;
 			type.assign("grass");
 			break;
+		case MOVE_THUNDERBOLT:
+			moveName.assign("Thunderbolt");
+			base = 29;
+			modify = 1;
+			type.assign("electric");
 		default:
 			cout << "default";
 			noMove();

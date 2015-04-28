@@ -40,8 +40,9 @@ Pikachu::Pikachu(){ // default constructor
 	Pokemon::setmoveLevel(7); // learns new move at lv 7
 	Pokemon::settype("electric");
 	Pokemon::setname("Pikachu");
+	Pokemon::setweak("grass");
 	//Pokemon::setmaxLevelExp(20);
 	// SET MOVES
 
-	Pokemon::setMoves(0, 5, 6, 13, 8); // tackle, shock, doubleslap, quickattack, headbutt
+	Pokemon::setMoves(0, 5, 13, 8, 16); // tackle,shock,quickattack,headbutt,thunderbolt
 }
