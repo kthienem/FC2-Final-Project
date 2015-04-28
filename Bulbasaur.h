@@ -37,6 +37,7 @@ Bulbasaur::Bulbasaur() { // default constructor
 	Pokemon::setmaxSpeed(rand() % 7); // random speed stat
 	Pokemon::setcurrSpeed(Pokemon::getmaxSpeed()); // set curr to max
 	Pokemon::setKO(0); // not KO'd
+	Pokemon::setmoveLevel(6); // learns new move at lv 6
 	Pokemon::settype("grass");
 
 	// SET MOVES

@@ -37,6 +37,7 @@ Charmander::Charmander() { // default constructor
 	Pokemon::setmaxSpeed(rand() % 7); // random speed stat
 	Pokemon::setcurrSpeed(Pokemon::getmaxSpeed()); // set curr to max
 	Pokemon::setKO(0); // not KO'd
+	Pokemon::setmoveLevel(9); // learns new move at lv 9
 	Pokemon::settype("fire");
 
 	// SET MOVES

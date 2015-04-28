@@ -51,6 +51,8 @@ class Pokemon{
 		int getKO();
 		void settype(string);
 		string gettype();
+		void setmoveLevel(int);
+		int getmoveLevel();
 		void setMoves(int,int,int,int,int);
 	private:
 		int maxHealth;
@@ -64,6 +66,7 @@ class Pokemon{
 		int maxSpeed;
 		int currSpeed;
 		int KO;	// boolean var
+		int moveLevel; // level at which Pokemon learns fifth move
 		string type;
 		vector <string> attackName;//how can we still utilize this given the Moves class?
 		vector <Moves> myMoves;// then we can use for example myMoves[2].attack()
@@ -147,13 +150,13 @@ void Pokemon::levelUp() {
 	// KO does not change
 	
 	// If necessary, add a new move
-/*
-	myMoves[0] = myMoves[1];
+
+	myMoves[0] = myMoves[1]; // first move is removed
 	myMoves[1] = myMoves[2];
 	myMoves[2] = myMoves[3];
-	myMoves.pop_back(); // remove move from back
-	myMoves.push_back(newmove); // add new move to the back
-*/
+	myMoves[3] = myMoves[4]; // move in slot 5 is added to 4 usable moves
+	
+
 }
 
 int Pokemon::getcurrHealth() {
@@ -191,7 +194,8 @@ void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumb
 
 void Pokemon::subHealth(int dam) {
 	cout << "Health was: " << getcurrHealth() << endl;
-	int damage = dam - currDef; // calculate damage 
+	int damage = dam - currDef; // calculate damage
+	cout << "Opponent resisted " << getcurrDef() << " damage!" << endl; 
 	if(damage > 0) {
 		setcurrHealth((getcurrHealth() - damage)); // reduce current health
 	}
@@ -281,6 +285,14 @@ void Pokemon::setKO(int k) {
 
 int Pokemon::getKO() {
 	return KO;
+}
+
+void Pokemon::setmoveLevel(int l) {
+	moveLevel = l;
+}
+
+int Pokemon::getmoveLevel() {
+	return moveLevel;
 }
 
 void Pokemon::settype(string t) {
