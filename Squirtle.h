@@ -37,10 +37,7 @@ Squirtle::Squirtle() { // default constructor
 	Pokemon::setmaxSpeed(rand() % 7); // random speed stat
 	Pokemon::setcurrSpeed(Pokemon::getmaxSpeed()); // set curr to max
 	Pokemon::setKO(0); // not KO'd
-<<<<<<< HEAD
-=======
 	Pokemon::setmoveLevel(8); // learns new move at lv 8
->>>>>>> 7bd7503a052023755fff32dc6e87b89fb222fba7
 	Pokemon::settype("water");
 
 	// SET MOVES

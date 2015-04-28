@@ -51,11 +51,8 @@ class Pokemon{
 		int getKO();
 		void settype(string);
 		string gettype();
-<<<<<<< HEAD
-=======
 		void setmoveLevel(int);
 		int getmoveLevel();
->>>>>>> 7bd7503a052023755fff32dc6e87b89fb222fba7
 		void setMoves(int,int,int,int,int);
 	private:
 		int maxHealth;
@@ -153,7 +150,6 @@ void Pokemon::levelUp() {
 	// KO does not change
 	
 	// If necessary, add a new move
-<<<<<<< HEAD
 /*
 	myMoves[0] = myMoves[1];
 	myMoves[1] = myMoves[2];
@@ -161,7 +157,6 @@ void Pokemon::levelUp() {
 	myMoves.pop_back(); // remove move from back
 	myMoves.push_back(newmove); // add new move to the back
 */
-=======
 
 	myMoves[0] = myMoves[1]; // first move is removed
 	myMoves[1] = myMoves[2];
@@ -169,7 +164,6 @@ void Pokemon::levelUp() {
 	myMoves[3] = myMoves[4]; // move in slot 5 is added to 4 usable moves
 	
 
->>>>>>> 7bd7503a052023755fff32dc6e87b89fb222fba7
 }
 
 int Pokemon::getcurrHealth() {
@@ -313,8 +307,6 @@ int Pokemon::getKO() {
 	return KO;
 }
 
-<<<<<<< HEAD
-=======
 void Pokemon::setmoveLevel(int l) {
 	moveLevel = l;
 }
@@ -323,7 +315,6 @@ int Pokemon::getmoveLevel() {
 	return moveLevel;
 }
 
->>>>>>> 7bd7503a052023755fff32dc6e87b89fb222fba7
 void Pokemon::settype(string t) {
 	type = t;
 }
