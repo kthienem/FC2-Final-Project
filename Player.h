@@ -9,6 +9,7 @@
 #include "Pikachu.h"
 #include "Bulbasaur.h"
 #include "Charmander.h"
+#include "Rattata.h"
 using namespace std;
 
 class Player {

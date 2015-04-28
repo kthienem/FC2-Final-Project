@@ -40,6 +40,7 @@ Bulbasaur::Bulbasaur() { // default constructor
 	Pokemon::setmoveLevel(6); // learns new move at lv 6
 	Pokemon::settype("grass");
 	Pokemon::setname("Bulbsaur");
+	Pokemon::setweak("fire");
 
 	// SET MOVES
 

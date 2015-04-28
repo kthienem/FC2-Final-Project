@@ -40,6 +40,7 @@ Charmander::Charmander() { // default constructor
 	Pokemon::setmoveLevel(9); // learns new move at lv 9
 	Pokemon::settype("fire");
 	Pokemon::setname("Charmander");
+	Pokemon::setweak("water");
 
 	// SET MOVES
 
