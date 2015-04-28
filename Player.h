@@ -64,6 +64,18 @@ void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or
 		case 4:
 			newPoke_ptr = new Charmander;
 			break;
+		case 5:
+			newPoke_ptr = new Rattata;
+			break;
+		case 6:
+			newPoke_ptr = new Charmander;
+			break;
+		case 7:
+			newPoke_ptr = new Squirtle;
+			break;
+		case 8:
+			newPoke_ptr = new Charmander;
+			break;
 	};
 	//myPoke[createPokemon++] = new Pokemon(PokeNum);
 	if(person == 1){

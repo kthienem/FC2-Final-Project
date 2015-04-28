@@ -55,7 +55,7 @@ class Pokemon{
 		string gettype();
 		string getname();
 		string getweak(); 
-		void setweak();
+		void setweak( string );
 		void setname(string);
 		void setmoveLevel(int);
 		int getmoveLevel();
