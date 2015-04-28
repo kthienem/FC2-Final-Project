@@ -162,7 +162,7 @@ void writeColorCodes(int,int,SDL_Surface*);
 vector<map<int,int> > readColorCodes();
 
 void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect, int, int);
-void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect);
+void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect,Player*);
 SDL_Rect determineWarpLoc(SDL_Rect);
 void talkToPillar(SDL_Rect,int *,int *);
 void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int);
@@ -207,7 +207,7 @@ int main()
 		}
 		else{//if media is successfully loaded begin displaying images
 //LOADINGSEQUENCE HERE - RETURNS NEW GAME
-			int newGame=1;
+			int newGame=0;
 			Player Nick;
 
 
@@ -339,7 +339,7 @@ int main()
 									}
 							// Check for cell cases
 								// Wild grass
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) || cellColorThreshold[WILD_GRASS_2_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_2_CELL], gScreenSurface) ) steponWildGrass=1;
 								// Warp pad(gym)
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 								// PokeCenter entrance
@@ -456,7 +456,7 @@ int main()
 									for( int i=0; i<COLOR_CELL_SIZE; i++ )
 										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!=GYM_PILLAR_CELL)
 											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ) canWalk= 1;
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) || cellColorThreshold[WILD_GRASS_2_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_2_CELL], gScreenSurface) ) steponWildGrass=1;
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) {
 										isWarpTile=1;
 									}
@@ -522,7 +522,7 @@ int main()
 									for( int i=0; i<COLOR_CELL_SIZE; i++ )
 										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!=GYM_PILLAR_CELL)
 											if( cellColorThreshold[i] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) || cellColorThreshold[WILD_GRASS_2_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WILD_GRASS_2_CELL], gScreenSurface) ) steponWildGrass=1;
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
@@ -559,7 +559,7 @@ int main()
 										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!= GYM_PILLAR_CELL){
 											if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
 										}
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) || cellColorThreshold[WILD_GRASS_2_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_2_CELL], gScreenSurface) ) steponWildGrass=1;
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
@@ -587,7 +587,7 @@ int main()
 							// PokeCenter healer
 								if( gCurrentClip==&gWalkUp[0] ){
 									if( cellColorThreshold[CENTER_HEALER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[CENTER_HEALER_CELL], gScreenSurface) )
-										healMyPokemon(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect);
+										healMyPokemon(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect, &Nick);
 								// Gym Pillar/Statue
 									if( cellColorThreshold[GYM_PILLAR_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_PILLAR_CELL], gScreenSurface) )
 										talkToPillar(characterRect, &gymAnswers, &firstPillarx);
@@ -642,14 +642,14 @@ int main()
 						}
 
 
-				/*		if(steponWildGrass){
+						if(steponWildGrass){
 							if(rand()%100 < 15){
 								battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
-								Nick.Battle();
+								Nick.wild_battle();
 					//		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect);
 							}
 						}
-				*/
+				
 						if(isWarpTile==1) {
 							frame= 0;
 						// Spin character around, and then warp him to another warp pad in the gym
@@ -1154,7 +1154,7 @@ void transitionGraphic(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBa
 	}
 }
 
-void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackground, SDL_Surface *gSpriteSheet, SDL_Rect *gCurrentClip, SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect) {
+void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackground, SDL_Surface *gSpriteSheet, SDL_Rect *gCurrentClip, SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect, Player *Nick) {
 	
 			gBackground = gPokeMaps[ POKE_CENTER_YES_MAP ];
 			SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
@@ -1187,6 +1187,7 @@ void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackgr
 								break;
 							case SDLK_SPACE://space bar
 								if( gBackground == gPokeMaps[ POKE_CENTER_YES_MAP ] ) {
+									(*Nick).pokeCenter();//heals all pokemon
 									gBackground = gPokeMaps[ POKE_CENTER_HEALING_MAP ];
 									SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
 									SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
