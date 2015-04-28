@@ -28,6 +28,7 @@ class Pokemon{
 		void subHealth(int); // decrements health of Pokemon
 		void addHealth(int); // increments health of Pokemon
 		int getcurrHealth(); // return current health
+		int getmaxHealth();
 		void setmaxHealth(int);
 		void setcurrHealth(int); // sets a new current health
 		void inccurrHealth(int);
@@ -59,6 +60,7 @@ class Pokemon{
 		void setMoves(int,int,int,int,int);
 		int incExp(int);
 		void setmaxLevelExp(int);
+		string attackname(int);
 	private:
 		int maxHealth;
 		int currHealth;
@@ -79,81 +81,22 @@ class Pokemon{
 		vector <Moves> myMoves;// then we can use for example myMoves[2].attack()
 };
 
-/*
-void pickPoke(string whichPoke) {
-	switch(whichPoke) {
-		case: POKE_PIKACHU
-			pikachu();
-			break;
-		case: POKE_BULBASAUR
-			bulbasaur();
-			break;
-		case: POKE_CHARMANDER
-			charmander();
-			break;
-		case: POKE_SQUIRTLE
-			squirtle();
-			break;
-	};
-}
-*/
-//void pikachu() {
-	//set level,exp,health,att,def,etc and moves too
-//}
 Pokemon::Pokemon(int pokeNum){
-	//initalize moves
-/*	int mv1, mv2, mv3, mv4;
-	switch(pokeNum) {
-		case 0: //pika
-			mv1 = 0;
-			mv2 = 5;
-			mv3 = 10;
-			mv4 = 7;
-			break;
-		case 1: //char
-			mv1 = 6;
-			mv2 = 2;
-			mv3 = 0;
-			mv4 = 1;
-			break;
-		case 2: //squirtle
-			mv1 = 3;
-			mv2 = 6;
-			mv3 = 8;
-			mv4 = 4;
-			break;
-	};
-*/
-//here is where we set for each type of pokemon
-
-// Allow for randomization
-srand(time(NULL)); // seed rand
-maxLevelExp = 20; //genaric maxlevelexp	
-//create a move //0 stands for tackle, 1 scratch, 2 ember, 3 watergun
-/*
-	Moves move1(mv1), move2(mv2), move3(mv3), move4(mv4);
-	
-	myMoves.push_back(move1); //push move into pokemon myMove vector
-	myMoves.push_back(move2);
-	myMoves.push_back(move3);
-	myMoves.push_back(move4);
-	maxAttack = 10; //set maxAttack
-	currHealth = 100;
-	KO = 0;
-*/
+	srand(time(NULL)); // seed rand
+	maxLevelExp = 50; //genaric maxlevelexp	
 }
 
-void Pokemon::heal(){
+void Pokemon::heal(){ //pokeCenter and other healing uses
 	currHealth = maxHealth; //restore health
 }
 
 void Pokemon::levelUp() {
-	cout << endl << "Level UP!!!" << endl << endl;
-	maxHealth+=10; // increment max health
-	currHealth = maxHealth; // leveling up fully restores health
+	cout << endl << "Level UP!!!" << "Now level: " << level << endl << endl;
+	maxHealth+=7; // increment max health
+	currHealth+=7; // leveling up heals by 7
 	level++; // increment level by 1
-	exp = 0; // set experience back to zero
-	maxLevelExp+=20; //increase max exp to next level up
+	exp = exp - maxLevelExp; // set exp to the overflow 
+	maxLevelExp+=30; //increase max exp to next level up
 	maxAttack += rand() % 5; // add a random attack stat amount
 	// Don't increment current attack?
 	maxDef += rand() % 5; // increment defense by a random stat amount
@@ -170,12 +113,13 @@ void Pokemon::levelUp() {
 	myMoves.pop_back(); // remove move from back
 	myMoves.push_back(newmove); // add new move to the back
 */
-
-	myMoves[0] = myMoves[1]; // first move is removed
-	myMoves[1] = myMoves[2];
-	myMoves[2] = myMoves[3];
-	myMoves[3] = myMoves[4]; // move in slot 5 is added to 4 usable moves
-	
+	if(level == 5){ //at level 5 learn new moves
+		cout << "Learned new move! Placed as move 4 and replaced move 1" << endl;
+		myMoves[0] = myMoves[1]; // first move is removed
+		myMoves[1] = myMoves[2];
+		myMoves[2] = myMoves[3];
+		myMoves[3] = myMoves[4]; // move in slot 5 is added to 4 usable moves
+	}
 
 }
 
@@ -212,7 +156,7 @@ void Pokemon::inccurrHealth(int add) {
 }*/
 
 void Pokemon::attack(int attackNum,Pokemon* poke_damage_ptr){ //attack function that calls certain moveNumber
-		cout << "Move number "<< attackNum <<" is " << myMoves[attackNum-1].display() << endl;
+		//cout << "Move number "<< attackNum <<" is " << myMoves[attackNum-1].display() << endl;
 		int damage = myMoves[attackNum-1].attack(maxAttack); //calculate damage eventually take into account weaknesses and such
 		cout << "Attack power: " << damage << endl; //display results
 		(*poke_damage_ptr).subHealth(damage); // subtract health based on damage dealt
@@ -221,7 +165,7 @@ void Pokemon::attack(int attackNum,Pokemon* poke_damage_ptr){ //attack function 
 void Pokemon::subHealth(int dam) {
 	//cout << "Health was: " << getcurrHealth() << endl;
 	int damage = dam - currDef; // calculate damage
-	cout << "Opponent resisted " << getcurrDef() << " damage!" << endl; 
+	cout << "Resisted " << getcurrDef() << " damage!" << endl; 
 	if(damage > 0) {
 		cout << "Actual damage: " << (damage) << endl;
 		setcurrHealth((getcurrHealth() - damage)); // reduce current health
@@ -347,6 +291,14 @@ void Pokemon::setname(string a) {
 }
 void Pokemon::setmaxLevelExp(int newMax){
 	maxLevelExp = newMax;
+}
+int Pokemon::getmaxHealth(){
+	return maxHealth;
+}
+
+string Pokemon::attackname(int moveNum){
+	return myMoves[moveNum].display();
+
 }
 
 void Pokemon::setMoves(int mv1, int mv2, int mv3, int mv4, int mv5) {
