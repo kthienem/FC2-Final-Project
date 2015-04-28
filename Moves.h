@@ -15,20 +15,22 @@
 //making into genaric class for moves that stores damage and other important info for each attack, so when these are created they are that attack
 using namespace std;
 enum moveList{
-	MOVE_TACKLE,
-	MOVE_SCRATCH,
-	MOVE_EMBER,
-	MOVE_WATERGUN,
-	MOVE_CUT,
-	MOVE_SHOCK,
-	MOVE_DOUBLESLAP,
-	MOVE_GUST,
-	MOVE_HEADBUTT,
-	MOVE_BITE,
-	MOVE_BUBBLEBEAM,
-	MOVE_RAZORLEAF,
-	MOVE_CONFUSION,
-	MOVE_QUICKATTACK
+	MOVE_TACKLE,      //0
+	MOVE_SCRATCH,     //1
+	MOVE_EMBER,       //2
+	MOVE_WATERGUN,    //3
+	MOVE_CUT,         //4
+	MOVE_SHOCK,       //5
+	MOVE_DOUBLESLAP,  //6
+	MOVE_GUST,        //7
+	MOVE_HEADBUTT,    //8
+	MOVE_BITE,        //9 
+	MOVE_BUBBLEBEAM,  //10
+	MOVE_RAZORLEAF,   //11
+	MOVE_CONFUSION,   //12
+	MOVE_QUICKATTACK, //13
+	MOVE_FLAMETHROWER,//14
+	MOVE_VINEWHIP     //15
 };
 
 class Moves{
@@ -132,6 +134,18 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			modify = 1.8;
 			type.assign("normal");
 			break;	
+		case MOVE_FLAMETHROWER:
+			moveName.assign("flamethrower");
+			base = 90;
+			modify = 1;
+			type.assign("fire");
+			break;
+		case MOVE_VINEWHIP:
+			moveName.assign("vine whip");
+			base = 70;
+			modify = 1;
+			type.assign("grass");
+			break;
 		default:
 			cout << "default";
 			noMove();
