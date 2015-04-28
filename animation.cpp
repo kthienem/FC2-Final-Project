@@ -16,6 +16,9 @@
 #include <fstream>
 #include <map>
 #include <cmath>
+
+#include "Player.h"
+
 using namespace std;
 
 //screen is exactly twice the stretching size of the zoomed in map so that we can match coordinates of screen with pixels of surface
@@ -182,6 +185,7 @@ int main()
 		else{//if media is successfully loaded begin displaying images
 //LOADINGSEQUENCE HERE - RETURNS NEW GAME
 			int newGame=0;
+			Player Nick;
 
 
 
@@ -595,7 +599,7 @@ int main()
 
 	if(steponWildGrass){
 		cout<<"WATCHOUT!\n";
-		if(rand()%100 < 15) cout<<"Pokemon Encounter!"<<endl;
+		if(rand()%100 < 15) Nick.Battle();
 //transparency
 //		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3);
 	}

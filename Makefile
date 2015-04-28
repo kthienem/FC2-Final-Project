@@ -17,7 +17,7 @@ OBJ_NAME = animation pokeMap2 pokeTest
 #This is the target that compiles our executable
 all : $(OBJ_NAME)
 
-animation : animation.cpp
+animation : animation.cpp Player.h
 	$(CC) animation.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $@
 
 pokeMap2 : pokeMap2.cpp

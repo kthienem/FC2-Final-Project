@@ -41,8 +41,8 @@ Player::Player(){
 }
 void Player::Battle(){
 	wild_battle();
-	pokeCenter();
-	player_battle();	
+//	pokeCenter();
+//	player_battle();	
 }
 //function for adding a new pokemon into players array
 void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or npc
@@ -117,6 +117,7 @@ int Player::noValid_other(){
 		return 1; //no valid pokemon
 }
 void Player::wild_battle(){	
+	otherPoke.clear();
 	add_pokemon((rand()%4)+1,0); // comp rand
 	int cp = 0; //current poke
 	int op = 0; //opponent poke
