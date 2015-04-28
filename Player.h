@@ -21,7 +21,9 @@ class Player {
 		void add_wild(Pokemon&);
 		int checkValidPoke(int);
 		int noValid();
+		int noValid_other();
 		void wild_battle();
+		void pokeCenter();
 		void player_battle();
 	private:
 		int createPokemon; // number of pokemon owned by player
@@ -39,6 +41,7 @@ Player::Player(){
 }
 void Player::Battle(){
 	wild_battle();
+	pokeCenter();
 	player_battle();	
 }
 //function for adding a new pokemon into players array
@@ -114,12 +117,13 @@ int Player::noValid_other(){
 		return 1; //no valid pokemon
 }
 void Player::wild_battle(){	
-	add_pokemon((rand%4)+1,0); // comp rand
+	add_pokemon((rand()%4)+1,0); // comp rand
 	int cp = 0; //current poke
 	int op = 0; //opponent poke
 	int	battleOn = 1;
 	int userMove;
 	int compMove;
+	cout << "Wild Battle!" << endl;
 	while(battleOn){
 		cout << endl << "-----------------------" << endl;
 		cout << "What move would you like to use: ";
@@ -155,7 +159,7 @@ void Player::wild_battle(){
 	}
 }
 void Player::player_battle(){
-	otherPoke.clear();	
+	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
 	add_pokemon(1,0); // comp rand
 	add_pokemon(2,0); // comp rand
 	int cp = 0; //current poke
@@ -163,6 +167,7 @@ void Player::player_battle(){
 	int	battleOn = 1;
 	int userMove;
 	int compMove;
+	cout << "Player Battle! vs Gary!" << endl;
 	while(battleOn){
 		cout << endl << "-----------------------" << endl;
 		cout << "What move would you like to use: ";
@@ -172,13 +177,17 @@ void Player::player_battle(){
 		cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
 		if((*otherPoke[op]).getKO()){
 			cout << "Pokemon has fainted" << endl;
-			op = 1; //test on using other valid otherpokemon
-			//battleOn = 0;
 			(*myPoke[cp]).incExp(25); //+25 exp
-			break;	
+			if(noValid_other()){
+				cout << "You have defeated Gary!" << endl;
+				break;
+			}
+			else{
+				op++; //next user pokemon
+			}
 		}	
 		cout << endl << "-----------------------" << endl;
-		cout << "Wild " << (*otherPoke[op]).getname() << " attacked!" << endl;
+		cout << "Gary's " << (*otherPoke[op]).getname() << " attacked!" << endl;
 		compMove = (rand() % 4) + 1;
 		(*otherPoke[op]).attack(compMove,myPoke[cp]); // comp move random 1-4
 		cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
@@ -197,6 +206,12 @@ void Player::player_battle(){
 			}
 		}
 		
+	}
+}
+
+void Player::pokeCenter(){
+	for(int i = 0; i < myPoke.size(); i++){
+		(*myPoke[i]).heal();
 	}
 }
 #endif

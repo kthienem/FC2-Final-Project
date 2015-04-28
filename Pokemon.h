@@ -49,6 +49,7 @@ class Pokemon{
 		int getcurrSpeed();
 		void setKO(int);
 		int getKO();
+		void heal();
 		void settype(string);
 		string gettype();
 		string getname();
@@ -140,6 +141,10 @@ maxLevelExp = 20; //genaric maxlevelexp
 	currHealth = 100;
 	KO = 0;
 */
+}
+
+void Pokemon::heal(){
+	currHealth = maxHealth; //restore health
 }
 
 void Pokemon::levelUp() {
