@@ -24,7 +24,7 @@ class Player {
 		int noValid_other();
 		void wild_battle();
 		void pokeCenter();
-		void player_battle();
+		void player_battle(int);
 		void create_trainer(int);
 	private:
 		int createPokemon; // number of pokemon owned by player
@@ -43,7 +43,7 @@ Player::Player(){
 	cp = 0;
 }
 void Player::Battle(){
-	wild_battle();
+//	wild_battle();
 //	pokeCenter();
 //	player_battle();	
 }
@@ -201,9 +201,9 @@ void Player::wild_battle(){
 		}
 	}
 }
-void Player::player_battle(){
+void Player::player_battle(int pick){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
-	create_trainer(1);
+	create_trainer(pick);
 	int op = 0; //opponent poke
 	int	battleOn = 1;
 	int userMove;
@@ -286,29 +286,31 @@ void Player::pokeCenter(){
 
 void Player::create_trainer(int pick){
 	switch(pick){
-		case 1:
+		case 1: //chick fire and norm
 			add_pokemon(1,0); 
 			add_pokemon(3,0); 
 			break;
-		case 2:
+		case 2: //yellow electric fight
 			add_pokemon(3,0);
 			add_pokemon(4,0);
 			add_pokemon(1,0); 
 			add_pokemon(1,0);
 			break;
-		case 3:
+		case 3: //ranger grass and fly
 			add_pokemon(1,0);
 			add_pokemon(2,0); 
 			break;
-		case 4:
+		case 4: //safari grass and water
 			add_pokemon(3,0);
 			add_pokemon(3,0);
 			add_pokemon(1,0); 
 			break;
-		case 5:
+		case 5: //fisherman water and norm
 			add_pokemon(2,0);
 			add_pokemon(2,0);
 			break;
+		case 6: //gym leader psychic
+			add_pokemon(2,0);
 		default:
 			add_pokemon(1,0);
 			add_pokemon(4,0);
