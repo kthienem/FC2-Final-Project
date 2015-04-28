@@ -34,6 +34,16 @@ enum pokeMaps
 	POKE_CENTER_HEALING_MAP,
 	POKE_GYM_MAP,
 	POKE_GYM_ANSWERS_MAP,
+	POKE_MESSAGE,
+	POKE_MESSAGE_1,
+	POKE_MESSAGE_2,
+	POKE_MESSAGE_3,
+	POKE_MESSAGE_4,
+	POKE_MESSAGE_5,
+	POKE_MESSAGE_6a,
+	POKE_MESSAGE_6b,
+	POKE_MESSAGE_CAVE,
+	POKE_MESSAGE_MART,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
 };
 //Color code contents
@@ -71,11 +81,18 @@ enum cellColorCode
 	GYM_FLOOR_WARP_CELL,
 	GYM_LEADER_CELL,
 	GYM_PILLAR_CELL,
+	DOOR_BLUE_N_CELL,
+	DOOR_BLUE_SE_CELL,
+	DOOR_GREEN_S_CELL,
+	DOOR_RED_NW_CELL,
+	DOOR_RED_S_CELL,
+	DOOR_WOOD_CELL,
+	DOOR_MART_CELL,
 	COLOR_CELL_SIZE
 };
 
-double cellColorThreshold[40]={	.55,	// bridge
-				.85,	// cave entrance
+double cellColorThreshold[50]={	.55,	// bridge
+				.63,	// cave entrance
 				.55,	// flower
 				.62,	// normal grass
 				.40,	// path edge
@@ -105,7 +122,14 @@ double cellColorThreshold[40]={	.55,	// bridge
 				.60,	// gym floor shadow(with wall sticking out)
 				.70,	// gym warp
 				.99,	// gym leader
-				.90	// gym pillar
+				.90,	// gym pillar
+				.90,	// door blue N
+				.90,	// door blue SE
+				.90,	// door green S
+				.90,	// door red NW
+				.80,	// door red S
+				.90,	// door wood
+				.85	// pokeMart door
 };
 
 bool init();		//initialize the display window
@@ -123,6 +147,7 @@ void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, 
 void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect);
 SDL_Rect determineWarpLoc(SDL_Rect);
 void talkToPillar(SDL_Rect,int *,int *);
+void dispMessage(SDL_Rect, SDL_Rect, int, int);
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
 SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the images to be displayed
@@ -159,6 +184,7 @@ int main()
 			stretchRect1.w = 50;			//size of portion of sprite sheet taken up by character
 			stretchRect1.h = 50;			//size of portion of sprite sheet taken up by character
 
+
 			SDL_Rect stretchRect2;			//rectangle to stretch the background image to fit to window
 			stretchRect2.x = 0;			//begin image at top corner of winow
 			stretchRect2.y = 0;
@@ -167,8 +193,8 @@ int main()
 
 			SDL_Rect stretchRect3;			// rectangle that zooms in on current viewable map
 			//starting x,y MUST be x=1+16a, y=1+16b
-			stretchRect3.x = 1841;			//begin image in middle of map
-			stretchRect3.y = 385;
+			stretchRect3.x = 1185;			//begin image in middle of map
+			stretchRect3.y = 17;
 //			stretchRect3.x = 1777;			//begin image in middle of map
 //			stretchRect3.y = 625;
 //			stretchRect3.x = 705;			//begin image in middle of map
@@ -176,10 +202,10 @@ int main()
 			stretchRect3.w = 384;
 			stretchRect3.h = 288;
 //PokeCenter Testing...
-		stretchRect1.x = 599;			//begin image in middle of map
-		stretchRect1.y = 462;
-		stretchRect3.x = 1841;			//begin image in middle of map
-		stretchRect3.y = 721;
+//		stretchRect1.x = 599;			//begin image in middle of map
+//		stretchRect1.y = 462;
+//		stretchRect3.x = 1841;			//begin image in middle of map
+//		stretchRect3.y = 721;
 
 			int caveChoice=0;
 			int caveMapX[4]= {	1777,	1761,	1809,	1761};
@@ -188,6 +214,7 @@ int main()
 			int caveCharY[4]= {	302,	334,	302,	302};
 
 			int sleeptime=5000;	// sleeptime*16 == time for trainer to take one step
+			int warptime=15000;	// sleeptime*16 == time for trainer to take one step
 			int canWalk=1;		// boolean - false if trainer attempts to walk into a tree, wall, etc
 			int white= 16777215;	// return of getpixel for white background
 			int whiteCount=0;	// counter
@@ -247,10 +274,18 @@ int main()
 										}
 									}
 									for( int i=0; i<COLOR_CELL_SIZE; i++ ){
-										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CENTER_HEALER_CELL && i!= GYM_PILLAR_CELL)
-											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
+										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CENTER_HEALER_CELL && i!= GYM_PILLAR_CELL){
+											if( i== DOOR_BLUE_N_CELL || i== DOOR_BLUE_SE_CELL || i== DOOR_GREEN_S_CELL || i== DOOR_RED_NW_CELL || i== DOOR_RED_S_CELL || i== DOOR_WOOD_CELL || i== DOOR_MART_CELL){
+												if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface)) {
+													if( i==DOOR_MART_CELL )
+														dispMessage(stretchRect1, stretchRect3, isCave, 1);
+													else
+														dispMessage(stretchRect1, stretchRect3, isCave, 0);
+												}
+											}else if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
 												canWalk= 1;
 											}
+										}
 										if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
 										if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 										if( cellColorThreshold[POKE_CENTER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[POKE_CENTER_CELL], gScreenSurface) ) {
@@ -314,14 +349,19 @@ int main()
 										}
 									}
 									if(isCave) {
-										int prevCave= caveChoice;
-										do{
-											caveChoice= rand()%4;
-										}while(prevCave==caveChoice);
-										stretchRect1.x= caveCharX[caveChoice];
-										stretchRect1.y= caveCharY[caveChoice];
-										stretchRect3.x= caveMapX[caveChoice];
-										stretchRect3.y= caveMapY[caveChoice];
+										if(stretchRect3.x<=833) {
+											dispMessage(stretchRect1, stretchRect3, isCave, 0);
+											SDL_Delay(3000);
+										}else{
+											int prevCave= caveChoice;
+											do{
+												caveChoice= rand()%4;
+											}while(prevCave==caveChoice);
+											stretchRect1.x= caveCharX[caveChoice];
+											stretchRect1.y= caveCharY[caveChoice];
+											stretchRect3.x= caveMapX[caveChoice];
+											stretchRect3.y= caveMapY[caveChoice];
+										} 
 										for( int i=16; i<32; i++){//indexed 16-32 in order to keep transition smooth(since we are passing in a counter and the walk up uses 0-15
 											if(i%4==0) frame++;
 											if(frame>3) frame=0;
@@ -341,7 +381,7 @@ int main()
 										SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &stretchRect1);//put the character image onto gScreenSurface
 										SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 
-									} 
+									}
 								}
 								break;
 							
@@ -406,6 +446,7 @@ int main()
 										SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 										isPokeCenter= 0;
 										isGym= 0;
+										gymAnswers= 0;
 									}
 								}
 								break;
@@ -483,7 +524,7 @@ int main()
 								break;
 
 							case SDLK_SPACE://space bar
-					//			writeColorCodes(trainerCellx,trainerCelly+cellShift, gScreenSurface);
+			//					writeColorCodes(trainerCellx,trainerCelly-cellShift, gScreenSurface);
 								//if hes facing up and the cell he is facing is the center healer
 								if( gCurrentClip==&gWalkUp[0] && cellColorThreshold[CENTER_HEALER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[CENTER_HEALER_CELL], gScreenSurface) )
 									healMyPokemon(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3);
@@ -491,7 +532,7 @@ int main()
 								if( gCurrentClip==&gWalkUp[0] && cellColorThreshold[GYM_PILLAR_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_PILLAR_CELL], gScreenSurface) )
 									talkToPillar(stretchRect1, &gymAnswers, &firstPillarx);
 
-				cout<<"pokeCenter:		"<<cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_DOOR_CELL], gScreenSurface)<<endl;
+				cout<<"MART:		"<<cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[DOOR_MART_CELL], gScreenSurface)<<endl;
 								break;
 				
 							default://do nothing when any other keys are pressed
@@ -537,7 +578,7 @@ int main()
 			if(i%4==1) gCurrentClip = &gWalkUp[frame];//set equal to proper frame of walking right sprites
 			if(i%4==2) gCurrentClip = &gWalkRight[frame];//set equal to proper frame of walking right sprites
 			if(i%4==3) gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
-			usleep(2*sleeptime);
+			usleep(warptime);
 			transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, stretchRect1, stretchRect2, stretchRect3, i, transitionSpeed);
 
 			if(i==15) {
@@ -664,6 +705,56 @@ bool loadMedia()
 
 	gPokeMaps[ POKE_GYM_ANSWERS_MAP ] = loadSurface("gymBase.png");//load background image
 	if(gPokeMaps[ POKE_GYM_ANSWERS_MAP ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE ] = loadSurface("pokeFrameNarrow.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_1 ] = loadSurface("pokeFrameNotAvailable.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_1 ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_2 ] = loadSurface("pokeFrameNotAvailable2.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_2 ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_3 ] = loadSurface("pokeFrameNotAvailable3.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_3 ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_4 ] = loadSurface("pokeFrameNotAvailable4.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_4 ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_5 ] = loadSurface("pokeFrameNotAvailable5.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_5 ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_6a ] = loadSurface("pokeFrameNotAvailable6.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_6a ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_6b ] = loadSurface("pokeFrameNotAvailable6b.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_6b ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_CAVE ] = loadSurface("pokeFrameCave.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_CAVE ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_MART ] = loadSurface("pokeFrameMart.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_MART ] == NULL){//if not loaded properly return unsuccessful 
 		success = false;
 	}
 
@@ -828,7 +919,7 @@ double cellComp( int x1, int y1, map<int,int> cellCode, SDL_Surface *surface ){
 void writeColorCodes(int x, int y, SDL_Surface *surface){
 
 	ofstream outFile;
-	outFile.open( "foo.txt", ios::out );
+	outFile.open( "doorMart.txt", ios::out );
 	map<int,int> colors;
 
 	for( int i=0; i<32; i++ ) {	
@@ -1083,4 +1174,34 @@ void talkToPillar(SDL_Rect stretchRect1, int *gymAnswers, int *firstPillarx ) {
 			(*gymAnswers)++;
 		}
 	}
+}
+
+void dispMessage(SDL_Rect stretchRect1, SDL_Rect stretchRect3, int isCave, int isMart) {
+
+	SDL_Rect stretchRect4;			//rectangle used for
+	stretchRect4.w = (SCREEN_WIDTH/6)*4;			//size of portion of sprite sheet taken up by character
+	stretchRect4.h = (SCREEN_HEIGHT/4);			//size of portion of sprite sheet taken up by character
+	stretchRect4.x = SCREEN_WIDTH/6;	//place at center of screen
+	if(stretchRect1.y>SCREEN_WIDTH/2)
+		stretchRect4.y = SCREEN_HEIGHT/15;	//place at center of screen
+	else
+		stretchRect4.y = 2*(SCREEN_HEIGHT/3);	//place at center of screen
+		
+	if(isCave)
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_CAVE ], NULL, gScreenSurface, &stretchRect4);
+	else if(isMart)
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_MART ], NULL, gScreenSurface, &stretchRect4);
+	else if(stretchRect3.x<529)
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_1 ], NULL, gScreenSurface, &stretchRect4);
+	else if(stretchRect1.x>535){
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_6a ], NULL, gScreenSurface, &stretchRect4);
+		SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+		SDL_Delay(2000);
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_6b ], NULL, gScreenSurface, &stretchRect4);
+	}else{
+		int message= (rand()%((POKE_MESSAGE_5-POKE_MESSAGE_2)+1)) + POKE_MESSAGE_2;
+		SDL_BlitScaled(gPokeMaps[ message ], NULL, gScreenSurface, &stretchRect4);
+	}
+	SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+	SDL_Delay(3000);
 }
