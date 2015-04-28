@@ -23,7 +23,7 @@ class Pokemon{
 		Pokemon(int=0);
 		void levelUp();	// level+1, add attack,def,reset exp
 		//virtual void attack() = 0;
-		void attack(int); //takes in input for what move to use
+		void attack(Pokemon*); //takes in input for what move to use
 		void swapAttack(int);// input will be index of attackName for the attack being added. This will ask the user if they want to swap attackName[x] with attackName[y] and then executes the swap
 		void subHealth(int); // decrements health of Pokemon
 		void addHealth(int); // increments health of Pokemon
@@ -51,6 +51,11 @@ class Pokemon{
 		int getKO();
 		void settype(string);
 		string gettype();
+<<<<<<< HEAD
+=======
+		void setmoveLevel(int);
+		int getmoveLevel();
+>>>>>>> 7bd7503a052023755fff32dc6e87b89fb222fba7
 		void setMoves(int,int,int,int,int);
 	private:
 		int maxHealth;
@@ -64,6 +69,7 @@ class Pokemon{
 		int maxSpeed;
 		int currSpeed;
 		int KO;	// boolean var
+		int moveLevel; // level at which Pokemon learns fifth move
 		string type;
 		vector <string> attackName;//how can we still utilize this given the Moves class?
 		vector <Moves> myMoves;// then we can use for example myMoves[2].attack()
@@ -147,6 +153,7 @@ void Pokemon::levelUp() {
 	// KO does not change
 	
 	// If necessary, add a new move
+<<<<<<< HEAD
 /*
 	myMoves[0] = myMoves[1];
 	myMoves[1] = myMoves[2];
@@ -154,6 +161,15 @@ void Pokemon::levelUp() {
 	myMoves.pop_back(); // remove move from back
 	myMoves.push_back(newmove); // add new move to the back
 */
+=======
+
+	myMoves[0] = myMoves[1]; // first move is removed
+	myMoves[1] = myMoves[2];
+	myMoves[2] = myMoves[3];
+	myMoves[3] = myMoves[4]; // move in slot 5 is added to 4 usable moves
+	
+
+>>>>>>> 7bd7503a052023755fff32dc6e87b89fb222fba7
 }
 
 int Pokemon::getcurrHealth() {
@@ -174,8 +190,7 @@ void Pokemon::setcurrHealth(int h) {
 void Pokemon::inccurrHealth(int add) {
 	currHealth += add; //inc health for potion and other increases
 }
-
-void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumber
+/*void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumber
 	int userNum; //input by user, can be removed
 	while (userNum != -1){ //just a way to check each attack
 		cout << "What attack would you like to use (1-4): "; //1-2 right now
@@ -187,11 +202,26 @@ void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumb
 		subHealth(damage); // subtract health based on damage dealt
 		}
 	}
+}*/
+
+void Pokemon::attack(Pokemon* poke_damage_ptr){ //attack function that calls certain moveNumber
+	int userNum; //input by user, can be removed
+	//while (userNum != -1){ //just a way to check each attack
+		cout << "What attack would you like to use (1-4): "; //1-2 right now
+		cin >> userNum; //user enters attack
+	if(userNum > 0 && userNum < 5){ //makes sure attack is in vector and 1 - 4
+		cout << "Move number "<< userNum <<" is " << myMoves[userNum-1].display() << endl;
+		int damage = myMoves[userNum-1].attack(maxAttack); //calculate damage eventually take into account weaknesses and such
+		cout << "The attack did " << damage << " damage!" << endl; //display results
+		(*poke_damage_ptr).subHealth(damage); // subtract health based on damage dealt
+		}
+	//}
 }
 
 void Pokemon::subHealth(int dam) {
 	cout << "Health was: " << getcurrHealth() << endl;
-	int damage = dam - currDef; // calculate damage 
+	int damage = dam - currDef; // calculate damage
+	cout << "Opponent resisted " << getcurrDef() << " damage!" << endl; 
 	if(damage > 0) {
 		setcurrHealth((getcurrHealth() - damage)); // reduce current health
 	}
@@ -283,6 +313,17 @@ int Pokemon::getKO() {
 	return KO;
 }
 
+<<<<<<< HEAD
+=======
+void Pokemon::setmoveLevel(int l) {
+	moveLevel = l;
+}
+
+int Pokemon::getmoveLevel() {
+	return moveLevel;
+}
+
+>>>>>>> 7bd7503a052023755fff32dc6e87b89fb222fba7
 void Pokemon::settype(string t) {
 	type = t;
 }
