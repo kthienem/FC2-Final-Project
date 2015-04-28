@@ -91,6 +91,7 @@ Pokemon::Pokemon(int pokeNum){
 
 void Pokemon::heal(){ //pokeCenter and other healing uses
 	currHealth = maxHealth; //restore health
+	KO = 0;
 }
 
 void Pokemon::levelUp() {
