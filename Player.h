@@ -3,8 +3,12 @@
 
 #ifndef PLAYER_H
 #define PLAYER_H
+#include <vector>
 #include "Pokemon.h"
+#include "Squirtle.h"
 #include "Pikachu.h"
+#include "Bulbasaur.h"
+#include "Charmander.h"
 using namespace std;
 
 class Player {
@@ -14,17 +18,19 @@ class Player {
 		void Battle(); // initiate battle sequence
 		void Menu(); // initiate menu interface
 		void Roam(); // initiate field interface (free roam)
-		Pokemon* add_pokemon(int);
+	 	void add_pokemon(int, int);
 		void add_wild(Pokemon&);
 	private:
 		int createPokemon; // number of pokemon owned by player
-		Pokemon *myPoke[6]; // array of pointers to pokemon of player's pokemon		
-		Pokemon *otherPoke[6];
+		vector <Pokemon*> myPoke; //array for pointers
+		vector <Pokemon*> otherPoke; //array for pointers
+		//Pokemon *myPoke[6]; // array of pointers to pokemon of player's pokemon		
+		//Pokemon *otherPoke[6];
 		//Pokemon Pika(1);
 };
 Player::Player(){
-	createPokemon = 0;
-	add_pokemon(0); // add a new pikachu to player pokemon
+	add_pokemon(1,1); // add a new pikachu to player pokemon
+	add_pokemon(1,0); //pikachu to do damage to
 /*
 	myPoke[createPokemon] = new Pokemon(0); //first pokemon pika
 	createPokemon++; // new pokemon added
@@ -32,30 +38,41 @@ Player::Player(){
 }
 
 void Player::Battle(){
-	int pokeNum;
-	do{
-	cout << "What pokemon would you like to use: ";
-	cin >> pokeNum;
-	pokeNum--;
-	}while(((pokeNum) > createPokemon) && ((pokeNum)<0));
-	(*myPoke[pokeNum]).attack(1); // test using attack 1
+	(*myPoke[0]).attack(otherPoke[0]); // test using attack 1
+	cout << "Their health: " << (*otherPoke[0]).getcurrHealth() << endl;
+	cout << "Your health: " << (*myPoke[0]).getcurrHealth() << endl;
 }
 
 //function for adding a new pokemon into players array
-Pokemon* Player::add_pokemon(int PokeNum){
-	if(createPokemon < 5){
+void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or npc
+	Pokemon *newPoke_ptr; 
+	switch(PokeNum) {
+		case 1:
+			newPoke_ptr = new Pikachu;
+			break;
+		case 2:
+			newPoke_ptr = new Bulbasaur;
+			break;
+		case 3:
+			newPoke_ptr = new Squirtle;
+			break;
+		case 4:
+			newPoke_ptr = new Charmander;		
+			break;
+	};
 		//myPoke[createPokemon++] = new Pokemon(PokeNum);
-		myPoke[createPokemon++] = new Pikachu;
-	}
-	else{
-		cout << "No more room" << endl;
-	}
+		if(person == 1){
+			myPoke.push_back(newPoke_ptr);
+		}
+		else{
+			otherPoke.push_back(newPoke_ptr);
+		}
 }
 
 //adds wild pokmeon into player array
 void Player::add_wild(Pokemon& wildPoke_ptr){
 	if(createPokemon < 5){ //make sure there is room!
-		myPoke[createPokemon++] = &wildPoke_ptr;
+		myPoke.push_back(&wildPoke_ptr);
 	}
 	else{
 		cout << "No more room" << endl;
