@@ -54,6 +54,8 @@ class Pokemon{
 		void settype(string);
 		string gettype();
 		string getname();
+		string getweak(); 
+		void setweak();
 		void setname(string);
 		void setmoveLevel(int);
 		int getmoveLevel();
@@ -77,6 +79,7 @@ class Pokemon{
 		int moveLevel; // level at which Pokemon learns fifth move
 		string type;
 		string name;
+		string weak; // type Pokemon is weak to
 		vector <string> attackName;//how can we still utilize this given the Moves class?
 		vector <Moves> myMoves;// then we can use for example myMoves[2].attack()
 };
@@ -288,6 +291,12 @@ string Pokemon::getname() {
 }
 void Pokemon::setname(string a) {
 	name = a;
+}
+void Pokemon::setweak(string w) {
+	weak = w;
+}
+string Pokemon::getweak() {
+	return weak;
 }
 void Pokemon::setmaxLevelExp(int newMax){
 	maxLevelExp = newMax;

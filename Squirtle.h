@@ -40,8 +40,9 @@ Squirtle::Squirtle() { // default constructor
 	Pokemon::setmoveLevel(8); // learns new move at lv 8
 	Pokemon::settype("water");
 	Pokemon::setname("Squirtle");
+	Pokemon::setweak("electric");
 
 	// SET MOVES
 
-	Pokemon::setMoves(0, 3, 6, 8, 10); // tackle,watergun,doubleslap,headbutt,bubblebeam
+	Pokemon::setMoves(0, 3, 9, 8, 10); // tackle,watergun,bite,headbutt,bubblebeam
 }
