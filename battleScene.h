@@ -24,6 +24,7 @@ class battleScene{
 		void close();//free memory and delete window
 		SDL_Surface* loadSurface(string path);//optimize loaded images
 		void battle();
+		void moveArrow(string);
 
 	private:
 		SDL_Window* gWindow;
@@ -39,6 +40,14 @@ class battleScene{
 		SDL_Rect gOpponentLevelWindow;//where the level of the enemy pokemon will go in window
 		SDL_Rect gPlayerLevel;//where the level of the players pokemon is located on the sprite sheet
 		SDL_Rect gPlayerLevelWindow;//where the level of the players pokemon will go in window
+		SDL_Rect gSelectionArrow;//the black arrow used to indicate what option the user is pointing at
+		SDL_Rect gArrowPosition[8];//the positions of the arrow on the screen
+		SDL_Rect gEmptyPokeball;//image of empty pokeball from sprite sheet
+		SDL_Rect gLivePokeball;//image of live pokeball from sprite sheet
+		SDL_Rect gDeadPokeball;//image of dead pokeball from sprite sheet
+		SDL_Rect gPokeballs;//image for available pokeballs
+		SDL_Rect gMovesMenu;//image for menu containing pokemons moves
+		SDL_Rect gCurrentArrowPos;//current poition of selection arrow
 
 };
 
@@ -140,6 +149,60 @@ bool battleScene::loadMedia()
 	gPlayerLevelWindow.w = 350;
 	gPlayerLevelWindow.h = 125;
 
+	gSelectionArrow.x = 269;
+	gSelectionArrow.y = 4;
+	gSelectionArrow.w = 5;
+	gSelectionArrow.h = 9;
+
+	//fight position
+	gArrowPosition[0].x = 415;
+	gArrowPosition[0].y = 452;
+	gArrowPosition[0].w = 14;
+	gArrowPosition[0].h = 26;
+
+	//pokemon position
+	gArrowPosition[1].x = 415;
+	gArrowPosition[1].y = 509;
+	gArrowPosition[1].w = 14;
+	gArrowPosition[1].h = 26;
+
+	//bag position
+	gArrowPosition[2].x = 595;
+	gArrowPosition[2].y = 452;
+	gArrowPosition[2].w = 14;
+	gArrowPosition[2].h = 26;
+
+	//run position
+	gArrowPosition[3].x = 595;
+	gArrowPosition[3].y = 509;
+	gArrowPosition[3].w = 14;
+	gArrowPosition[3].h = 26;
+
+	gEmptyPokeball.x = 123;
+	gEmptyPokeball.y = 65;
+	gEmptyPokeball.w = 7;
+	gEmptyPokeball.h = 7;
+
+	gLivePokeball.x = 133;
+	gLivePokeball.y = 65;
+	gLivePokeball.w = 7;
+	gLivePokeball.h = 7;
+
+	gDeadPokeball.x = 143;
+	gDeadPokeball.y = 65;
+	gDeadPokeball.w = 7;
+	gDeadPokeball.h = 7;
+
+	gPokeballs.x = 178;
+	gPokeballs.y = 65;
+	gPokeballs.w = 104;
+	gPokeballs.h = 12;
+
+	gMovesMenu.x = 297;
+	gMovesMenu.y = 4;
+	gMovesMenu.w = 239;
+	gMovesMenu.h = 47;
+
 	return success;
 }
 
@@ -178,6 +241,9 @@ SDL_Surface* battleScene::loadSurface(string path)
 
 void battleScene::battle()
 {
+	int turn = 0;
+	bool inMenu = true;
+
 	if(!init()){//initializes window, if it fails display error message
     cout << "Failed to initialize!" << endl;
   }
@@ -188,15 +254,39 @@ void battleScene::battle()
     else{//if media is successfully loaded begin displaying images
       bool quit = false;//boolean variable for when the user want to quit
 			SDL_Event e;//variable for keyboard events entered by user
+			gCurrentArrowPos = gArrowPosition[0];
       
 			while(!quit){
 				while(SDL_PollEvent(&e) != 0){
 					if(e.type == SDL_QUIT) quit = true;//event entered was x-ing out of window, set quit to true
+					else if(e.type == SDL_KEYDOWN){//key has been pressed
+						if(turn%2 == 0 && inMenu){//player is in option menu and it is their turn
+							switch(e.key.keysym.sym){//switch with key type parameter
+								case SDLK_UP:
+									moveArrow("up");
+									break;
+								case SDLK_DOWN:
+									moveArrow("down");
+									break;
+								case SDLK_LEFT:
+									moveArrow("left");
+									break;
+								case SDLK_RIGHT:
+									moveArrow("right");
+									break;
+								default:
+									break;
+							}
+						}
+					}
 				}
 				SDL_BlitScaled(gBackground, NULL, gScreenSurface, &gBack);//blit background to screen
 				SDL_BlitScaled(gMenuSheet, &gMenuBack, gScreenSurface, &gMenuBackWindow);//blit menu background to screen
 				//Blit options if it is your turn
-				SDL_BlitScaled(gMenuSheet, &gOptions, gScreenSurface, &gOptionsWindow);//blit options menu to screen
+				if (turn%2 == 0){
+					SDL_BlitScaled(gMenuSheet, &gOptions, gScreenSurface, &gOptionsWindow);//blit options menu to screen
+					SDL_BlitScaled(gMenuSheet, &gSelectionArrow, gScreenSurface, &gCurrentArrowPos);//blit selection arrow onto screen
+				}
 				//Blit enemy level if pokemon is out
 				SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
 				//Blit player level if pokemon is out
@@ -206,5 +296,65 @@ void battleScene::battle()
     }
   }
 
+}
+
+void battleScene::moveArrow(string dir)
+{
+	if(dir == "up"){
+		if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
+			gCurrentArrowPos = gArrowPosition[0];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[1].x && gCurrentArrowPos.y == gArrowPosition[1].y){
+			gCurrentArrowPos = gArrowPosition[0];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
+			gCurrentArrowPos = gArrowPosition[2];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
+			gCurrentArrowPos = gArrowPosition[2];
+		}
+	}
+	else if(dir == "down"){
+		if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
+			gCurrentArrowPos = gArrowPosition[1];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[1].x && gCurrentArrowPos.y == gArrowPosition[1].y){
+			gCurrentArrowPos = gArrowPosition[1];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
+			gCurrentArrowPos = gArrowPosition[3];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
+			gCurrentArrowPos = gArrowPosition[3];
+		}
+	}
+	else if(dir == "left"){
+		if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
+			gCurrentArrowPos = gArrowPosition[0];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[1].x && gCurrentArrowPos.y == gArrowPosition[1].y){
+			gCurrentArrowPos = gArrowPosition[1];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
+			gCurrentArrowPos = gArrowPosition[0];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
+			gCurrentArrowPos = gArrowPosition[1];
+		}
+	}
+	else if(dir == "right"){
+		if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
+			gCurrentArrowPos = gArrowPosition[2];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[1].x && gCurrentArrowPos.y == gArrowPosition[1].y){
+			gCurrentArrowPos = gArrowPosition[3];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
+			gCurrentArrowPos = gArrowPosition[2];
+		}
+		else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
+			gCurrentArrowPos = gArrowPosition[3];
+		}
+	}
 }
 #endif
