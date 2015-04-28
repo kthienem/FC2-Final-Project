@@ -26,6 +26,7 @@ class Player {
 		void wild_battle();
 		void pokeCenter();
 		void player_battle();
+		void create_trainer(int);
 	private:
 		int createPokemon; // number of pokemon owned by player
 		vector <Pokemon*> myPoke; //array for pointers
@@ -149,7 +150,12 @@ void Player::wild_battle(){
 		cout << endl << "-----------------------" << endl;
 		cout << "What move would you like to use: ";
 		cin >> userMove;
-		if(userMove == 5){ //catch
+		
+		while((userMove > 5) || (userMove < 1)){
+			cout << "Please choose a valid move (1-4): ";
+			cin >> userMove;
+		}
+		if(userMove == 5){ //catch, problem with if you choose an invalid number then it doesn't load the catch function, should use sub functions to change that
 			int value = rand()%100;
 			cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*7) << endl;
 			if(value < (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*7)){
@@ -159,11 +165,7 @@ void Player::wild_battle(){
 				break;
 			}
 		}
-		while(((userMove > 4) || (userMove < 1)) && (userMove != 5)){
-			cout << "Please choose a valid move (1-4): ";
-			cin >> userMove;
-		}
-		if(userMove != 5){ //skip attack phase if used
+		else if(userMove != 5){ //skip attack phase if used
 			cout << (*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
 			(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
 			cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
@@ -202,8 +204,7 @@ void Player::wild_battle(){
 }
 void Player::player_battle(){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
-	add_pokemon(1,0); // comp rand
-	add_pokemon(2,0); // comp rand
+	create_trainer(1);
 	int op = 0; //opponent poke
 	int	battleOn = 1;
 	int userMove;
@@ -281,6 +282,38 @@ void Player::player_battle(){
 void Player::pokeCenter(){
 	for(int i = 0; i < myPoke.size(); i++){
 		(*myPoke[i]).heal();
+	}
+}
+
+void Player::create_trainer(int pick){
+	switch(pick){
+		case 1:
+			add_pokemon(1,0); 
+			add_pokemon(3,0); 
+			break;
+		case 2:
+			add_pokemon(3,0);
+			add_pokemon(4,0);
+			add_pokemon(1,0); 
+			add_pokemon(1,0);
+			break;
+		case 3:
+			add_pokemon(1,0);
+			add_pokemon(2,0); 
+			break;
+		case 4:
+			add_pokemon(3,0);
+			add_pokemon(3,0);
+			add_pokemon(1,0); 
+			break;
+		case 5:
+			add_pokemon(2,0);
+			add_pokemon(2,0);
+			break;
+		default:
+			add_pokemon(1,0);
+			add_pokemon(4,0);
+			break;
 	}
 }
 #endif

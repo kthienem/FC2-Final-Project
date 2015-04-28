@@ -16,6 +16,34 @@ using namespace std;
 const int SCREEN_WIDTH = 768;
 const int SCREEN_HEIGHT = 576;
 
+enum Names{
+	PIKACHU,
+	CHARMANDER,
+	BULBASAUR,
+	SQUIRTLE,
+	NAMES
+};
+
+enum Moves{
+	TACKLE,
+	SCRATCH,
+	EMBER,
+	WATERGUN,
+	CUT,
+	SHOCK,
+	DOUBLESLAP,
+	GUST,
+	HEADBUTT,
+	BITE,
+	BUBBLEBEAM,
+	RAZORLEAF,
+	CONFUSION,
+	QUICKATTACK,
+	FLAMETHROWER,
+	VINEWHIP,
+	MOVES
+};
+
 class battleScene{
 	public:
 		battleScene();
@@ -47,12 +75,17 @@ class battleScene{
 		SDL_Rect gLivePokeball;//image of live pokeball from sprite sheet
 		SDL_Rect gDeadPokeball;//image of dead pokeball from sprite sheet
 		SDL_Rect gPokeballs;//image for available pokeballs
+		SDL_Rect gPokeballsWindow;//location for available pokeballs image
 		SDL_Rect gMovesMenu;//image for menu containing pokemons moves
 		SDL_Rect gMovesMenuPos;//position in window for moves menu
 		SDL_Rect gCurrentArrowPos;//current poition of selection arrow
 		SDL_Surface* gPokemonMenu;
 		SDL_Rect gPokemon;//location on image for list of pokemon
 		SDL_Rect gPokemonWindow;//where list of pokemon will go in window
+		SDL_Surface* gNames_Moves;//image file with names of pokemon and moves
+		SDL_Rect gPokemonNames[NAMES];
+		SDL_Rect gMoves[MOVES];
+		SDL_Rect gMovesWindow[4];
 
 };
 
@@ -115,6 +148,9 @@ bool battleScene::loadMedia()
 
 	gPokemonMenu = loadSurface("Pokemon_Menu.png");//loads list of available pokemon
 	if(gPokemonMenu == NULL) success = false;
+
+	gNames_Moves = loadSurface("Names_Moves.png");//loads image with list of pokemon names and moves
+	if(gNames_Moves == NULL) success = false;
 
 	gMenuBack.x = 297;
 	gMenuBack.y = 56;
@@ -186,21 +222,25 @@ bool battleScene::loadMedia()
 	gArrowPosition[3].w = 14;
 	gArrowPosition[3].h = 26;
 
+	//position of first move
 	gArrowPosition[4].x = 22;
 	gArrowPosition[4].y = 440;
 	gArrowPosition[4].w = 14;
 	gArrowPosition[4].h = 26;
 
+	//position of second move
 	gArrowPosition[5].x = 22;
 	gArrowPosition[5].y = 509;
 	gArrowPosition[5].w = 14;
 	gArrowPosition[5].h = 26;
 
+	//position of third move
 	gArrowPosition[6].x = 270;
 	gArrowPosition[6].y = 440;
 	gArrowPosition[6].w = 14;
 	gArrowPosition[6].h = 26;
 
+	//position of fourth move
 	gArrowPosition[7].x = 270;
 	gArrowPosition[7].y = 509;
 	gArrowPosition[7].w = 14;
@@ -225,6 +265,11 @@ bool battleScene::loadMedia()
 	gPokeballs.y = 65;
 	gPokeballs.w = 104;
 	gPokeballs.h = 12;
+	
+	gPokeballsWindow.x = (SCREEN_WIDTH/2) + 20;
+	gPokeballsWindow.y = 350;
+	gPokeballsWindow.w = 300;
+	gPokeballsWindow.h = 20;
 
 	gMovesMenu.x = 297;
 	gMovesMenu.y = 4;
@@ -245,6 +290,130 @@ bool battleScene::loadMedia()
 	gPokemonWindow.y = 0;
 	gPokemonWindow.w = SCREEN_WIDTH;
 	gPokemonWindow.h = SCREEN_HEIGHT;
+
+	gPokemonNames[PIKACHU].x = 0;
+	gPokemonNames[PIKACHU].y = 20;
+	gPokemonNames[PIKACHU].w = 128;
+	gPokemonNames[PIKACHU].h = 20;
+
+	gPokemonNames[CHARMANDER].x = 0;
+	gPokemonNames[CHARMANDER].y = 40;
+	gPokemonNames[CHARMANDER].w = 128;
+	gPokemonNames[CHARMANDER].h = 20;
+
+	gPokemonNames[SQUIRTLE].x = 0;
+	gPokemonNames[SQUIRTLE].y = 60;
+	gPokemonNames[SQUIRTLE].w = 128;
+	gPokemonNames[SQUIRTLE].h = 20;
+
+	gPokemonNames[BULBASAUR].x = 0;
+	gPokemonNames[BULBASAUR].y = 0;
+	gPokemonNames[BULBASAUR].w = 128;
+	gPokemonNames[BULBASAUR].h = 20;
+
+	gMoves[TACKLE].x = 142;
+	gMoves[TACKLE].y = 0;
+	gMoves[TACKLE].w = 155;
+	gMoves[TACKLE].h = 20;
+
+	gMoves[SCRATCH].x = 142;
+	gMoves[SCRATCH].y = 20;
+	gMoves[SCRATCH].w = 155;
+	gMoves[SCRATCH].h = 20;
+
+	gMoves[EMBER].x = 142;
+	gMoves[EMBER].y = 40;
+	gMoves[EMBER].w = 155;
+	gMoves[EMBER].h = 20;
+
+	gMoves[WATERGUN].x = 142;
+	gMoves[WATERGUN].y = 60;
+	gMoves[WATERGUN].w = 155;
+	gMoves[WATERGUN].h = 20;
+
+	gMoves[CUT].x = 142;
+	gMoves[CUT].y = 80;
+	gMoves[CUT].w = 155;
+	gMoves[CUT].h = 20;
+
+	gMoves[SHOCK].x = 142;
+	gMoves[SHOCK].y = 100;
+	gMoves[SHOCK].w = 155;
+	gMoves[SHOCK].h = 20;
+
+	gMoves[DOUBLESLAP].x = 142;
+	gMoves[DOUBLESLAP].y = 120;
+	gMoves[DOUBLESLAP].w = 155;
+	gMoves[DOUBLESLAP].h = 20;
+
+	gMoves[GUST].x = 142;
+	gMoves[GUST].y = 140;
+	gMoves[GUST].w = 155;
+	gMoves[GUST].h = 20;
+
+	gMoves[HEADBUTT].x = 142;
+	gMoves[HEADBUTT].y = 160;
+	gMoves[HEADBUTT].w = 155;
+	gMoves[HEADBUTT].h = 20;
+
+	gMoves[BITE].x = 142;
+	gMoves[BITE].y = 180;
+	gMoves[BITE].w = 155;
+	gMoves[BITE].h = 20;
+
+	gMoves[BUBBLEBEAM].x = 142;
+	gMoves[BUBBLEBEAM].y = 200;
+	gMoves[BUBBLEBEAM].w = 155;
+	gMoves[BUBBLEBEAM].h = 20;
+
+	gMoves[RAZORLEAF].x = 142;
+	gMoves[RAZORLEAF].y = 220;
+	gMoves[RAZORLEAF].w = 155;
+	gMoves[RAZORLEAF].h = 20;
+
+	gMoves[CONFUSION].x = 142;
+	gMoves[CONFUSION].y = 240;
+	gMoves[CONFUSION].w = 155;
+	gMoves[CONFUSION].h = 20;
+
+	gMoves[QUICKATTACK].x = 142;
+	gMoves[QUICKATTACK].y = 260;
+	gMoves[QUICKATTACK].w = 155;
+	gMoves[QUICKATTACK].h = 20;
+
+	gMoves[FLAMETHROWER].x = 142;
+	gMoves[FLAMETHROWER].y = 280;
+	gMoves[FLAMETHROWER].w = 155;
+	gMoves[FLAMETHROWER].h = 20;
+
+	gMoves[VINEWHIP].x = 142;
+	gMoves[VINEWHIP].y = 300;
+	gMoves[VINEWHIP].w = 155;
+	gMoves[VINEWHIP].h = 20;
+	
+	//Window position for Move 1
+	gMovesWindow[0].x = 40;
+	gMovesWindow[0].y = 440;
+	gMovesWindow[0].w = 150;
+	gMovesWindow[0].h = 26;
+
+	//Window position for Move 2
+	gMovesWindow[1].x = 40;
+	gMovesWindow[1].y = 509;
+	gMovesWindow[1].w = 150;
+	gMovesWindow[1].h = 26;
+
+	//Window position for Move 3
+	gMovesWindow[2].x = 290;
+	gMovesWindow[2].y = 440;
+	gMovesWindow[2].w = 150;
+	gMovesWindow[2].h = 26;
+
+	//Window position for Move 4
+	gMovesWindow[3].x = 290;
+	gMovesWindow[3].y = 509;
+	gMovesWindow[3].w = 150;
+	gMovesWindow[3].h = 26;
 
 	return success;
 }
@@ -285,8 +454,8 @@ SDL_Surface* battleScene::loadSurface(string path)
 void battleScene::battle()
 {
 	int turn = 0;
-	bool inMenu = false;
-	bool inMoves = true;
+	bool inMenu = true;
+	bool inMoves = false;
 
 	if(!init()){//initializes window, if it fails display error message
     cout << "Failed to initialize!" << endl;
@@ -329,6 +498,10 @@ void battleScene::battle()
 								case SDLK_SPACE:
 								{
 									int temp1 = menuOption();
+									if (temp1 == 1){
+										inMenu = false;
+										inMoves = true;
+									}
 									break;
 								}
 								default:
@@ -383,6 +556,11 @@ void battleScene::battle()
 				else if(turn%2 == 0 && inMoves){
 					SDL_BlitScaled(gMenuSheet, &gMovesMenu, gScreenSurface, &gMovesMenuPos);//blit moves menu to screen
 					SDL_BlitScaled(gMenuSheet, &gSelectionArrow, gScreenSurface, &gCurrentArrowPos);//blit selection arrow onto screen
+					//blit available moves to screen
+					SDL_BlitScaled(gNames_Moves, &gMoves[WATERGUN], gScreenSurface, &gMovesWindow[0]);
+					SDL_BlitScaled(gNames_Moves, &gMoves[BUBBLEBEAM], gScreenSurface, &gMovesWindow[1]);
+					SDL_BlitScaled(gNames_Moves, &gMoves[DOUBLESLAP], gScreenSurface, &gMovesWindow[2]);
+					SDL_BlitScaled(gNames_Moves, &gMoves[FLAMETHROWER], gScreenSurface, &gMovesWindow[3]);
 				}
 				//Blit enemy level if pokemon is out
 				SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
@@ -508,6 +686,20 @@ int battleScene::menuOption()
 	if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
 		gCurrentArrowPos = gArrowPosition[4];
 		return 1;
+	}
+	else if(gCurrentArrowPos.x == gArrowPosition[1].x && gCurrentArrowPos.y == gArrowPosition[1].y){
+	}
+	else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
+	}
+	else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
+	}
+	else if(gCurrentArrowPos.x == gArrowPosition[4].x && gCurrentArrowPos.y == gArrowPosition[4].y){
+	}
+	else if(gCurrentArrowPos.x == gArrowPosition[5].x && gCurrentArrowPos.y == gArrowPosition[5].y){
+	}
+	else if(gCurrentArrowPos.x == gArrowPosition[6].x && gCurrentArrowPos.y == gArrowPosition[6].y){
+	}
+	else if(gCurrentArrowPos.x == gArrowPosition[7].x && gCurrentArrowPos.y == gArrowPosition[7].y){
 	}
 }
 #endif
