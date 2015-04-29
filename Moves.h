@@ -265,7 +265,6 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			type.assign("normal");
 
 		default:
-			cout << "default";
 			noMove();
 			break;
 	}

@@ -33,7 +33,7 @@ enum Names{
 	SLOWPOKE,
 	PONYTA,
 	ODDISH,
-	ABRA
+	ABRA,
 	NAMES
 };
 
@@ -54,6 +54,19 @@ enum Moves{
 	QUICKATTACK,
 	FLAMETHROWER,
 	VINEWHIP,
+	THUNDERBOLT
+	PSYCHIC,
+	PSYBEAM,
+	LOWKICK,
+	SLASH,
+	PECK,
+	SEISMICTOSS,
+	THUNDER,
+	HYDROPUMP,
+	FIREBLAST,
+	SOLARBEAM,
+	BODYSLAM,
+	SWIFT,
 	MOVES
 };
 
@@ -116,6 +129,8 @@ class battleScene{
 		SDL_Rect gOpponentBattlePokemon[NAMES];
 		SDL_Rect gPlayerBattlePokemon[NAMES];
 		SDL_Rect gSelectPokemon[NAMES];
+		SDL_Rect gOpponentPokemon;
+		SDL_Rect gPlayerPokemon;
 
 };
 
@@ -182,7 +197,14 @@ bool battleScene::loadMedia()
 		SDL_SetColorKey(gPokemonMenu, SDL_TRUE, SDL_MapRGB(gPokemonMenu->format, 0, 128, 0));
 	}
 
-	
+	gBattleSprites = loadSurface("Pokemon.png");//loads image with different pokemon for battle
+	if(gBattleSprites == NULL) success - false;
+	else{
+		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 200, 200, 168));
+		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 216, 216, 216));
+		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 208, 208, 184));
+		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 96, 152, 128));
+	}
 
 	gNames_Moves = loadSurface("Names_Moves.png");//loads image with list of pokemon names and moves
 	if(gNames_Moves == NULL) success = false;
@@ -485,6 +507,71 @@ bool battleScene::loadMedia()
 	gMoves[VINEWHIP].y = 300;
 	gMoves[VINEWHIP].w = 155;
 	gMoves[VINEWHIP].h = 20;
+
+	gMoves[THUNDERBOLT].x = 142;
+	gMoves[THUNDERBOLT].y = 320;
+	gMoves[THUNDERBOLT].w = 155;
+	gMoves[THUNDERBOLT].h = 20;
+
+	gMoves[PSYCHIC].x = 142;
+	gMoves[PSYCHIC].y = 360;
+	gMoves[PSYCHIC].w = 155;
+	gMoves[PSYCHIC].h = 20;
+
+	gMoves[PSYBEAM].x = 142;
+	gMoves[PSYBEAM].y = 380;
+	gMoves[PSYBEAM].w = 155;
+	gMoves[PSYBEAM].h = 20;
+
+	gMoves[LOWKICK].x = 142;
+	gMoves[LOWKICK].y = 400;
+	gMoves[LOWKICK].w = 155;
+	gMoves[LOWKICK].h = 20;
+
+	gMoves[SLASH].x = 142;
+	gMoves[SLASH].y = 420;
+	gMoves[SLASH].w = 155;
+	gMoves[SLASH].h = 20;
+
+	gMoves[PECK].x = 142;
+	gMoves[PECK].y = 440;
+	gMoves[PECK].w = 155;
+	gMoves[PECK].h = 20;
+
+	gMoves[SEISMICTOSS].x = 142;
+	gMoves[SEISMICTOSS].y = 460;
+	gMoves[SEISMICTOSS].w = 155;
+	gMoves[SEISMICTOSS].h = 20;
+
+	gMoves[THUNDER].x = 142;
+	gMoves[THUNDER].y = 480;
+	gMoves[THUNDER].w = 155;
+	gMoves[THUNDER].h = 20;
+
+	gMoves[HYDROPUMP].x = 142;
+	gMoves[HYDROPUMP].y = 500;
+	gMoves[HYDROPUMP].w = 155;
+	gMoves[HYDROPUMP].h = 20;
+
+	gMoves[FIREBLAST].x = 142;
+	gMoves[FIREBLAST].y = 520;
+	gMoves[FIREBLAST].w = 155;
+	gMoves[FIREBLAST].h = 20;
+
+	gMoves[SOLARBEAM].x = 142;
+	gMoves[SOLARBEAM].y = 540;
+	gMoves[SOLARBEAM].w = 155;
+	gMoves[SOLARBEAM].h = 20;
+
+	gMoves[BODYSLAM].x = 140;
+	gMoves[BODYSLAM].y = 560;
+	gMoves[BODYSLAM].w = 155;
+	gMoves[BODYSLAM].h = 20;
+
+	gMoves[SWIFT].x = 142;
+	gMoves[SWIFT].y = 580;
+	gMoves[SWIFT].w = 155;
+	gMoves[SWIFT].h = 20;
 	
 	//Window position for Move 1
 	gMovesWindow[0].x = 40;
@@ -575,85 +662,245 @@ bool battleScene::loadMedia()
 	gPokemonListWindow[5].w = 650;
 	gPokemonListWindow[5].h = 75;
 
-	gOpponentBattlePokemon[PIKACHU].x = ;
-	gOpponentBattlePokemon[PIKACHU].y = ;
-	gOpponentBattlePokemon[PIKACHU].w = ;
-	gOpponentBattlePokemon[PIKACHU].h = ;
+	gOpponentBattlePokemon[PIKACHU].x = 496;
+	gOpponentBattlePokemon[PIKACHU].y = 203;
+	gOpponentBattlePokemon[PIKACHU].w = 42;
+	gOpponentBattlePokemon[PIKACHU].h = 50;
 
-	gOpponentBattlePokemon[CHARMANDER].x = ;
-	gOpponentBattlePokemon[CHARMANDER].y = ;
-	gOpponentBattlePokemon[CHARMANDER].w = ;
-	gOpponentBattlePokemon[CHARMANDER].h = ;
+	gOpponentBattlePokemon[CHARMANDER].x = 175;
+	gOpponentBattlePokemon[CHARMANDER].y = 12;
+	gOpponentBattlePokemon[CHARMANDER].w = 36;
+	gOpponentBattlePokemon[CHARMANDER].h = 40;
 
-	gOpponentBattlePokemon[BULBASAUR].x = ;
-	gOpponentBattlePokemon[BULBASAUR].y = ;
-	gOpponentBattlePokemon[BULBASAUR].w = ;
-	gOpponentBattlePokemon[BULBASAUR].h = ;
+	gOpponentBattlePokemon[BULBASAUR].x = 14;
+	gOpponentBattlePokemon[BULBASAUR].y = 15;
+	gOpponentBattlePokemon[BULBASAUR].w = 35;
+	gOpponentBattlePokemon[BULBASAUR].h = 34;
 
-	gOpponentBattlePokemon[SQUIRTLE].x = ;
-	gOpponentBattlePokemon[SQUIRTLE].y = ;
-	gOpponentBattlePokemon[SQUIRTLE].w = ;
-	gOpponentBattlePokemon[SQUIRTLE].h = ;
+	gOpponentBattlePokemon[SQUIRTLE].x = 338;
+	gOpponentBattlePokemon[SQUIRTLE].y = 14;
+	gOpponentBattlePokemon[SQUIRTLE].w = 39;
+	gOpponentBattlePokemon[SQUIRTLE].h = 39;
 
-	gOpponentBattlePokemon[RATTATA].x = ;
-	gOpponentBattlePokemon[RATTATA].y = ;
-	gOpponentBattlePokemon[RATTATA].w = ;
-	gOpponentBattlePokemon[RATTATA].h = ;
+	gOpponentBattlePokemon[RATTATA].x = 172;
+	gOpponentBattlePokemon[RATTATA].y = 212;
+	gOpponentBattlePokemon[RATTATA].w = 37;
+	gOpponentBattlePokemon[RATTATA].h = 36;
 
-	gOpponentBattlePokemon[PIDGEY].x = ;
-	gOpponentBattlePokemon[PIDGEY].y = ;
-	gOpponentBattlePokemon[PIDGEY].w = ;
-	gOpponentBattlePokemon[PIDGEY].h = ;
+	gOpponentBattlePokemon[PIDGEY].x = 14;
+	gOpponentBattlePokemon[PIDGEY].y = 211;
+	gOpponentBattlePokemon[PIDGEY].w = 37;
+	gOpponentBattlePokemon[PIDGEY].h = 38;
 
-	gOpponentBattlePokemon[MACHOP].x = ;
-	gOpponentBattlePokemon[MACHOP].y = ;
-	gOpponentBattlePokemon[MACHOP].w = ;
-	gOpponentBattlePokemon[MACHOP].h = ;
+	gOpponentBattlePokemon[MACHOP].x = 178;
+	gOpponentBattlePokemon[MACHOP].y = 929;
+	gOpponentBattlePokemon[MACHOP].w = 32;
+	gOpponentBattlePokemon[MACHOP].h = 43;
 
-	gOpponentBattlePokemon[DROWZEE].x = ;
-	gOpponentBattlePokemon[DROWZEE].y = ;
-	gOpponentBattlePokemon[DROWZEE].w = ;
-	gOpponentBattlePokemon[DROWZEE].h = ;
+	gOpponentBattlePokemon[DROWZEE].x = 975;
+	gOpponentBattlePokemon[DROWZEE].y = 336;
+	gOpponentBattlePokemon[DROWZEE].w = 45;
+	gOpponentBattlePokemon[DROWZEE].h = 47;
 
-	gOpponentBattlePokemon[SNORLAX].x = ;
-	gOpponentBattlePokemon[SNORLAX].y = ;
-	gOpponentBattlePokemon[SNORLAX].w = ;
-	gOpponentBattlePokemon[SNORLAX].h = ;
+	gOpponentBattlePokemon[SNORLAX].x = 1128;
+	gOpponentBattlePokemon[SNORLAX].y = 858;
+	gOpponentBattlePokemon[SNORLAX].w = 64;
+	gOpponentBattlePokemon[SNORLAX].h = 55;
 
-	gOpponentBattlePokemon[ZUBAT].x = ;
-	gOpponentBattlePokemon[ZUBAT].y = ;
-	gOpponentBattlePokemon[ZUBAT].w = ;
-	gOpponentBattlePokemon[ZUBAT].h = ;
+	gOpponentBattlePokemon[ZUBAT].x = 494;
+	gOpponentBattlePokemon[ZUBAT].y = 470;
+	gOpponentBattlePokemon[ZUBAT].w = 44;
+	gOpponentBattlePokemon[ZUBAT].h = 41;
 
-	gOpponentBattlePokemon[MANKEY].x = ;
-	gOpponentBattlePokemon[MANKEY].y = ;
-	gOpponentBattlePokemon[MANKEY].w = ;
-	gOpponentBattlePokemon[MANKEY].h = ;
+	gOpponentBattlePokemon[MANKEY].x = 494;
+	gOpponentBattlePokemon[MANKEY].y = 667;
+	gOpponentBattlePokemon[MANKEY].w = 45;
+	gOpponentBattlePokemon[MANKEY].h = 40;
 
-	gOpponentBattlePokemon[ELECTABUZZ].x = ;
-	gOpponentBattlePokemon[ELECTABUZZ].y = ;
-	gOpponentBattlePokemon[ELECTABUZZ].w = ;
-	gOpponentBattlePokemon[ELECTABUZZ].h = ;
+	gOpponentBattlePokemon[ELECTABUZZ].x = 970;
+	gOpponentBattlePokemon[ELECTABUZZ].y = 658;
+	gOpponentBattlePokemon[ELECTABUZZ].w = 62;
+	gOpponentBattlePokemon[ELECTABUZZ].h = 60;
 
-	gOpponentBattlePokemon[SLOWPOKE].x = ;
-	gOpponentBattlePokemon[SLOWPOKE].y = ;
-	gOpponentBattlePokemon[SLOWPOKE].w = ;
-	gOpponentBattlePokemon[SLOWPOKE].h = ;
+	gOpponentBattlePokemon[SLOWPOKE].x = 976;
+	gOpponentBattlePokemon[SLOWPOKE].y = 12;
+	gOpponentBattlePokemon[SLOWPOKE].w = 48;
+	gOpponentBattlePokemon[SLOWPOKE].h = 41;
 
-	gOpponentBattlePokemon[PONYTA].x = ;
-	gOpponentBattlePokemon[PONYTA].y = ;
-	gOpponentBattlePokemon[PONYTA].w = ;
-	gOpponentBattlePokemon[PONYTA].h = ;
+	gOpponentBattlePokemon[PONYTA].x = 813;
+	gOpponentBattlePokemon[PONYTA].y = 71;
+	gOpponentBattlePokemon[PONYTA].w = 49;
+	gOpponentBattlePokemon[PONYTA].h = 53;
 
-	gOpponentBattlePokemon[ODDISH].x = ;
-	gOpponentBattlePokemon[ODDISH].y = ;
-	gOpponentBattlePokemon[ODDISH].w = ;
-	gOpponentBattlePokemon[ODDISH].h = ;
+	gOpponentBattlePokemon[ODDISH].x = 661;
+	gOpponentBattlePokemon[ODDISH].y = 410;
+	gOpponentBattlePokemon[ODDISH].w = 33;
+	gOpponentBattlePokemon[ODDISH].h = 38;
 
-	gOpponentBattlePokemon[ABRA].x = ;
-	gOpponentBattlePokemon[ABRA].y = ;
-	gOpponentBattlePokemon[ABRA].w = ;
-	gOpponentBattlePokemon[ABRA].h = ;
+	gOpponentBattlePokemon[ABRA].x = 11;
+	gOpponentBattlePokemon[ABRA].y = 937;
+	gOpponentBattlePokemon[ABRA].w = 44;
+	gOpponentBattlePokemon[ABRA].h = 38;
+
+	gPlayerBattlePokemon[PIKACHU].x = 552;
+	gPlayerBattlePokemon[PIKACHU].y = 205;
+	gPlayerBattlePokemon[PIKACHU].w = 52;
+	gPlayerBattlePokemon[PIKACHU].h = 50;
+
+	gPlayerBattlePokemon[CHARMANDER].x = 234;
+	gPlayerBattlePokemon[CHARMANDER].y = 11;
+	gPlayerBattlePokemon[CHARMANDER].w = 48;
+	gPlayerBattlePokemon[CHARMANDER].h = 44;
+
+	gPlayerBattlePokemon[BULBASAUR].x = 74;
+	gPlayerBattlePokemon[BULBASAUR].y = 14;
+	gPlayerBattlePokemon[BULBASAUR].w = 46;
+	gPlayerBattlePokemon[BULBASAUR].h = 35;
+
+	gPlayerBattlePokemon[SQUIRTLE].x = 393;
+	gPlayerBattlePokemon[SQUIRTLE].y = 16;
+	gPlayerBattlePokemon[SQUIRTLE].w = 46;
+	gPlayerBattlePokemon[SQUIRTLE].h = 34;
+
+	gPlayerBattlePokemon[RATTATA].x = 234;
+	gPlayerBattlePokemon[RATTATA].y = 210;
+	gPlayerBattlePokemon[RATTATA].w = 50;
+	gPlayerBattlePokemon[RATTATA].h = 39;
+
+	gPlayerBattlePokemon[PIDGEY].x = 72;
+	gPlayerBattlePokemon[PIDGEY].y = 205;
+	gPlayerBattlePokemon[PIDGEY].w = 49;
+	gPlayerBattlePokemon[PIDGEY].h = 49;
+
+	gPlayerBattlePokemon[MACHOP].x = 234;
+	gPlayerBattlePokemon[MACHOP].y = 930;
+	gPlayerBattlePokemon[MACHOP].w = 47;
+	gPlayerBattlePokemon[MACHOP].h = 41;
+
+	gPlayerBattlePokemon[DROWZEE].x = 1038;
+	gPlayerBattlePokemon[DROWZEE].y = 341;
+	gPlayerBattlePokemon[DROWZEE].w = 49;
+	gPlayerBattlePokemon[DROWZEE].h = 38;
+
+	gPlayerBattlePokemon[SNORLAX].x = 1193;
+	gPlayerBattlePokemon[SNORLAX].y = 865;
+	gPlayerBattlePokemon[SNORLAX].w = 62;
+	gPlayerBattlePokemon[SNORLAX].h = 42;
+
+	gPlayerBattlePokemon[ZUBAT].x = 552;
+	gPlayerBattlePokemon[ZUBAT].y = 471;
+	gPlayerBattlePokemon[ZUBAT].w = 55;
+	gPlayerBattlePokemon[ZUBAT].h = 42;
+
+	gPlayerBattlePokemon[MANKEY].x = 553;
+	gPlayerBattlePokemon[MANKEY].y = 667;
+	gPlayerBattlePokemon[MANKEY].w = 52;
+	gPlayerBattlePokemon[MANKEY].h = 43;
+
+	gPlayerBattlePokemon[ELECTABUZZ].x = 1038;
+	gPlayerBattlePokemon[ELECTABUZZ].y = 665;
+	gPlayerBattlePokemon[ELECTABUZZ].w = 49;
+	gPlayerBattlePokemon[ELECTABUZZ].h = 48;
+
+	gPlayerBattlePokemon[SLOWPOKE].x = 1033;
+	gPlayerBattlePokemon[SLOWPOKE].y = 14;
+	gPlayerBattlePokemon[SLOWPOKE].w = 59;
+	gPlayerBattlePokemon[SLOWPOKE].h = 38;
+
+	gPlayerBattlePokemon[PONYTA].x = 877;
+	gPlayerBattlePokemon[PONYTA].y = 75;
+	gPlayerBattlePokemon[PONYTA].w = 50;
+	gPlayerBattlePokemon[PONYTA].h = 47;
+
+	gPlayerBattlePokemon[ODDISH].x = 722;
+	gPlayerBattlePokemon[ODDISH].y = 403;
+	gPlayerBattlePokemon[ODDISH].w = 44;
+	gPlayerBattlePokemon[ODDISH].h = 49;
+
+	gPlayerBattlePokemon[ABRA].x = 75;
+	gPlayerBattlePokemon[ABRA].y = 930;
+	gPlayerBattlePokemon[ABRA].w = 41;
+	gPlayerBattlePokemon[ABRA].h = 41;
+
+	gSelectPokemon[PIKACHU].x = 618;
+	gSelectPokemon[PIKACHU].y = 208;
+	gSelectPokemon[PIKACHU].w = 20;
+	gSelectPokemon[PIKACHU].h = 20;
+
+	gSelectPokemon[CHARMANDER].x = 295;
+	gSelectPokemon[CHARMANDER].y = 12;
+	gSelectPokemon[CHARMANDER].w = 22;
+	gSelectPokemon[CHARMANDER].h = 18;
+
+	gSelectPokemon[BULBASAUR].x = 134;
+	gSelectPokemon[BULBASAUR].y = 12;
+	gSelectPokemon[BULBASAUR].w = 21;
+	gSelectPokemon[BULBASAUR].h = 18;
+
+	gSelectPokemon[SQUIRTLE].x = 456;
+	gSelectPokemon[SQUIRTLE].y = 12;
+	gSelectPokemon[SQUIRTLE].w = 22;
+	gSelectPokemon[SQUIRTLE].h = 18;
+
+	gSelectPokemon[RATTATA].x = 296;
+	gSelectPokemon[RATTATA].y = 207;
+	gSelectPokemon[RATTATA].w = 19;
+	gSelectPokemon[RATTATA].h = 22;
+
+	gSelectPokemon[PIDGEY].x = 135;
+	gSelectPokemon[PIDGEY].y = 209;
+	gSelectPokemon[PIDGEY].w = 19;
+	gSelectPokemon[PIDGEY].h = 18;
+
+	gSelectPokemon[MACHOP].x = 297;
+	gSelectPokemon[MACHOP].y = 928;
+	gSelectPokemon[MACHOP].w = 17;
+	gSelectPokemon[MACHOP].h = 21;
+
+	gSelectPokemon[DROWZEE].x = 1099;
+	gSelectPokemon[DROWZEE].y = 337;
+	gSelectPokemon[DROWZEE].w = 23;
+	gSelectPokemon[DROWZEE].h = 21;
+
+	gSelectPokemon[SNORLAX].x = 1260;
+	gSelectPokemon[SNORLAX].y = 862;
+	gSelectPokemon[SNORLAX].w = 25;
+	gSelectPokemon[SNORLAX].h = 22;
+
+	gSelectPokemon[ZUBAT].x = 617;
+	gSelectPokemon[ZUBAT].y = 470;
+	gSelectPokemon[ZUBAT].w = 21;
+	gSelectPokemon[ZUBAT].h = 19;
+
+	gSelectPokemon[MANKEY].x = 615;
+	gSelectPokemon[MANKEY].y = 669;
+	gSelectPokemon[MANKEY].w = 26;
+	gSelectPokemon[MANKEY].h = 17;
+
+	gSelectPokemon[ELECTABUZZ].x = 1100;
+	gSelectPokemon[ELECTABUZZ].y = 667;
+	gSelectPokemon[ELECTABUZZ].w = 21;
+	gSelectPokemon[ELECTABUZZ].h = 20;
+
+	gSelectPokemon[SLOWPOKE].x = 1100;
+	gSelectPokemon[SLOWPOKE].y = 10;
+	gSelectPokemon[SLOWPOKE].w = 21;
+	gSelectPokemon[SLOWPOKE].h = 20;
+
+	gSelectPokemon[PONYTA].x = 938;
+	gSelectPokemon[PONYTA].y = 74;
+	gSelectPokemon[PONYTA].w = 25;
+	gSelectPokemon[PONYTA].h = 23;
+
+	gSelectPokemon[ODDISH].x = 782;
+	gSelectPokemon[ODDISH].y = 407;
+	gSelectPokemon[ODDISH].w = 14;
+	gSelectPokemon[ODDISH].h = 16;
+
+	gSelectPokemon[ABRA].x = 136;
+	gSelectPokemon[ABRA].y = 928;
+	gSelectPokemon[ABRA].w = 20;
+	gSelectPokemon[ABRA].h = 19;
 
 	return success;
 }
