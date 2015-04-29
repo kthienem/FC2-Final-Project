@@ -36,8 +36,10 @@ class Player {
 		int noValid_other();
 		void wild_battle();
 		void pokeCenter();
-		void player_battle();
+		void player_battle(int);
 		void create_trainer(int);
+		void save_pokemon_stats();
+		void load_pokemon_stats();
 	private:
 		int createPokemon; // number of pokemon owned by player
 		vector <Pokemon*> myPoke; //array for pointers
@@ -55,7 +57,7 @@ Player::Player(){
 	cp = 0;
 }
 void Player::Battle(){
-	wild_battle();
+//	wild_battle();
 //	pokeCenter();
 //	player_battle();	
 }
@@ -73,6 +75,18 @@ void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or
 			newPoke_ptr = new Squirtle;
 			break;
 		case 4:
+			newPoke_ptr = new Charmander;
+			break;
+		case 5:
+			newPoke_ptr = new Rattata;
+			break;
+		case 6:
+			newPoke_ptr = new Charmander;
+			break;
+		case 7:
+			newPoke_ptr = new Squirtle;
+			break;
+		case 8:
 			newPoke_ptr = new Charmander;
 			break;
 	};
@@ -213,9 +227,9 @@ void Player::wild_battle(){
 		}
 	}
 }
-void Player::player_battle(){
+void Player::player_battle(int pick){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
-	create_trainer(1);
+	create_trainer(pick);
 	int op = 0; //opponent poke
 	int	battleOn = 1;
 	int userMove;
@@ -298,33 +312,63 @@ void Player::pokeCenter(){
 
 void Player::create_trainer(int pick){
 	switch(pick){
-		case 1:
+		case 1: //chick fire and norm
 			add_pokemon(1,0); 
 			add_pokemon(3,0); 
 			break;
-		case 2:
+		case 2: //yellow electric fight
 			add_pokemon(3,0);
 			add_pokemon(4,0);
 			add_pokemon(1,0); 
 			add_pokemon(1,0);
 			break;
-		case 3:
+		case 3: //ranger grass and fly
 			add_pokemon(1,0);
 			add_pokemon(2,0); 
 			break;
-		case 4:
+		case 4: //safari grass and water
 			add_pokemon(3,0);
 			add_pokemon(3,0);
 			add_pokemon(1,0); 
 			break;
-		case 5:
+		case 5: //fisherman water and norm
 			add_pokemon(2,0);
 			add_pokemon(2,0);
 			break;
+		case 6: //gym leader psychic
+			add_pokemon(2,0);
 		default:
 			add_pokemon(1,0);
 			add_pokemon(4,0);
 			break;
 	}
+}
+
+void Player::save_pokemon_stats(){
+	ofstream outFile;
+    outFile.open( "savePoke.txt", ios::out );
+	for(int i = 0; i < myPoke.size(); i++){
+    	outFile << (*myPoke[i]).getmaxHealth() << " ";
+    	outFile << (*myPoke[i]).getcurrHealth() << " ";
+    	outFile << (*myPoke[i]).getlevel() << " ";
+    	outFile << (*myPoke[i]).getexp() << " ";
+    	outFile << (*myPoke[i]).getmaxLevelExp() << " ";
+    	outFile << (*myPoke[i]).getmaxAttack() << " ";
+    	outFile << (*myPoke[i]).getcurrAttack() << " ";
+		outFile << (*myPoke[i]).getmaxDef() << " ";
+		outfile << endl; //end of one pokemon
+
+	}
+    outFile.close();
+}
+
+void Player::load_pokemon_stats(){
+    ifstream inFile;
+    inFile.open( "savePoke.txt",ios::in );
+	int temp;
+    inFile >> temp;
+    var = temp;
+
+    inFile.close();
 }
 #endif

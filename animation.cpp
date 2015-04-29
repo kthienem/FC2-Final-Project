@@ -95,6 +95,7 @@ enum cellColorCode
 	DOOR_WOOD_CELL,
 	DOOR_MART_CELL,
 	TRAINER_BRUNETTE_CELL,
+	TRAINER_BRUNETTE2_CELL,
 	TRAINER_FISHERMAN_CELL,
 	TRAINER_RANGER_CELL,
 	TRAINER_SAFARI_CELL,
@@ -141,11 +142,12 @@ double cellColorThreshold[50]={	.55,	// bridge
 				.80,	// door red S
 				.90,	// door wood
 				.85,	// pokeMart door
-				.60,	// trainer brunette
+				.90,	// trainer brunette
+				.70,	// trainer brunette2
 				.85,	// trainer fisherman
-				.85,	// trainer ranger
-				.85,	// trainer safari hat
-				.85	// trainer yellow cap
+				.79,	// trainer ranger
+				.64,	// trainer safari hat
+				.63	// trainer yellow cap
 };
 
 bool init();		//initialize the display window
@@ -160,19 +162,30 @@ void writeColorCodes(int,int,SDL_Surface*);
 vector<map<int,int> > readColorCodes();
 
 void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect, int, int);
-void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect);
+void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect,Player*);
 SDL_Rect determineWarpLoc(SDL_Rect);
 void talkToPillar(SDL_Rect,int *,int *);
 void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int);
 bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect);
 void saveGame(SDL_Rect, SDL_Rect);
 void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);
+void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);
+void introSequence(SDL_Rect);
 //int goFish();
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
 SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the images to be displayed
 SDL_Surface* gSpriteSheet = NULL;	//pointer to the image contatining the pieces needed for the animation
 SDL_Rect* gCurrentClip = NULL;		//pointer to the current portion of gSpriteSheet being dislayed
+
+//Intro stuff
+SDL_Surface* gIntroSprites = NULL;	//pointer to the image contatining the pieces needed for the animation
+SDL_Rect gTorchic[6];
+SDL_Surface* gIntroBackground = NULL;
+SDL_Rect gIntroTrees;
+SDL_Surface* gIntroTitleSprites = NULL;	//pointer to the image contatining the pieces needed for the animation
+SDL_Rect gPokeTitle[6];
+
 
 SDL_Surface* gPokeMaps[ POKE_MAP_SIZE ];
 SDL_Surface* gBackground = NULL;	//pointer to the image that is used as the background
@@ -239,7 +252,7 @@ int main()
 			int caveCharX[4]= {	343,	343,	375,	279};
 			int caveCharY[4]= {	302,	334,	302,	302};
 
-			int sleeptime=5000;	// sleeptime*16 == time for trainer to take one step
+			int sleeptime=500;	// sleeptime*16 == time for trainer to take one step
 			int warptime=15000;	// sleeptime*16 == time for trainer to take one step
 			int canWalk=1;		// boolean - false if trainer attempts to walk into a tree, wall, etc
 			int white= 16777215;	// return of getpixel for white background
@@ -277,12 +290,14 @@ int main()
 			colorCodes= readColorCodes();
 
 
-	if(!newGame){
-		loadGame(&gCurrentClip, &characterRect, &mapZoomRect);
-	}
+			if(!newGame){
+				loadGame(&gCurrentClip, &characterRect, &mapZoomRect);
+			}
 
 			int trainerCellx= characterRect.x+7;
 			int trainerCelly= characterRect.y+16;
+
+	//		introSequence(stretch2windowRect);
 
 			while(!quit){//while the user has not entered the event to quit
 				while(SDL_PollEvent(&e) != 0){//while there remains user entered events
@@ -316,6 +331,7 @@ int main()
 													else
 														dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0);
 												}
+												
 											}else if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
 												canWalk= 1;
 											}
@@ -323,7 +339,7 @@ int main()
 									}
 							// Check for cell cases
 								// Wild grass
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) || cellColorThreshold[WILD_GRASS_2_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WILD_GRASS_2_CELL], gScreenSurface) ) steponWildGrass=1;
 								// Warp pad(gym)
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 								// PokeCenter entrance
@@ -440,7 +456,7 @@ int main()
 									for( int i=0; i<COLOR_CELL_SIZE; i++ )
 										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!=GYM_PILLAR_CELL)
 											if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ) canWalk= 1;
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_CELL], gScreenSurface) || cellColorThreshold[WILD_GRASS_2_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WILD_GRASS_2_CELL], gScreenSurface) ) steponWildGrass=1;
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) {
 										isWarpTile=1;
 									}
@@ -506,7 +522,7 @@ int main()
 									for( int i=0; i<COLOR_CELL_SIZE; i++ )
 										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!=GYM_PILLAR_CELL)
 											if( cellColorThreshold[i] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) || cellColorThreshold[WILD_GRASS_2_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WILD_GRASS_2_CELL], gScreenSurface) ) steponWildGrass=1;
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
@@ -543,7 +559,7 @@ int main()
 										if( i!= POKEBALL_CELL && i!= WATER_CELL && i!= CAVE_ENT_CELL && i!= GYM_PILLAR_CELL){
 											if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ) canWalk= 1;
 										}
-									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) ) steponWildGrass=1;
+									if( cellColorThreshold[WILD_GRASS_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_CELL], gScreenSurface) || cellColorThreshold[WILD_GRASS_2_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WILD_GRASS_2_CELL], gScreenSurface) ) steponWildGrass=1;
 									if( cellColorThreshold[GYM_FLOOR_WARP_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[GYM_FLOOR_WARP_CELL], gScreenSurface) ) isWarpTile=1;
 									for( int i=0; i<16; i++){
 										if(i%4==0) frame++;
@@ -566,25 +582,52 @@ int main()
 								break;
 
 							case SDLK_SPACE://space bar
-					//			writeColorCodes(trainerCellx+cellShift,trainerCelly, gScreenSurface);
+				//				writeColorCodes(trainerCellx+cellShift,trainerCelly, gScreenSurface);
 						// Check for cell cases
 							// PokeCenter healer
-								if( gCurrentClip==&gWalkUp[0] && cellColorThreshold[CENTER_HEALER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[CENTER_HEALER_CELL], gScreenSurface) )
-									healMyPokemon(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect);
-							// Gym Pillar/Statue
-								if( gCurrentClip==&gWalkUp[0] && cellColorThreshold[GYM_PILLAR_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_PILLAR_CELL], gScreenSurface) )
-									talkToPillar(characterRect, &gymAnswers, &firstPillarx);
-							// Gym leader
-								if( gCurrentClip==&gWalkUp[0] && cellColorThreshold[GYM_LEADER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_LEADER_CELL], gScreenSurface) ){
-									cout<<"BATTLETIME\n";
+								if( gCurrentClip==&gWalkUp[0] ){
+									if( cellColorThreshold[CENTER_HEALER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[CENTER_HEALER_CELL], gScreenSurface) )
+										healMyPokemon(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect, &Nick);
+								// Gym Pillar/Statue
+									if( cellColorThreshold[GYM_PILLAR_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_PILLAR_CELL], gScreenSurface) )
+										talkToPillar(characterRect, &gymAnswers, &firstPillarx);
+								// Gym leader
+									if( cellColorThreshold[GYM_LEADER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_LEADER_CELL], gScreenSurface) ){
+										battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+										cout<<"BATTLETIME\n";
+									}
+								// Trainers
+									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
+										if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ){
+											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
+											cout<<"littlebattle\n";
+										}
+								}else if( gCurrentClip==&gWalkDown[0] ){
+								// Trainers
+									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
+										if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ){
+											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
+											cout<<"littlebattle\n";
+										}
+								}else if( gCurrentClip==&gWalkLeft[0] ){
+								// Trainers
+									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
+										if( cellColorThreshold[i] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[i], gScreenSurface) ){
+											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
+											cout<<"littlebattle\n";
+										}
+								}else if( gCurrentClip==&gWalkRight[0] ){
+								// Trainers
+									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
+										if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ){
+											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
+											cout<<"littlebattle\n";
+										}
 								}
-								cout<< cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[TRAINER_BRUNETTE_CELL], gScreenSurface)<<endl;
-								cout<< cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[TRAINER_FISHERMAN_CELL], gScreenSurface)<<endl;
-								cout<< cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[TRAINER_RANGER_CELL], gScreenSurface)<<endl;
-								cout<< cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[TRAINER_SAFARI_CELL], gScreenSurface)<<endl;
-								cout<< cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[TRAINER_YELLOW_CELL], gScreenSurface)<<endl;
-cout<<endl;
-
 								break;
 				
 							case SDLK_p:	// Pause Menu
@@ -600,10 +643,13 @@ cout<<endl;
 
 
 						if(steponWildGrass){
-		//					if(rand()%100 < 15) Nick.Battle();
+							if(rand()%100 < 15){
+								battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+								Nick.wild_battle();
 					//		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect);
+							}
 						}
-
+				
 						if(isWarpTile==1) {
 							frame= 0;
 						// Spin character around, and then warp him to another warp pad in the gym
@@ -805,6 +851,93 @@ bool loadMedia()
 		success = false;
 	}
 
+	gIntroBackground = loadSurface("IntroBackground.png");//load sprite sheet containing animation images
+	if(gIntroBackground == NULL){//if not loaded properly return unsuccessful
+		success = false;
+	}
+	else{
+		//Set Walking down clips
+		gIntroTrees.x = 128;
+		gIntroTrees.y = 0;
+		gIntroTrees.w = 240;
+		gIntroTrees.h = 160;
+	}
+
+	gIntroTitleSprites = loadSurface("PokeTitle.png");//load sprite sheet containing animation images
+	if(gIntroTitleSprites == NULL){//if not loaded properly return unsuccessful
+		success = false;
+	}
+	else{
+		SDL_SetColorKey(gIntroTitleSprites, SDL_TRUE, SDL_MapRGB(gIntroTitleSprites->format, 255, 255, 255));//the color given in SDL_MapRGB one the sprite sheet will be made transparent to background image
+		gPokeTitle[0].x = 5;
+		gPokeTitle[0].y = 6;
+		gPokeTitle[0].w = 175;
+		gPokeTitle[0].h = 57;
+
+		gPokeTitle[1].x = 178;
+		gPokeTitle[1].y = 6;
+		gPokeTitle[1].w = 175;
+		gPokeTitle[1].h = 57;
+
+		gPokeTitle[2].x = 357;
+		gPokeTitle[2].y = 7;
+		gPokeTitle[2].w = 175;
+		gPokeTitle[2].h = 57;
+
+		gPokeTitle[3].x = 2;
+		gPokeTitle[3].y = 72;
+		gPokeTitle[3].w = 175;
+		gPokeTitle[3].h = 57;
+
+		gPokeTitle[4].x = 181;
+		gPokeTitle[4].y = 71;
+		gPokeTitle[4].w = 175;
+		gPokeTitle[4].h = 57;
+
+		gPokeTitle[5].x = 366;
+		gPokeTitle[5].y = 71;
+		gPokeTitle[5].w = 175;
+		gPokeTitle[5].h = 57;
+	}
+
+	gIntroSprites = loadSurface("JumpFall.png");//load sprite sheet containing animation images
+	if(gIntroSprites == NULL){//if not loaded properly return unsuccessful
+		success = false;
+	}
+	else{
+		//Set Walking down clips
+		gTorchic[0].x = 0;
+		gTorchic[0].y = 54;
+		gTorchic[0].w = 24;
+		gTorchic[0].h = 24;
+
+		gTorchic[1].x = 21;
+		gTorchic[1].y = 54;
+		gTorchic[1].w = 24;
+		gTorchic[1].h = 24;
+
+		gTorchic[2].x = 41;
+		gTorchic[2].y = 54;
+		gTorchic[2].w = 24;
+		gTorchic[2].h = 24;
+
+		gTorchic[3].x = 63;
+		gTorchic[3].y = 54;
+		gTorchic[3].w = 24;
+		gTorchic[3].h = 24;
+
+		gTorchic[4].x = 90;
+		gTorchic[4].y = 50;
+		gTorchic[4].w = 24;
+		gTorchic[4].h = 24;
+
+		gTorchic[5].x = 119;
+		gTorchic[5].y = 48;
+		gTorchic[5].w = 24;
+		gTorchic[5].h = 24;
+
+	}
+
 	gSpriteSheet = loadSurface("PokemonPlayer.bmp");//load sprite sheet containing animation images
 	if(gSpriteSheet == NULL){//if not loaded properly return unsuccessful
 		success = false;
@@ -966,7 +1099,7 @@ double cellComp( int x1, int y1, map<int,int> cellCode, SDL_Surface *surface ){
 void writeColorCodes(int x, int y, SDL_Surface *surface){
 
 	ofstream outFile;
-	outFile.open( "trainerRanger.txt", ios::out );
+	outFile.open( "trainerBrunette2.txt", ios::out );
 	map<int,int> colors;
 
 	for( int i=0; i<32; i++ ) {	
@@ -1021,7 +1154,7 @@ void transitionGraphic(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBa
 	}
 }
 
-void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackground, SDL_Surface *gSpriteSheet, SDL_Rect *gCurrentClip, SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect) {
+void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackground, SDL_Surface *gSpriteSheet, SDL_Rect *gCurrentClip, SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect, Player *Nick) {
 	
 			gBackground = gPokeMaps[ POKE_CENTER_YES_MAP ];
 			SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
@@ -1054,6 +1187,7 @@ void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackgr
 								break;
 							case SDLK_SPACE://space bar
 								if( gBackground == gPokeMaps[ POKE_CENTER_YES_MAP ] ) {
+									(*Nick).pokeCenter();//heals all pokemon
 									gBackground = gPokeMaps[ POKE_CENTER_HEALING_MAP ];
 									SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
 									SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
@@ -1397,6 +1531,75 @@ void loadGame(SDL_Rect **gCurrentClip, SDL_Rect *characterRect, SDL_Rect *mapZoo
 	(*mapZoomRect).y= temp;
 
 	inFile.close();
+
+}
+
+void battleCutScene(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect){
+	SDL_Delay(500);
+
+	for(int i=0; i<8; i++){
+		if(i%2 == 0){
+			SDL_FillRect( gScreenSurface, NULL, SDL_MapRGB( gScreenSurface->format, 0x00, 0x00, 0x00 ) );
+		}else{
+			SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+			SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
+		}
+		SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+		SDL_Delay(150);
+	}
+
+}
+
+void introSequence(SDL_Rect stretch2windowRect){
+	SDL_Rect torchicRect;			//rectangle used for where to place the character
+	torchicRect.x = SCREEN_WIDTH;	//place at center of screen
+	torchicRect.y = 2*(SCREEN_HEIGHT/3)+10;	//place at center of screen
+	torchicRect.w = 50;			//size of portion of sprite sheet taken up by character
+	torchicRect.h = 50;			//size of portion of sprite sheet taken up by character
+
+	SDL_Rect stretchRect4;			//rectangle used for
+	stretchRect4.w = (SCREEN_WIDTH/6)*4+20;			//size of portion of sprite sheet taken up by character
+	stretchRect4.h = (SCREEN_HEIGHT/4)+10;			//size of portion of sprite sheet taken up by character
+	stretchRect4.x = SCREEN_WIDTH/6;	//place at center of screen
+	stretchRect4.y = SCREEN_HEIGHT/5+15;	//place at center of screen
+
+
+//torchic running
+for(int j=0; j<9; j++)
+	for(int i=0; i<4; i++){
+		SDL_BlitScaled(gIntroBackground, &gIntroTrees, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+			gIntroTrees.x-=2;
+			if(gIntroTrees.x<=64) gIntroTrees.x=128;
+		torchicRect.x-=15;
+		SDL_BlitScaled(gIntroSprites, &gTorchic[i], gScreenSurface, &torchicRect);//put the character image onto gScreenSurface
+		SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+		if(i==0) SDL_Delay(50);
+		SDL_Delay(150);
+	}
+//torchic falling
+for(int j=10; j>0; j-=5)
+	for(int i=4; i<6; i++){
+		SDL_BlitScaled(gIntroBackground, &gIntroTrees, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+		gIntroTrees.x-=1;
+		if(gIntroTrees.x<=64) gIntroTrees.x=128;
+		torchicRect.x-=j;
+		SDL_BlitScaled(gIntroSprites, &gTorchic[i], gScreenSurface, &torchicRect);//put the character image onto gScreenSurface
+		SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+		SDL_Delay(150);
+	}
+		SDL_Delay(550);
+//pokemon title
+for(int i=0; i<6*6; i++){
+		SDL_BlitScaled(gIntroBackground, &gIntroTrees, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+		gIntroTrees.x-=1;
+		if(gIntroTrees.x<=64) gIntroTrees.x=128;
+		SDL_BlitScaled(gIntroSprites, &gTorchic[5], gScreenSurface, &torchicRect);//put the character image onto gScreenSurface
+		torchicRect.x+=3;
+		SDL_BlitScaled(gIntroTitleSprites, &gPokeTitle[i%6], gScreenSurface, &stretchRect4);//put the background image onto gScreenSurface
+		SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+		SDL_Delay(150);
+
+}
 
 }
 

@@ -20,7 +20,8 @@ using namespace std;
 
 class Pokemon{
 	public:
-		Pokemon(int=0);
+		Pokemon(); //default constructor
+//		Pokemon(int,int,int,int,int); //non-default
 		void levelUp();	// level+1, add attack,def,reset exp
 		//virtual void attack() = 0;
 		void attack(int,Pokemon*); //takes in input for what move to use
@@ -55,7 +56,7 @@ class Pokemon{
 		string gettype();
 		string getname();
 		string getweak(); 
-		void setweak();
+		void setweak( string );
 		void setname(string);
 		void setmoveLevel(int);
 		int getmoveLevel();
@@ -84,20 +85,25 @@ class Pokemon{
 		vector <Moves> myMoves;// then we can use for example myMoves[2].attack()
 };
 
-Pokemon::Pokemon(int pokeNum){
+Pokemon::Pokemon(){
 	srand(time(NULL)); // seed rand
 	maxLevelExp = 50; //genaric maxlevelexp	
 }
+//non-default for loading a pokemon
+//Pokemon::Pokemon(int,int,int,int,int,int,int,int,int,int,int,int,string,string,string){ //check if knows 5 move
+
+//}
 
 void Pokemon::heal(){ //pokeCenter and other healing uses
 	currHealth = maxHealth; //restore health
+	KO = 0;
 }
 
 void Pokemon::levelUp() {
+	level++; // increment level by 1
 	cout << endl << "Level UP!!!" << "Now level: " << level << endl << endl;
 	maxHealth+=7; // increment max health
 	currHealth+=7; // leveling up heals by 7
-	level++; // increment level by 1
 	exp = exp - maxLevelExp; // set exp to the overflow 
 	maxLevelExp+=30; //increase max exp to next level up
 	maxAttack += rand() % 5; // add a random attack stat amount
@@ -116,8 +122,8 @@ void Pokemon::levelUp() {
 	myMoves.pop_back(); // remove move from back
 	myMoves.push_back(newmove); // add new move to the back
 */
-	if(level == 5){ //at level 5 learn new moves
-		cout << "Learned new move! Placed as move 4 and replaced move 1" << endl;
+	if(level == moveLevel){ //at level 5 learn new moves
+		cout << "Learned new move: " << myMoves[4].display() << " Replaced move: " << myMoves[0].display() << endl;
 		myMoves[0] = myMoves[1]; // first move is removed
 		myMoves[1] = myMoves[2];
 		myMoves[2] = myMoves[3];
