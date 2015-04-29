@@ -12,7 +12,7 @@ CC = g++
 LINKER_FLAGS = -lSDL2 -lSDL2_image
 
 #OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = animation pokeMap2 pokeTest
+OBJ_NAME = animation pokeMap2
 
 #This is the target that compiles our executable
 all : $(OBJ_NAME)
@@ -23,5 +23,3 @@ animation : animation.cpp Player.h
 pokeMap2 : pokeMap2.cpp
 	$(CC) pokeMap2.cpp $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $@
 
-pokeTest : main.cpp Player.h Pokemon.h Moves.h
-	$(CC) main.cpp -o pokeTest
