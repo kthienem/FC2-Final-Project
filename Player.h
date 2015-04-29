@@ -50,6 +50,8 @@ class Player {
 		int opcheckKO(int);
 		int myCurrentPoke(); //get current pokemon's number
 		int opCurrentPoke(); //get current pokemon's number for op
+		int myLevel();
+		int opLevel();
 
 
 		int getMoveNum(int);
@@ -699,5 +701,11 @@ int Player::myCurrentPoke(){
 }
 int Player::opCurrentPoke(){
 	return ((*otherPoke[op]).getnum());
+}
+int Player::myLevel(){
+	return ((*myPoke[cp]).getlevel());
+}
+int Player::opLevel(){
+	return ((*otherPoke[op]).getlevel());
 }
 #endif
