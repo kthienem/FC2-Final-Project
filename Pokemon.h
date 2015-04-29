@@ -67,6 +67,7 @@ class Pokemon{
 		void setmaxLevelExp(int);
 		int getmaxLevelExp();
 		string attackname(int);
+		int getMoveNum(int);
 	private:
 		int num; // number of Pokemon
 		int maxHealth;
@@ -340,6 +341,29 @@ void Pokemon::setMoves(int mv1, int mv2, int mv3, int mv4, int mv5) {
 	myMoves.push_back(move3);
 	myMoves.push_back(move4);
 	myMoves.push_back(move5); // potential move to learn
+}
+
+int Pokemon::getMoveNum(int move) {
+	switch (move) {
+		case 0:
+			return myMoves[0].getmovenum();
+			break;
+		
+		case 1:
+			return myMoves[1].getmovenum();
+			break;
+
+		case 2:
+			return myMoves[2].getmovenum();
+			break;
+		
+		case 3:
+			return myMoves[3].getmovenum();
+			break;
+
+		default:
+			break; 
+	}
 }
 
 #endif

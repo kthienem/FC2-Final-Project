@@ -17,13 +17,14 @@
 #include <map>
 #include <cmath>
 
+#include "battleScene.h"
 #include "Player.h"
 
 using namespace std;
 
 //screen is exactly twice the stretching size of the zoomed in map so that we can match coordinates of screen with pixels of surface
-const int SCREEN_WIDTH = 768;
-const int SCREEN_HEIGHT = 576;
+const int MAP_SCREEN_WIDTH = 768;
+const int MAP_SCREEN_HEIGHT = 576;
 
 const int WALKING_ANIMATION_FRAMES = 4;//number of frames used to create animation
 
@@ -216,8 +217,8 @@ int main()
 			int frame = 0;			//count for the current frame being used for the animation
 
 			SDL_Rect characterRect;			//rectangle used for where to place the character
-			characterRect.x = SCREEN_WIDTH/2 - 9;	//place at center of screen
-			characterRect.y = SCREEN_HEIGHT/2 + 14;	//place at center of screen
+			characterRect.x = MAP_SCREEN_WIDTH/2 - 9;	//place at center of screen
+			characterRect.y = MAP_SCREEN_HEIGHT/2 + 14;	//place at center of screen
 			characterRect.w = 50;			//size of portion of sprite sheet taken up by character
 			characterRect.h = 50;			//size of portion of sprite sheet taken up by character
 
@@ -225,8 +226,8 @@ int main()
 			SDL_Rect stretch2windowRect;			//rectangle to stretch the background image to fit to window
 			stretch2windowRect.x = 0;			//begin image at top corner of winow
 			stretch2windowRect.y = 0;
-			stretch2windowRect.w = SCREEN_WIDTH;		//make image take up the entire window
-			stretch2windowRect.h = SCREEN_HEIGHT;
+			stretch2windowRect.w = MAP_SCREEN_WIDTH;		//make image take up the entire window
+			stretch2windowRect.h = MAP_SCREEN_HEIGHT;
 
 			SDL_Rect mapZoomRect;			// rectangle that zooms in on current viewable map
 		// x,y must always be x=1+16a, y=1+16b in order to stay alligned with map cells
@@ -366,7 +367,7 @@ int main()
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkUp[frame];//set equal to proper frame of walking right sprites
 										if( canWalk==1 ) {
-											if(characterRect.y>SCREEN_HEIGHT/2+14 || isOB==1 || isPokeCenter) {
+											if(characterRect.y>MAP_SCREEN_HEIGHT/2+14 || isOB==1 || isPokeCenter) {
 												characterRect.y-=2;//move char
 												//NOTE: trainer is moved twice as many times as the screen. This is because the character image is shifted n "coordinates" on the window, while the screen is shifted n "pixels" on the background/map image
 											} else {
@@ -429,7 +430,7 @@ int main()
 											if(frame>3) frame=0;
 											gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
 											if( canWalk==1 ) {
-												if(characterRect.y<SCREEN_HEIGHT/2+14 || isOB==1 || isGym || isPokeCenter) {
+												if(characterRect.y<MAP_SCREEN_HEIGHT/2+14 || isOB==1 || isGym || isPokeCenter) {
 													characterRect.y+=2;//move char
 													//NOTE: trainer is moved twice as many times as the screen. This is because the character image is shifted n "coordinates" on the window, while the screen is shifted n "pixels" on the background/map image
 												} else {
@@ -472,7 +473,7 @@ int main()
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkDown[frame];//set equal to proper frame of walking right sprites
 										if( canWalk==1 ) {
-											if(isOB==1 || characterRect.y<SCREEN_HEIGHT/2+14 || isGym || isPokeCenter) {
+											if(isOB==1 || characterRect.y<MAP_SCREEN_HEIGHT/2+14 || isGym || isPokeCenter) {
 												characterRect.y+=2;//move char
 											} else {
 												mapZoomRect.y++;//move screen
@@ -534,7 +535,7 @@ int main()
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkLeft[frame];//set equal to proper frame of walking right sprites
 										if( canWalk==1 ) {
-											if(isOB==1 || characterRect.x>SCREEN_WIDTH/2-9 || isGym || isPokeCenter) {
+											if(isOB==1 || characterRect.x>MAP_SCREEN_WIDTH/2-9 || isGym || isPokeCenter) {
 												characterRect.x-=2;//move char
 											} else { 
 												mapZoomRect.x--;//move screen
@@ -571,7 +572,7 @@ int main()
 										if(frame>3) frame=0;
 										gCurrentClip = &gWalkRight[frame];//set equal to proper frame of walking right sprites
 										if(canWalk==1){
-											if(isOB==1 || characterRect.x<SCREEN_WIDTH/2-9 || isGym || isPokeCenter) {
+											if(isOB==1 || characterRect.x<MAP_SCREEN_WIDTH/2-9 || isGym || isPokeCenter) {
 												characterRect.x+=2;
 											} else {
 												mapZoomRect.x++;//move screen
@@ -650,6 +651,8 @@ int main()
 						if(steponWildGrass){
 							if(rand()%100 < 15){
 								battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+								battleScene battleName(&Nick, gWindow);
+								battleName.battle();
 								Nick.wild_battle();
 					//		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect);
 							}
@@ -727,7 +730,7 @@ bool init()
 		success = false;//lets main know SDL could not initialize
 	}
 	else{
-		gWindow = SDL_CreateWindow("Animation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);//create window with undefined position and previously given dimensions
+		gWindow = SDL_CreateWindow("Animation", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, MAP_SCREEN_WIDTH, MAP_SCREEN_HEIGHT, SDL_WINDOW_SHOWN);//create window with undefined position and previously given dimensions
 
 		if(gWindow == NULL){//if window points to NULL error
 			cout << "Window could not be created! SDL Error: " << SDL_GetError() << endl;
@@ -1369,13 +1372,13 @@ void talkToPillar(SDL_Rect characterRect, int *gymAnswers, int *firstPillarx ) {
 void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int isMart, int isStart, int isInside) {
 
 	SDL_Rect stretchRect4;			//rectangle used for
-	stretchRect4.w = (SCREEN_WIDTH/6)*4;			//size of portion of sprite sheet taken up by character
-	stretchRect4.h = (SCREEN_HEIGHT/4);			//size of portion of sprite sheet taken up by character
-	stretchRect4.x = SCREEN_WIDTH/6;	//place at center of screen
-	if(characterRect.y>SCREEN_WIDTH/2)
-		stretchRect4.y = SCREEN_HEIGHT/15;	//place at center of screen
+	stretchRect4.w = (MAP_SCREEN_WIDTH/6)*4;			//size of portion of sprite sheet taken up by character
+	stretchRect4.h = (MAP_SCREEN_HEIGHT/4);			//size of portion of sprite sheet taken up by character
+	stretchRect4.x = MAP_SCREEN_WIDTH/6;	//place at center of screen
+	if(characterRect.y>MAP_SCREEN_WIDTH/2)
+		stretchRect4.y = MAP_SCREEN_HEIGHT/15;	//place at center of screen
 	else
-		stretchRect4.y = 2*(SCREEN_HEIGHT/3);	//place at center of screen
+		stretchRect4.y = 2*(MAP_SCREEN_HEIGHT/3);	//place at center of screen
 		
 	if(isCave)
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_CAVE ], NULL, gScreenSurface, &stretchRect4);
@@ -1402,10 +1405,10 @@ void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int i
 
 bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect, Player *Nick_ptr) {
 	SDL_Rect stretchRect4;			//rectangle used for
-	stretchRect4.w = SCREEN_WIDTH/4;			//size of portion of sprite sheet taken up by character
-	stretchRect4.h = (SCREEN_HEIGHT/2);			//size of portion of sprite sheet taken up by character
-	stretchRect4.x = 2*(SCREEN_WIDTH/3);	//place at center of screen
-	stretchRect4.y = SCREEN_HEIGHT/15;	//place at center of screen
+	stretchRect4.w = MAP_SCREEN_WIDTH/4;			//size of portion of sprite sheet taken up by character
+	stretchRect4.h = (MAP_SCREEN_HEIGHT/2);			//size of portion of sprite sheet taken up by character
+	stretchRect4.x = 2*(MAP_SCREEN_WIDTH/3);	//place at center of screen
+	stretchRect4.y = MAP_SCREEN_HEIGHT/15;	//place at center of screen
 
 	SDL_Rect stretchRect5;			//rectangle used for
 	stretchRect5.w = stretchRect4.w-30;			//size of portion of sprite sheet taken up by character
@@ -1566,22 +1569,22 @@ int introSequence(SDL_Rect stretch2windowRect){
 	int newGame=0;
 
 	SDL_Rect torchicRect;			//rectangle used for where to place the character
-	torchicRect.x = SCREEN_WIDTH;	//place at center of screen
-	torchicRect.y = 2*(SCREEN_HEIGHT/3)+10;	//place at center of screen
+	torchicRect.x = MAP_SCREEN_WIDTH;	//place at center of screen
+	torchicRect.y = 2*(MAP_SCREEN_HEIGHT/3)+10;	//place at center of screen
 	torchicRect.w = 50;			//size of portion of sprite sheet taken up by character
 	torchicRect.h = 50;			//size of portion of sprite sheet taken up by character
 
 	SDL_Rect stretchRect4;			//rectangle used for
-	stretchRect4.w = (SCREEN_WIDTH/6)*4+20;			//size of portion of sprite sheet taken up by character
-	stretchRect4.h = (SCREEN_HEIGHT/4)+10;			//size of portion of sprite sheet taken up by character
-	stretchRect4.x = SCREEN_WIDTH/6;	//place at center of screen
-	stretchRect4.y = SCREEN_HEIGHT/5+15;	//place at center of screen
+	stretchRect4.w = (MAP_SCREEN_WIDTH/6)*4+20;			//size of portion of sprite sheet taken up by character
+	stretchRect4.h = (MAP_SCREEN_HEIGHT/4)+10;			//size of portion of sprite sheet taken up by character
+	stretchRect4.x = MAP_SCREEN_WIDTH/6;	//place at center of screen
+	stretchRect4.y = MAP_SCREEN_HEIGHT/5+15;	//place at center of screen
 
 	SDL_Rect stretchRect5;			//rectangle used for
-	stretchRect5.w = (SCREEN_WIDTH/2);			//size of portion of sprite sheet taken up by character
-	stretchRect5.h = (SCREEN_HEIGHT/5);			//size of portion of sprite sheet taken up by character
-	stretchRect5.x = SCREEN_WIDTH/4;	//place at center of screen
-	stretchRect5.y = 4*(SCREEN_HEIGHT/5)-3;	//place at center of screen
+	stretchRect5.w = (MAP_SCREEN_WIDTH/2);			//size of portion of sprite sheet taken up by character
+	stretchRect5.h = (MAP_SCREEN_HEIGHT/5);			//size of portion of sprite sheet taken up by character
+	stretchRect5.x = MAP_SCREEN_WIDTH/4;	//place at center of screen
+	stretchRect5.y = 4*(MAP_SCREEN_HEIGHT/5)-3;	//place at center of screen
 
 	SDL_Rect stretchRect6;			//rectangle used for
 	stretchRect6.w = (stretchRect5.w/3)-4;			//size of portion of sprite sheet taken up by character

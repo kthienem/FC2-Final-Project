@@ -11,6 +11,7 @@
 #include <ctime>
 #include <string>
 #include <unistd.h>
+#include "Player.h"
 
 using namespace std;
 
@@ -37,7 +38,7 @@ enum Names{
 	NAMES
 };
 
-enum Moves{
+enum PokeMoves{
 	TACKLE,
 	SCRATCH,
 	EMBER,
@@ -54,7 +55,7 @@ enum Moves{
 	QUICKATTACK,
 	FLAMETHROWER,
 	VINEWHIP,
-	THUNDERBOLT
+	THUNDERBOLT,
 	PSYCHIC,
 	PSYBEAM,
 	LOWKICK,
@@ -79,7 +80,7 @@ enum Health{
 
 class battleScene{
 	public:
-		battleScene();
+		battleScene(Player*, SDL_Window*);
 		bool init();//initialize display window
 		bool loadMedia();//load images to be used
 		void close();//free memory and delete window
@@ -134,9 +135,9 @@ class battleScene{
 
 };
 
-battleScene::battleScene()
+battleScene::battleScene(Player* myPlayer, SDL_Window* myWindow)
 {
-	gWindow = NULL;
+	gWindow = myWindow;
 	gScreenSurface = NULL;
 	gBackground = NULL;
 }
@@ -151,7 +152,7 @@ bool battleScene::init()
 		success = false;
 	}
 	else{
-		gWindow = SDL_CreateWindow("Battle", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);//create window with undefined position and previously given dimensions
+	//	gWindow = SDL_CreateWindow("Battle", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);//create window with undefined position and previously given dimensions
 
 		if(gWindow == NULL){
 			cout << "Window could not be created! SDL Error: " << SDL_GetError() << endl;
@@ -1241,7 +1242,6 @@ int battleScene::menuOption(string state)
 	else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
-		close();
 		return 3;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[4].x && gCurrentArrowPos.y == gArrowPosition[4].y){

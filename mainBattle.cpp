@@ -5,7 +5,7 @@
 
 int main()
 {
-	battleScene scene1;
+	battleScene scene1();
 
 	scene1.battle();
 }
