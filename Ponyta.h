@@ -1,7 +1,7 @@
 // Specific Pokemon class
 
-#ifndef CHARMANDER_H
-#define CHARMANDER_H
+#ifndef PONYTA_H
+#define PONYTA_H
 #include <string>
 #include <cstdlib> // for randomness
 #include "Pokemon.h" // include base class
@@ -9,10 +9,10 @@
 
 using namespace std;
 
-class Charmander: public Pokemon {
+class Ponyta: public Pokemon {
 	public:
-		Charmander(); // default constructor
-		~Charmander(); // non-default constructor
+		Ponyta(); // default constructor
+		~Ponyta(); // non-default constructor
 
 	private:
 		// Include sprites here
@@ -22,27 +22,27 @@ class Charmander: public Pokemon {
 
 #endif
 
-Charmander::Charmander() { // default constructor
+Ponyta::Ponyta() { // default constructor
 	
 	// SET STATS
 	
-	Pokemon::setmaxHealth(27); // set max health
-	Pokemon::setcurrHealth(27); // set curr to max Health
+	Pokemon::setmaxHealth(25); // set max health
+	Pokemon::setcurrHealth(25); // set curr to max Health
 	Pokemon::setlevel(1);
 	Pokemon::setexp(0);
-	Pokemon::setmaxAttack((rand() % 7) + 3); // random attack stat
+	Pokemon::setmaxAttack((rand() % 7) + 2); // random attack stat
 	Pokemon::setcurrAttack(Pokemon::getmaxAttack()); // set curr to max
 	Pokemon::setmaxDef(rand() % 7); // random def stat
 	Pokemon::setcurrDef(Pokemon::getmaxDef()); // set curr to random
-	Pokemon::setmaxSpeed(rand() % 7); // random speed stat
+	Pokemon::setmaxSpeed((rand() % 7) + 1); // random speed stat
 	Pokemon::setcurrSpeed(Pokemon::getmaxSpeed()); // set curr to max
 	Pokemon::setKO(0); // not KO'd
-	Pokemon::setmoveLevel(9); // learns new move at lv 9
+	Pokemon::setmoveLevel(5); // learns new move at lv 9
 	Pokemon::settype("fire");
-	Pokemon::setname("Charmander");
+	Pokemon::setname("Ponyta");
 	Pokemon::setweak("water");
 
 	// SET MOVES
 
-	Pokemon::setMoves(1, 2, 8, 14, 26); // scratch,ember,headbutt,flamethrower,fireblast
+	Pokemon::setMoves(0, 2, 8, 13, 29); // tackle,ember,headbutt,quickattack,swift
 }

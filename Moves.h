@@ -31,7 +31,20 @@ enum moveList{
 	MOVE_QUICKATTACK, //13
 	MOVE_FLAMETHROWER,//14
 	MOVE_VINEWHIP,    //15
-	MOVE_THUNDERBOLT  //16
+	MOVE_THUNDERBOLT, //16
+	MOVE_CONFUSION,   //17
+	MOVE_PSYCHIC,     //18
+	MOVE_PSYBEAM,     //19
+	MOVE_LOWKICK,     //20
+	MOVE_SLASH,       //21
+	MOVE_PECK,        //22
+	MOVE_SEISMICTOSS, //23
+	MOVE_THUNDER,     //24
+	MOVE_HYDROPUMP,   //25
+	MOVE_FIREBLAST,   //26
+	MOVE_SOLARBEAM,   //27
+	MOVE_BODYSLAM,    //28
+	MOVE_SWIFT        //29
 };
 
 class Moves{
@@ -109,7 +122,7 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			moveName.assign("bite");
 			base = 18;
 			modify = 2;
-			type.assign("dark");
+			type.assign("normal");
 			break;
 		case MOVE_BUBBLEBEAM:
 			moveName.assign("bubblebeam");
@@ -148,10 +161,76 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			type.assign("grass");
 			break;
 		case MOVE_THUNDERBOLT:
-			moveName.assign("Thunderbolt");
+			moveName.assign("thunderbolt");
 			base = 29;
 			modify = 1;
 			type.assign("electric");
+		case MOVE_CONFUSION:
+			moveName.assign("thunderbolt");
+			base = 15;
+			modify = 1;
+			type.assign("psychic");
+		case MOVE_PSYCHIC:
+			moveName.assign("Psychic");
+			base = 20;
+			modify = 1.3;
+			type.assign("psychic");
+		case MOVE_PSYBEAM:
+			moveName.assign("psybeam");
+			base = 15;
+			modify = 2;
+			type.assign("psychic");
+		case MOVE_LOWKICK:
+			moveName.assign("low kick");
+			base = 18;
+			modify = 1.5;
+			type.assign("fighting");
+		case MOVE_SLASH:
+			moveName.assign("slash");
+			base = 18;
+			modify = 1.3;
+			type.assign("normal");
+		case MOVE_PECK:
+			moveName.assign("peck");
+			base = 15;
+			modify = 1.6;
+			type.assign("flying");
+		case MOVE_SEISMICTOSS:
+			moveName.assign("seismic toss");
+			base = 22;
+			modify = 1.2;
+			type.assign("fighting");
+		case MOVE_THUNDER:
+			moveName.assign("thunder");
+			base = 25;
+			modify = 1;
+			type.assign("electric");
+		case MOVE_HYDROPUMP:
+			moveName.assign("hydropump");
+			base = 25;
+			modify = 1;
+			type.assign("water");
+		case MOVE_FIREBLAST:
+			moveName.assign("firsblast");
+			base = 25;
+			modify = 1;
+			type.assign("fire");
+		case MOVE_SOLARBEAM:
+			moveName.assign("solar beam");
+			base = 25;
+			modify = 1;
+			type.assign("grass");
+		case MOVE_BODYSLAM:
+			moveName.assign("body slam");
+			base = 20;
+			modify = 1.7;
+			type.assign("normal");
+		case MOVE_SWIFT:
+			moveName.assign("swift");
+			base = 16;
+			modify = 1.2;
+			type.assign("normal");
+
 		default:
 			cout << "default";
 			noMove();
