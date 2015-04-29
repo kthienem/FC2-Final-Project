@@ -144,7 +144,7 @@ void Player::add_pokemon(int PokeNum, int person, int levelDesired){ //person 1 
 			newPoke_ptr = new Abra;
 			break;
 	};
-	for(int i = 0; i < levelDesired; i++){
+	for(int i = 1; i < levelDesired; i++){
 		(*newPoke_ptr).levelUp();
 	}
 	//myPoke[createPokemon++] = new Pokemon(PokeNum);

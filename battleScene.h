@@ -1172,6 +1172,12 @@ int battleScene::battle(int wildLevel)
 												inMenu = false;
 												inMoves = false;
 												inPokemon = true;
+												if((*myTrainer).switchPoke(0) == -1){
+													quit = 1;	
+													(*myTrainer).pokeCenter();
+													return_value = 1;
+												}
+												gCurrentArrowPos = gArrowPosition[0];
 											}
 										}
 									}
@@ -1188,6 +1194,11 @@ int battleScene::battle(int wildLevel)
 											inMenu = false;
 											inMoves = false;
 											inPokemon = true; 
+											if((*myTrainer).switchPoke(0) == -1){
+												quit = 1;	
+												(*myTrainer).pokeCenter();
+												return_value = 1;
+											}
 										}
 									}
 									break;
@@ -1225,9 +1236,13 @@ int battleScene::battle(int wildLevel)
 										inMenu = false;
 										inMoves = false;
 										inPokemon = true; 
-									}	
-									inMenu = true;
-									inPokemon = false;
+									}
+									else{
+										inMoves = false;	
+										inMenu = true;
+										inPokemon = false;
+									}
+									gCurrentArrowPos = gArrowPosition[0];
 									break;
 								}
 								default:
