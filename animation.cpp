@@ -161,23 +161,23 @@ bool loadMedia();	//load the images to be used
 void close();		//free memory and delete the window
 SDL_Surface* loadSurface(string path);//optimize the loaded images
 
-void putpixel( int, int, int );			// inputs: x,y,color
-uint32_t getpixel( int, int, SDL_Surface*);	// output: color; inputs: x,y,surface
-double cellComp( int,int,map<int,int>,SDL_Surface* );// output: %match; inputs: x1,y1,cellColormap,surface
-void writeColorCodes(int,int,SDL_Surface*);
-vector<map<int,int> > readColorCodes();
+void putpixel( int, int, int );				// inputs: x,y,color
+uint32_t getpixel( int, int, SDL_Surface*);		// output: color; inputs: x,y,surface
+double cellComp( int,int,map<int,int>,SDL_Surface* );	// compare a known cell will the next "step"
+void writeColorCodes(int,int,SDL_Surface*);		// writes the pixel-color frequencies for a given cell, used to write cellPixelColors.txt
+vector<map<int,int> > readColorCodes();			// read in cell color frequencies from cellPixelColors.txt
 
 void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect, int, int);
 void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect,Player*);
-SDL_Rect determineWarpLoc(SDL_Rect);
-void talkToPillar(SDL_Rect,int *,int *);
-void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int, int, int, int);
-bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect, Player*);
-void saveGame(SDL_Rect, SDL_Rect);
-void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);
-void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);
-int introSequence(SDL_Rect,SDL_Rect,SDL_Rect);
-int goFish(SDL_Rect,SDL_Rect,SDL_Rect,char);
+SDL_Rect determineWarpLoc(SDL_Rect);			// given your location in the gym, this returns your new(warped) location
+void talkToPillar(SDL_Rect,int *,int *);		// if you talk to both of the pillars, the keys to the warp pads are revealed
+void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int, int, int, int);	// displays one of various messages depending on the integer inputs
+bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect, Player*);	// load up pause menu, includes interaction within menu
+void saveGame(SDL_Rect, SDL_Rect);			// write stats of Player(and his Pokemon) and Player's map location
+void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);	// load stats of Player and previous map location
+void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);	// flashes a black screen to signal user is entering battle
+int introSequence(SDL_Rect,SDL_Rect,SDL_Rect);		// display introductory sequence with load/save menu(you can trip torchic if you want!)
+int goFish(SDL_Rect,SDL_Rect,SDL_Rect,char);		// user will pull out fishing pole and attempt to catch a water pokemon
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
 SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the images to be displayed
@@ -229,10 +229,6 @@ int main()
 			characterRect.y = 14;	//place at center of screen
 			characterRect.w = 50;			//size of portion of sprite sheet taken up by character
 			characterRect.h = 50;			//size of portion of sprite sheet taken up by character
-		//	characterRect.x = MAP_SCREEN_WIDTH/2 - 9;	//place at center of screen
-		//	characterRect.y = MAP_SCREEN_HEIGHT/2 + 14;	//place at center of screen
-		//	characterRect.w = 50;			//size of portion of sprite sheet taken up by character
-		//	characterRect.h = 50;			//size of portion of sprite sheet taken up by character
 
 
 			SDL_Rect stretch2windowRect;			//rectangle to stretch the background image to fit to window
@@ -595,7 +591,6 @@ int main()
 								break;
 
 							case SDLK_SPACE://space bar
-				//				writeColorCodes(trainerCellx+cellShift,trainerCelly, gScreenSurface);
 						// Check for cell cases
 							// PokeCenter healer
 								if( gCurrentClip==&gWalkUp[0] ){
@@ -1461,7 +1456,7 @@ double cellComp( int x1, int y1, map<int,int> cellCode, SDL_Surface *surface ){
 void writeColorCodes(int x, int y, SDL_Surface *surface){
 
 	ofstream outFile;
-	outFile.open( "trainerBrunette2.txt", ios::out );
+	outFile.open( "foo.txt", ios::out );
 	map<int,int> colors;
 
 	for( int i=0; i<32; i++ ) {	
