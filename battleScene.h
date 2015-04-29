@@ -39,36 +39,36 @@ enum Names{
 };
 
 enum PokeMoves{
-	TACKLE,
-	SCRATCH,
-	EMBER,
-	WATERGUN,
-	CUT,
-	SHOCK,
-	KARATECHOP,
-	GUST,
-	HEADBUTT,
-	BITE,
-	BUBBLEBEAM,
-	RAZORLEAF,
-	WINGATTACK,
-	QUICKATTACK,
-	FLAMETHROWER,
-	VINEWHIP,
-	THUNDERBOLT,
-	CONFUSION,
-	PSYCHIC,
-	PSYBEAM,
-	LOWKICK,
-	SLASH,
-	PECK,
-	SEISMICTOSS,
-	THUNDER,
-	HYDROPUMP,
-	FIREBLAST,
-	SOLARBEAM,
-	BODYSLAM,
-	SWIFT,
+	TACKLE,			//0
+	SCRATCH,		//1
+	EMBER,			//2
+	WATERGUN,		//3
+	CUT,				//4
+	SHOCK,			//5
+	KARATECHOP,	//6
+	GUST,				//7
+	HEADBUTT,		//8
+	BITE,				//9
+	BUBBLEBEAM,	//10
+	RAZORLEAF,	//11
+	WINGATTACK,	//12
+	QUICKATTACK,//13
+	FLAMETHROWER,//14
+	VINEWHIP,		//15
+	THUNDERBOLT,//16
+	CONFUSION,	//17
+	PSYCHIC,		//18
+	PSYBEAM,		//19
+	LOWKICK,		//20
+	SLASH,			//21
+	PECK,				//22
+	SEISMICTOSS,//23
+	THUNDER,		//24
+	HYDROPUMP,	//25
+	FIREBLAST,	//26
+	SOLARBEAM,	//27
+	BODYSLAM,		//28
+	SWIFT,			//29
 	MOVES
 };
 
@@ -135,6 +135,8 @@ class battleScene{
 		SDL_Rect gSelectPokemon[NAMES];
 		SDL_Rect gOpponentPokemon;
 		SDL_Rect gPlayerPokemon;
+		SDL_Rect gCurrentPlayerColor;
+		SDL_Rect gCurrentOpponentColor;
 
 };
 
@@ -959,6 +961,8 @@ void battleScene::battle()
 	bool inMoves = false;
 	bool inPokemon = false;
 	int selected = 0;
+	gCurrentPlayerColor = gHealthBar[GREEN];
+	gCurrentOpponentColor = gHealthBar[GREEN];
 
 	if(!init()){//initializes window, if it fails display error message
     cout << "Failed to initialize!" << endl;
@@ -1105,10 +1109,10 @@ void battleScene::battle()
 					}
 					//Blit enemy level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
-					SDL_BlitScaled(gMenuSheet, &gHealthBar[GREEN], gScreenSurface, &gOpponentHealth);//blit opponents health to screem
+					SDL_BlitScaled(gMenuSheet, &gCurrentOpponentColor, gScreenSurface, &gOpponentHealth);//blit opponents health to screem
 					//Blit player level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gPlayerLevel, gScreenSurface, &gPlayerLevelWindow);//blit level and health of player's pokemon
-					SDL_BlitScaled(gMenuSheet, &gHealthBar[GREEN], gScreenSurface, &gPlayerHealth);//blit players healt to screen
+					SDL_BlitScaled(gMenuSheet, &gCurrentPlayerColor, gScreenSurface, &gPlayerHealth);//blit players healt to screen
 				}
 				else if(inPokemon){
 					SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
@@ -1123,8 +1127,25 @@ void battleScene::battle()
 					}
 				}
 				gPlayerHealth.w = 162*(*myTrainer).getmyHealth()/(*myTrainer).getmyMaxHealth();
+				if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/2){
+					gCurrentPlayerColor = gHealthBar[GREEN];
+				}
+				else if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/4){
+					gCurrentPlayerColor = gHealthBar[YELLOW];
+				}
+				else{
+					gCurrentPlayerColor = gHealthBar[RED];
+				}
 				gOpponentHealth.w = 144*(*myTrainer).getopHealth()/(*myTrainer).getopMaxHealth();
-//cout << (*myTrainer).getmyHealth() << endl;
+				if((*myTrainer).getopHealth() > (*myTrainer).getopMaxHealth()/2){
+					gCurrentOpponentColor = gHealthBar[GREEN];
+				}
+				else if((*myTrainer).getopHealth() > (*myTrainer).getopMaxHealth()/4){
+					gCurrentOpponentColor = gHealthBar[YELLOW];
+				}
+				else{
+					gCurrentOpponentColor = gHealthBar[RED];
+				}
 				SDL_UpdateWindowSurface(gWindow);//update window
 			}
     }
