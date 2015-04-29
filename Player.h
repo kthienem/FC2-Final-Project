@@ -31,7 +31,7 @@ class Player {
 		void Battle(); // initiate battle sequence
 		void Menu(); // initiate menu interface
 		void Roam(); // initiate field interface (free roam)
-		void add_pokemon(int, int); //add new pokemon, first int is pokemon number and second is player
+		void add_pokemon(int, int, int); //add new pokemon, first int is pokemon number and second is player
 		void add_wild(Pokemon&); //
 		int checkValidPoke(int);
 		int noValid();
@@ -57,11 +57,11 @@ class Player {
 		int whatPokeinParty(int);
 		int getMoveNum(int);
 		int getNumPoke();
-		void wild_battle();
-		void fish_battle();
+		void wild_battle(int);
+		void fish_battle(int);
 		void pokeCenter();
-		void player_battle(int);
-		void create_trainer(int);
+		void player_battle(int,int);
+		void create_trainer(int,int);
 		void save_pokemon_stats();
 		void load_pokemon_stats();
 		void push_poke(string); //myPoke.push_back(new Pokemon);
@@ -78,7 +78,7 @@ class Player {
 };
 Player::Player(int newGame){
 	if(newGame){
-		add_pokemon(7,1); // add a new pikachu to player pokemon
+		add_pokemon(7,1,0); // add a new pikachu to player pokemon
 		cp = 0;
 	}
 	else{
@@ -91,7 +91,7 @@ void Player::Battle(){
 //	player_battle();	
 }
 //function for adding a new pokemon into players array
-void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or npc
+void Player::add_pokemon(int PokeNum, int person, int levelDesired){ //person 1 or 0 for player or npc
 	Pokemon *newPoke_ptr;
 	switch(PokeNum) {
 		case 1:
@@ -143,6 +143,9 @@ void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or
 			newPoke_ptr = new Abra;
 			break;
 	};
+	for(int i = 0; i < levelDesired; i++){
+		(*newPoke_ptr).levelUp();
+	}
 	//myPoke[createPokemon++] = new Pokemon(PokeNum);
 	if(person == 1){ //limit to 6 here and need to in the catch time too
 		myPoke.push_back(newPoke_ptr);
@@ -198,9 +201,9 @@ int Player::noValid_other(){
 	else
 		return 1; //no valid pokemon
 }
-void Player::wild_battle(){	
+void Player::wild_battle(int level_enc){	
 	otherPoke.clear();
-	add_pokemon((rand()%16)+1,0); // comp rand
+	add_pokemon((rand()%16)+1,0,level_enc); // comp rand
 	op = 0; //opponent poke
 	cout << "Wild Battle!" << endl;
 //	int choice;
@@ -321,9 +324,9 @@ void Player::wild_battle(){
 		}
 	}*/
 }
-void Player::fish_battle(){	
+void Player::fish_battle(int level_enc){	
 	otherPoke.clear();
-	add_pokemon(rand_between(9,10),0); // comp rand
+	add_pokemon(rand_between(9,10),0,level_enc); // comp rand
 	op = 0; //opponent poke
 /*	int	battleOn = 1;
 	int userMove;
@@ -403,9 +406,9 @@ void Player::fish_battle(){
 		}
 	}*/
 }
-void Player::player_battle(int pick){
+void Player::player_battle(int pick, int level_enc){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
-	create_trainer(pick);
+	create_trainer(pick,level_enc);
 	op = 0;
 /*
 	int op = 0; //opponent poke
@@ -488,41 +491,41 @@ void Player::pokeCenter(){
 	}
 }
 
-void Player::create_trainer(int pick){
+void Player::create_trainer(int pick, int level_enc){
 	otherPoke.clear();	
 	switch(pick){
 		case 1: //chick fire and norm
-			add_pokemon(rand_between(11,12),0); //fire
-			add_pokemon(rand_between(1,2),0); //norm
+			add_pokemon(rand_between(11,12),0,level_enc); //fire
+			add_pokemon(rand_between(1,2),0,level_enc); //norm
 			break;
 		case 2: //fisherman water and norm
-			add_pokemon(rand_between(9,10),0);
-			add_pokemon(rand_between(1,2),0);
+			add_pokemon(rand_between(9,10),0,level_enc);
+			add_pokemon(rand_between(1,2),0,level_enc);
 			break;
 		case 3: //ranger grass and fly
-			add_pokemon(rand_between(13,14),0);
-			add_pokemon(rand_between(3,4),0);
+			add_pokemon(rand_between(13,14),0,level_enc);
+			add_pokemon(rand_between(3,4),0,level_enc);
 			break;
 		case 4: //safari grass and water
-			add_pokemon(rand_between(13,14),0);
-			add_pokemon(rand_between(9,10),0);
-			add_pokemon(rand_between(13,14),0);
+			add_pokemon(rand_between(13,14),0,level_enc);
+			add_pokemon(rand_between(9,10),0,level_enc);
+			add_pokemon(rand_between(13,14),0,level_enc);
 			break;	
 		case 5: //yellow electric fight
-			add_pokemon(rand_between(7,8),0);
-			add_pokemon(rand_between(5,6),0);
-			add_pokemon(rand_between(5,6),0);
-			add_pokemon(rand_between(7,8),0);
+			add_pokemon(rand_between(7,8),0,level_enc);
+			add_pokemon(rand_between(5,6),0,level_enc+1);
+			add_pokemon(rand_between(5,6),0,level_enc);
+			add_pokemon(rand_between(7,8),0,level_enc);
 			break;
 		case 6: //gym leader psychic
-			add_pokemon(rand_between(15,16),0);
-			add_pokemon(rand_between(1,16),0);
-			add_pokemon(rand_between(15,16),0);
-			add_pokemon(rand_between(1,16),0);
-			add_pokemon(rand_between(15,16),0);
+			add_pokemon(rand_between(15,16),0,8);
+			add_pokemon(rand_between(1,16),0,10);
+			add_pokemon(rand_between(15,16),0,10);
+			add_pokemon(rand_between(1,16),0,9);
+			add_pokemon(rand_between(15,16),0,10);
 		default:
-			add_pokemon(rand_between(1,16),0);
-			add_pokemon(rand_between(1,16),0);
+			add_pokemon(rand_between(1,16),0,5);
+			add_pokemon(rand_between(1,16),0,5);
 			break;
 	}
 }
@@ -563,7 +566,7 @@ void Player::load_pokemon_stats(){
 	inFile >> cp;
 	for(int i = 0; i < numPoke; i++){
 		inFile >> inInt;
-		add_pokemon(inInt,1); //adds certain pokemon in then loads the stats so the moves are saved!
+		add_pokemon(inInt,1,0); //adds certain pokemon in then loads the stats so the moves are saved!
 		inFile >> inInt;
 		(*myPoke[i]).setmaxHealth(inInt);
 		inFile >> inInt;

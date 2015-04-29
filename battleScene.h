@@ -137,9 +137,12 @@ class battleScene{
 		SDL_Rect gSelectPokemon[NAMES];//images for small image of pokemon when viewing user's pokemon
 		SDL_Rect gCurrentPlayerColor;//current color of health bar for player
 		SDL_Rect gCurrentOpponentColor;//current color of health bar for opponent
+		SDL_Rect gOpponentName;//name of opponents current pokemon
 		SDL_Rect gOpponentPokemon;//current image for opponent pokemon
+		SDL_Rect gPlayerName;//name of players current pokemon
 		SDL_Rect gPlayerPokemon;//current image for player pokemon
 		SDL_Rect gPokemonSelectImage[6];//locations on window for selecting pokemon
+		SDL_Rect gPokemonSelectName[6];//locations on window for selecting pokemon names
 
 };
 
@@ -216,6 +219,9 @@ bool battleScene::loadMedia()
 
 	gNames_Moves = loadSurface("Names_Moves.png");//loads image with list of pokemon names and moves
 	if(gNames_Moves == NULL) success = false;
+	else{
+		SDL_SetColorKey(gNames_Moves, SDL_TRUE, SDL_MapRGB(gNames_Moves->format, 255, 255, 255));
+	}
 
 	gMenuBack.x = 297;
 	gMenuBack.y = 56;
@@ -920,10 +926,80 @@ bool battleScene::loadMedia()
 	gOpponentPokemon.w = 125;
 	gOpponentPokemon.h = 125;
 
+	gOpponentName.x = 80;
+	gOpponentName.y = 50;
+	gOpponentName.w = 150;
+	gOpponentName.h = 30;
+
 	gPlayerPokemon.x = 100;
 	gPlayerPokemon.y = 254;
 	gPlayerPokemon.w = 150;
 	gPlayerPokemon.h = 150;
+
+	gPlayerName.x = 460;
+	gPlayerName.y = 290;
+	gPlayerName.w = 150;
+	gPlayerName.h = 30;
+
+	gPokemonSelectName[0].x = 250;
+	gPokemonSelectName[0].y = 40;
+	gPokemonSelectName[0].w = 150;
+	gPokemonSelectName[0].h = 30;
+
+	gPokemonSelectName[1].x = 250;
+	gPokemonSelectName[1].y = 125;
+	gPokemonSelectName[1].w = 150;
+	gPokemonSelectName[1].h = 30;
+
+	gPokemonSelectName[2].x = 250;
+	gPokemonSelectName[2].y = 210;
+	gPokemonSelectName[2].w = 150;
+	gPokemonSelectName[2].h = 30;
+
+	gPokemonSelectName[3].x = 250;
+	gPokemonSelectName[3].y = 295;
+	gPokemonSelectName[3].w = 150;
+	gPokemonSelectName[3].h = 30;
+
+	gPokemonSelectName[4].x = 250;
+	gPokemonSelectName[4].y = 380;
+	gPokemonSelectName[4].w = 150;
+	gPokemonSelectName[4].h = 30;
+
+	gPokemonSelectName[5].x = 250;
+	gPokemonSelectName[5].y = 465;
+	gPokemonSelectName[5].w = 150;
+	gPokemonSelectName[5].h = 30;
+
+	gPokemonSelectImage[0].x = 170;
+	gPokemonSelectImage[0].y = 42;
+	gPokemonSelectImage[0].w = 50;
+	gPokemonSelectImage[0].h = 50;
+
+	gPokemonSelectImage[1].x = 170;
+	gPokemonSelectImage[1].y = 127;
+	gPokemonSelectImage[1].w = 50;
+	gPokemonSelectImage[1].h = 50;
+
+	gPokemonSelectImage[2].x = 170;
+	gPokemonSelectImage[2].y = 212;
+	gPokemonSelectImage[2].w = 50;
+	gPokemonSelectImage[2].h = 50;
+
+	gPokemonSelectImage[3].x = 170;
+	gPokemonSelectImage[3].y = 297;
+	gPokemonSelectImage[3].w = 50;
+	gPokemonSelectImage[3].h = 50;
+
+	gPokemonSelectImage[4].x = 170;
+	gPokemonSelectImage[4].y = 382;
+	gPokemonSelectImage[4].w = 50;
+	gPokemonSelectImage[4].h = 50;
+
+	gPokemonSelectImage[5].x = 170;
+	gPokemonSelectImage[5].y = 467;
+	gPokemonSelectImage[5].w = 50;
+	gPokemonSelectImage[5].h = 50;
 
 	return success;
 }
@@ -1083,7 +1159,7 @@ void battleScene::battle()
 								}
 								case SDLK_DOWN:
 								{
-									if(selected < 5) selected++;
+									if(selected < (*myTrainer).getNumPoke()-1) selected++;
 									break;
 								}
 								case SDLK_SPACE:
@@ -1123,10 +1199,12 @@ void battleScene::battle()
 					//Blit enemy level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
 					SDL_BlitScaled(gBattleSprites, &gOpponentBattlePokemon[(*myTrainer).opCurrentPoke()], gScreenSurface, &gOpponentPokemon);//blit image of opponents pokemon to screen
+					SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).opCurrentPoke()], gScreenSurface, &gOpponentName);
 					SDL_BlitScaled(gMenuSheet, &gCurrentOpponentColor, gScreenSurface, &gOpponentHealth);//blit opponents health to screem
 					//Blit player level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gPlayerLevel, gScreenSurface, &gPlayerLevelWindow);//blit level and health of player's pokemon
 					SDL_BlitScaled(gBattleSprites, &gPlayerBattlePokemon[(*myTrainer).myCurrentPoke()], gScreenSurface, &gPlayerPokemon);//blit image of opponents pokemon to screen
+					SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).myCurrentPoke()], gScreenSurface, &gPlayerName);
 					SDL_BlitScaled(gMenuSheet, &gCurrentPlayerColor, gScreenSurface, &gPlayerHealth);//blit players healt to screen
 				}
 				else if(inPokemon){
@@ -1302,13 +1380,15 @@ int battleScene::menuOption(string state)
 void battleScene::pokemonMenu(int selected)
 {
 	SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
-	for(int i = 0; i < 6; i++){
+	for(int i = 0; i < (*myTrainer).getNumPoke(); i++){
 		if(i == selected){
 			SDL_BlitScaled(gPokemonMenu, &gPokemonListSelect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
 		}
 		else{
 			SDL_BlitScaled(gPokemonMenu, &gPokemonListUnselect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
 		}
+		SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).whatPokeinParty(i)], gScreenSurface, &gPokemonSelectName[i]);
+		SDL_BlitScaled(gBattleSprites, &gSelectPokemon[(*myTrainer).whatPokeinParty(i)], gScreenSurface, &gPokemonSelectImage[i]);
 	}
 
 }

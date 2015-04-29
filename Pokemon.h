@@ -120,11 +120,11 @@ void Pokemon::levelUp() {
 	currHealth+=7; // leveling up heals by 7
 	exp = exp - maxLevelExp; // set exp to the overflow 
 	maxLevelExp+=30; //increase max exp to next level up
-	maxAttack += rand() % 5; // add a random attack stat amount
+	maxAttack += (rand() % 4) + 1; // add a random attack stat amount
 	// Don't increment current attack?
-	maxDef += rand() % 5; // increment defense by a random stat amount
+	maxDef += (rand() % 4) + 1; // increment defense by a random stat amount
 	// Don't increment current def?
-	maxSpeed += rand() % 5; // increment speed
+	maxSpeed += (rand() % 4) + 1; // increment speed
 	// Don't increment current Speed?
 	// KO does not change
 	
