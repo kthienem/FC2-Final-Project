@@ -35,6 +35,7 @@ class Player {
 		int checkValidPoke(int);
 		int noValid();
 		int noValid_other();
+		int getNumPoke();
 		void wild_battle();
 		void fish_battle();
 		void pokeCenter();
@@ -531,5 +532,8 @@ void Player::load_pokemon_stats(){
 }
 int Player::rand_between(int a, int b){
 	return((rand() % (b - a + 1)) + 1);
+}
+int Player::getNumPoke(){
+	return myPoke.size();
 }
 #endif
