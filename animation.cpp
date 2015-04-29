@@ -651,9 +651,8 @@ int main()
 						if(steponWildGrass){
 							if(rand()%100 < 15){
 								battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
-								battleScene battleName(&Nick, gWindow);
+								battleScene battleName(&Nick, gWindow,0);
 								battleName.battle();
-								Nick.wild_battle();
 					//		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect);
 							}
 						}

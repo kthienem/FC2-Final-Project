@@ -38,8 +38,8 @@ class Player {
 		int whatToDo();
 		int switchPoke(int);
 		int run();
-		int fight_comp(int, int);
-		int fight(int, int, int);
+		int fight_comp();
+		int fight(int);
 		int catchPoke(int, int);
 
 
@@ -59,6 +59,7 @@ class Player {
 		vector <Pokemon*> myPoke; //array for pointers
 		vector <Pokemon*> otherPoke; //array for pointers
 		int cp; //current pokemon
+		int op;
 		//Pokemon *myPoke[6]; // array of pointers to pokemon of player's pokemon
 		////Pokemon *otherPoke[6];
 		////Pokemon Pika(1);
@@ -189,19 +190,19 @@ int Player::noValid_other(){
 void Player::wild_battle(){	
 	otherPoke.clear();
 	add_pokemon((rand()%16)+1,0); // comp rand
-	int op = 0; //opponent poke
+	op = 0; //opponent poke
 	cout << "Wild Battle!" << endl;
-	int choice;
-	int KOed_poke, KOed_yourpoke;	
-	choice = whatToDo();
-	int newPoke = 0;
-	int move = 0;	
-	switch(choice){
+//	int choice;
+//	int KOed_poke, KOed_yourpoke;	
+//	choice = whatToDo();
+//	int newPoke = 0;
+//	int move = 0;	
+	/*switch(choice){
 		case 1: //fight can check speed to decide who first
-			if(fight(cp,op,move)){
+			if(fight(move)){
 				return; //end encounter killed wild poke
 			}
-			if(fight_comp(cp,op)){ //computer turn
+			if(fight_comp()){ //computer turn
 				cp = switchPoke(newPoke);
 				if(cp == -1){
 					return; //exit battle no more useable pokemon
@@ -233,7 +234,7 @@ void Player::wild_battle(){
 			}
 			break;
 
-	}	
+	}*/	
 
 	/*while(battleOn){
 		if((*myPoke[cp]).getKO()){ //make sure current poke isn't KO'ed
@@ -591,11 +592,11 @@ int Player::whatToDo(){
 	cout << "What would you like to do: 1 fight, 2 catch, 3 run";
 	cin >> choice;	
 }
-int Player::fight(int cp, int op, int userMove){
-	int choice;
-	cout << "Choose what move to use: 1,2,3 or 4";
-	cin >> choice;
-	cout << (*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(choice-1) << endl;
+int Player::fight(int userMove){
+//	int choice;
+//	cout << "Choose what move to use: 1,2,3 or 4";
+//	cin >> choice;
+	cout << (*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
 	(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
 	//check their ko and give exp
 	if((*otherPoke[op]).getKO()){
@@ -619,7 +620,7 @@ int Player::catchPoke(int cp, int op){
 		return 0; //did not catch
 	}
 }
-int Player::fight_comp(int cp, int op){
+int Player::fight_comp(){
 		int compMove = (rand() % 4) + 1;
         cout << "Wild "<< (*otherPoke[op]).getname() << " attacked with " << (*otherPoke[op]).attackname(compMove-1) << endl;
         (*otherPoke[op]).attack(compMove,myPoke[cp]); // comp move random 1-4

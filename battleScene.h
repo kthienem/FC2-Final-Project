@@ -80,7 +80,7 @@ enum Health{
 
 class battleScene{
 	public:
-		battleScene(Player*, SDL_Window*);
+		battleScene(Player*, SDL_Window*, int);
 		bool init();//initialize display window
 		bool loadMedia();//load images to be used
 		void close();//free memory and delete window
@@ -90,6 +90,8 @@ class battleScene{
 		int menuOption(string);//directs player to proper screen depending on their menu choice
 
 	private:
+		int battleType;
+		Player* myTrainer;
 		SDL_Window* gWindow;
 		SDL_Surface* gScreenSurface;
 		SDL_Surface* gBackground;
@@ -135,9 +137,11 @@ class battleScene{
 
 };
 
-battleScene::battleScene(Player* myPlayer, SDL_Window* myWindow)
+battleScene::battleScene(Player* myPlayer, SDL_Window* myWindow, int type)
 {
 	gWindow = myWindow;
+	battleType = type;
+	myTrainer = myPlayer;
 	gScreenSurface = NULL;
 	gBackground = NULL;
 }
@@ -962,7 +966,9 @@ void battleScene::battle()
       bool quit = false;//boolean variable for when the user want to quit
 			SDL_Event e;//variable for keyboard events entered by user
 			gCurrentArrowPos = gArrowPosition[0];
-      
+			if(battleType == 0){
+     				(*myTrainer).wild_battle(); //load wild pokemon to fight
+			}
 			while(!quit){
 				while(SDL_PollEvent(&e) != 0){
 					if(e.type == SDL_QUIT) quit = true;//event entered was x-ing out of window, set quit to true
@@ -992,12 +998,12 @@ void battleScene::battle()
 								case SDLK_SPACE:
 								{
 									int temp1 = menuOption("inMenu");
-									if (temp1 == 1){
+									if (temp1 == 5){
 										inMenu = false;
 										inMoves = true;
 									}
-									else if(temp1 == 3) quit = true;
-									else if(temp1 == 4){
+									else if(temp1 == 6) quit = true;
+									else if(temp1 == 7){
 										inMenu = false;
 										inPokemon = true;
 									}
@@ -1034,10 +1040,9 @@ void battleScene::battle()
 								case SDLK_SPACE:
 								{
 									int temp2 = menuOption("inMoves");
-									if(temp2 == 2){
-										inMenu = true;
-										inMoves = false;
-									}
+									inMenu = true;
+									inMoves = false;
+									quit = (*myTrainer).fight(temp2);
 									break;
 								}
 								default:
@@ -1234,19 +1239,19 @@ int battleScene::menuOption(string state)
 {
 	if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
 		gCurrentArrowPos = gArrowPosition[4];
-		return 1;
+		return 5;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[1].x && gCurrentArrowPos.y == gArrowPosition[1].y){
-		return 4;
+		return 7;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
-		return 3;
+		return 6;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[4].x && gCurrentArrowPos.y == gArrowPosition[4].y){
 		gCurrentArrowPos = gArrowPosition[0];
-		return 2;
+		return 1;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[5].x && gCurrentArrowPos.y == gArrowPosition[5].y){
 		gCurrentArrowPos = gArrowPosition[0];
@@ -1254,11 +1259,11 @@ int battleScene::menuOption(string state)
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[6].x && gCurrentArrowPos.y == gArrowPosition[6].y){
 		gCurrentArrowPos = gArrowPosition[0];
-		return 2;
+		return 3;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[7].x && gCurrentArrowPos.y == gArrowPosition[7].y){
 		gCurrentArrowPos = gArrowPosition[0];
-		return 2;
+		return 4;
 	}
 }
 #endif
