@@ -10,6 +10,7 @@
 #include <SDL2/SDL_image.h>
 #include <ctime>
 #include <string>
+#include <unistd.h>
 
 using namespace std;
 
@@ -21,6 +22,18 @@ enum Names{
 	CHARMANDER,
 	BULBASAUR,
 	SQUIRTLE,
+	RATTATA,
+	PIDGEY,
+	MACHOP,
+	DROWZEE,
+	SNORLAX,
+	ZUBAT,
+	MANKEY,
+	ELECTABUZZ,
+	SLOWPOKE,
+	PONYTA,
+	ODDISH,
+	ABRA
 	NAMES
 };
 
@@ -44,6 +57,13 @@ enum Moves{
 	MOVES
 };
 
+enum Health{
+	GREEN,
+	YELLOW,
+	RED,
+	COLORS
+};
+
 class battleScene{
 	public:
 		battleScene();
@@ -53,7 +73,7 @@ class battleScene{
 		SDL_Surface* loadSurface(string path);//optimize loaded images
 		void battle();//runs battle scene
 		void moveArrow(string);//moves arrow to appropriate position
-		int menuOption();//directs player to proper screen depending on their menu choice
+		int menuOption(string);//directs player to proper screen depending on their menu choice
 
 	private:
 		SDL_Window* gWindow;
@@ -82,10 +102,20 @@ class battleScene{
 		SDL_Surface* gPokemonMenu;
 		SDL_Rect gPokemon;//location on image for list of pokemon
 		SDL_Rect gPokemonWindow;//where list of pokemon will go in window
+		SDL_Rect gPokemonListSelect;//image for selected pokemon in list
+		SDL_Rect gPokemonListUnselect;//image for no selected pokemon in list
+		SDL_Rect gPokemonListWindow[6];//images for pokemon list
 		SDL_Surface* gNames_Moves;//image file with names of pokemon and moves
 		SDL_Rect gPokemonNames[NAMES];
 		SDL_Rect gMoves[MOVES];
 		SDL_Rect gMovesWindow[4];
+		SDL_Rect gHealthBar[COLORS];
+		SDL_Rect gOpponentHealth;
+		SDL_Rect gPlayerHealth;
+		SDL_Surface* gBattleSprites;//image with pokemon for battle and selection menu
+		SDL_Rect gOpponentBattlePokemon[NAMES];
+		SDL_Rect gPlayerBattlePokemon[NAMES];
+		SDL_Rect gSelectPokemon[NAMES];
 
 };
 
@@ -148,6 +178,11 @@ bool battleScene::loadMedia()
 
 	gPokemonMenu = loadSurface("Pokemon_Menu.png");//loads list of available pokemon
 	if(gPokemonMenu == NULL) success = false;
+	else{
+		SDL_SetColorKey(gPokemonMenu, SDL_TRUE, SDL_MapRGB(gPokemonMenu->format, 0, 128, 0));
+	}
+
+	
 
 	gNames_Moves = loadSurface("Names_Moves.png");//loads image with list of pokemon names and moves
 	if(gNames_Moves == NULL) success = false;
@@ -311,6 +346,66 @@ bool battleScene::loadMedia()
 	gPokemonNames[BULBASAUR].w = 128;
 	gPokemonNames[BULBASAUR].h = 20;
 
+	gPokemonNames[RATTATA].x = 0;
+	gPokemonNames[RATTATA].y = 80;
+	gPokemonNames[RATTATA].w = 128;
+	gPokemonNames[RATTATA].h = 20;
+
+	gPokemonNames[PIDGEY].x = 0;
+	gPokemonNames[PIDGEY].y = 100;
+	gPokemonNames[PIDGEY].w = 128;
+	gPokemonNames[PIDGEY].h = 20;
+
+	gPokemonNames[MACHOP].x = 0;
+	gPokemonNames[MACHOP].y = 120;
+	gPokemonNames[MACHOP].w = 128;
+	gPokemonNames[MACHOP].h = 20;
+
+	gPokemonNames[DROWZEE].x = 0;
+	gPokemonNames[DROWZEE].y = 140;
+	gPokemonNames[DROWZEE].w = 128;
+	gPokemonNames[DROWZEE].h = 20;
+
+	gPokemonNames[SNORLAX].x = 0;
+	gPokemonNames[SNORLAX].y = 160;
+	gPokemonNames[SNORLAX].w = 128;
+	gPokemonNames[SNORLAX].h = 20;
+
+	gPokemonNames[ZUBAT].x = 0;
+	gPokemonNames[ZUBAT].y = 180;
+	gPokemonNames[ZUBAT].w = 128;
+	gPokemonNames[ZUBAT].h = 20;
+
+	gPokemonNames[MANKEY].x = 0;
+	gPokemonNames[MANKEY].y = 200;
+	gPokemonNames[MANKEY].w = 128;
+	gPokemonNames[MANKEY].h = 20;
+
+	gPokemonNames[ELECTABUZZ].x = 0;
+	gPokemonNames[ELECTABUZZ].y = 220;
+	gPokemonNames[ELECTABUZZ].w = 128;
+	gPokemonNames[ELECTABUZZ].h = 20;
+
+	gPokemonNames[SLOWPOKE].x = 0;
+	gPokemonNames[SLOWPOKE].y = 240;
+	gPokemonNames[SLOWPOKE].w = 128;
+	gPokemonNames[SLOWPOKE].h = 20;
+
+	gPokemonNames[PONYTA].x = 0;
+	gPokemonNames[PONYTA].y = 260;
+	gPokemonNames[PONYTA].w = 128;
+	gPokemonNames[PONYTA].h = 20;
+
+	gPokemonNames[ODDISH].x = 0;
+	gPokemonNames[ODDISH].y = 280;
+	gPokemonNames[ODDISH].w = 128;
+	gPokemonNames[ODDISH].h = 20;
+
+	gPokemonNames[ABRA].x = 0;
+	gPokemonNames[ABRA].y = 300;
+	gPokemonNames[ABRA].w = 128;
+	gPokemonNames[ABRA].h = 20;
+
 	gMoves[TACKLE].x = 142;
 	gMoves[TACKLE].y = 0;
 	gMoves[TACKLE].w = 155;
@@ -415,6 +510,151 @@ bool battleScene::loadMedia()
 	gMovesWindow[3].w = 150;
 	gMovesWindow[3].h = 26;
 
+	gHealthBar[GREEN].x = 117;
+	gHealthBar[GREEN].y = 9;
+	gHealthBar[GREEN].w = 1;
+	gHealthBar[GREEN].h = 3;
+
+	gHealthBar[YELLOW].x = 117;
+	gHealthBar[YELLOW].y = 13;
+	gHealthBar[YELLOW].w = 1;
+	gHealthBar[YELLOW].h = 3;
+
+	gHealthBar[RED].x = 117;
+	gHealthBar[RED].y = 17;
+	gHealthBar[RED].w = 1;
+	gHealthBar[RED].h = 3;
+
+	gOpponentHealth.x = 168;
+	gOpponentHealth.y = 91;
+	gOpponentHealth.w = 144;
+	gOpponentHealth.h = 10;
+
+	gPlayerHealth.x = 566;
+	gPlayerHealth.y = 333;
+	gPlayerHealth.w = 162;
+	gPlayerHealth.h = 10;
+
+	gPokemonListSelect.x = 162;
+	gPokemonListSelect.y = 203;
+	gPokemonListSelect.w = 149;
+	gPokemonListSelect.h = 24;
+
+	gPokemonListUnselect.x = 162;
+	gPokemonListUnselect.y = 179;
+	gPokemonListUnselect.w = 149;
+	gPokemonListUnselect.h = 21;
+
+	gPokemonListWindow[0].x = 75;
+	gPokemonListWindow[0].y = 30;
+	gPokemonListWindow[0].w = 650;
+	gPokemonListWindow[0].h = 75;
+
+	gPokemonListWindow[1].x = 75;
+	gPokemonListWindow[1].y = 115;
+	gPokemonListWindow[1].w = 650;
+	gPokemonListWindow[1].h = 75;
+
+	gPokemonListWindow[2].x = 75;
+	gPokemonListWindow[2].y = 200;
+	gPokemonListWindow[2].w = 650;
+	gPokemonListWindow[2].h = 75;
+
+	gPokemonListWindow[3].x = 75;
+	gPokemonListWindow[3].y = 285;
+	gPokemonListWindow[3].w = 650;
+	gPokemonListWindow[3].h = 75;
+
+	gPokemonListWindow[4].x = 75;
+	gPokemonListWindow[4].y = 370;
+	gPokemonListWindow[4].w = 650;
+	gPokemonListWindow[4].h = 75;
+
+	gPokemonListWindow[5].x = 75;
+	gPokemonListWindow[5].y = 455;
+	gPokemonListWindow[5].w = 650;
+	gPokemonListWindow[5].h = 75;
+
+	gOpponentBattlePokemon[PIKACHU].x = ;
+	gOpponentBattlePokemon[PIKACHU].y = ;
+	gOpponentBattlePokemon[PIKACHU].w = ;
+	gOpponentBattlePokemon[PIKACHU].h = ;
+
+	gOpponentBattlePokemon[CHARMANDER].x = ;
+	gOpponentBattlePokemon[CHARMANDER].y = ;
+	gOpponentBattlePokemon[CHARMANDER].w = ;
+	gOpponentBattlePokemon[CHARMANDER].h = ;
+
+	gOpponentBattlePokemon[BULBASAUR].x = ;
+	gOpponentBattlePokemon[BULBASAUR].y = ;
+	gOpponentBattlePokemon[BULBASAUR].w = ;
+	gOpponentBattlePokemon[BULBASAUR].h = ;
+
+	gOpponentBattlePokemon[SQUIRTLE].x = ;
+	gOpponentBattlePokemon[SQUIRTLE].y = ;
+	gOpponentBattlePokemon[SQUIRTLE].w = ;
+	gOpponentBattlePokemon[SQUIRTLE].h = ;
+
+	gOpponentBattlePokemon[RATTATA].x = ;
+	gOpponentBattlePokemon[RATTATA].y = ;
+	gOpponentBattlePokemon[RATTATA].w = ;
+	gOpponentBattlePokemon[RATTATA].h = ;
+
+	gOpponentBattlePokemon[PIDGEY].x = ;
+	gOpponentBattlePokemon[PIDGEY].y = ;
+	gOpponentBattlePokemon[PIDGEY].w = ;
+	gOpponentBattlePokemon[PIDGEY].h = ;
+
+	gOpponentBattlePokemon[MACHOP].x = ;
+	gOpponentBattlePokemon[MACHOP].y = ;
+	gOpponentBattlePokemon[MACHOP].w = ;
+	gOpponentBattlePokemon[MACHOP].h = ;
+
+	gOpponentBattlePokemon[DROWZEE].x = ;
+	gOpponentBattlePokemon[DROWZEE].y = ;
+	gOpponentBattlePokemon[DROWZEE].w = ;
+	gOpponentBattlePokemon[DROWZEE].h = ;
+
+	gOpponentBattlePokemon[SNORLAX].x = ;
+	gOpponentBattlePokemon[SNORLAX].y = ;
+	gOpponentBattlePokemon[SNORLAX].w = ;
+	gOpponentBattlePokemon[SNORLAX].h = ;
+
+	gOpponentBattlePokemon[ZUBAT].x = ;
+	gOpponentBattlePokemon[ZUBAT].y = ;
+	gOpponentBattlePokemon[ZUBAT].w = ;
+	gOpponentBattlePokemon[ZUBAT].h = ;
+
+	gOpponentBattlePokemon[MANKEY].x = ;
+	gOpponentBattlePokemon[MANKEY].y = ;
+	gOpponentBattlePokemon[MANKEY].w = ;
+	gOpponentBattlePokemon[MANKEY].h = ;
+
+	gOpponentBattlePokemon[ELECTABUZZ].x = ;
+	gOpponentBattlePokemon[ELECTABUZZ].y = ;
+	gOpponentBattlePokemon[ELECTABUZZ].w = ;
+	gOpponentBattlePokemon[ELECTABUZZ].h = ;
+
+	gOpponentBattlePokemon[SLOWPOKE].x = ;
+	gOpponentBattlePokemon[SLOWPOKE].y = ;
+	gOpponentBattlePokemon[SLOWPOKE].w = ;
+	gOpponentBattlePokemon[SLOWPOKE].h = ;
+
+	gOpponentBattlePokemon[PONYTA].x = ;
+	gOpponentBattlePokemon[PONYTA].y = ;
+	gOpponentBattlePokemon[PONYTA].w = ;
+	gOpponentBattlePokemon[PONYTA].h = ;
+
+	gOpponentBattlePokemon[ODDISH].x = ;
+	gOpponentBattlePokemon[ODDISH].y = ;
+	gOpponentBattlePokemon[ODDISH].w = ;
+	gOpponentBattlePokemon[ODDISH].h = ;
+
+	gOpponentBattlePokemon[ABRA].x = ;
+	gOpponentBattlePokemon[ABRA].y = ;
+	gOpponentBattlePokemon[ABRA].w = ;
+	gOpponentBattlePokemon[ABRA].h = ;
+
 	return success;
 }
 
@@ -423,6 +663,9 @@ void battleScene::close()
 	//Deallocate Surfaces
 	SDL_FreeSurface(gBackground);
 	SDL_FreeSurface(gScreenSurface);
+	SDL_FreeSurface(gMenuSheet);
+	SDL_FreeSurface(gPokemonMenu);
+	SDL_FreeSurface(gNames_Moves);
 
 	SDL_DestroyWindow(gWindow);//destroys the window
 	gWindow = NULL;//points window pointer to NULL just incase
@@ -456,6 +699,9 @@ void battleScene::battle()
 	int turn = 0;
 	bool inMenu = true;
 	bool inMoves = false;
+	bool inPokemon = false;
+	int percentHealth = 1;
+	int selected = 0;
 
 	if(!init()){//initializes window, if it fails display error message
     cout << "Failed to initialize!" << endl;
@@ -497,10 +743,15 @@ void battleScene::battle()
 								}
 								case SDLK_SPACE:
 								{
-									int temp1 = menuOption();
+									int temp1 = menuOption("inMenu");
 									if (temp1 == 1){
 										inMenu = false;
 										inMoves = true;
+									}
+									else if(temp1 == 3) quit = true;
+									else if(temp1 == 4){
+										inMenu = false;
+										inPokemon = true;
 									}
 									break;
 								}
@@ -534,38 +785,88 @@ void battleScene::battle()
 								}
 								case SDLK_SPACE:
 								{
-									int temp2 = menuOption();
+									int temp2 = menuOption("inMoves");
+									if(temp2 == 2){
+										inMenu = true;
+										inMoves = false;
+									}
 									break;
 								}
 								default:
 								{
 									break;
 								}
+								
+							}
+						}
+						else if(turn%2 == 0 && inPokemon){//player is in moves menu and it is their turn
+							switch(e.key.keysym.sym){//switch with key type parameter
+								case SDLK_UP:
+								{
+									if(selected > 0) selected--;
+									break;
+								}
+								case SDLK_DOWN:
+								{
+									if(selected < 5) selected++;
+									break;
+								}
+								case SDLK_SPACE:
+								{
+									int temp2 = menuOption("inPokemon");
+									inMenu = true;
+									inPokemon = false;
+									break;
+								}
+								default:
+								{
+									break;
+								}
+								
 							}
 						}
 					}
 				}
-				SDL_BlitScaled(gBackground, NULL, gScreenSurface, &gBack);//blit background to screen
-				SDL_BlitScaled(gMenuSheet, &gMenuBack, gScreenSurface, &gMenuBackWindow);//blit menu background to screen
-				//Blit options if it is your turn
-				SDL_BlitScaled(gMenuSheet, &gOptions, gScreenSurface, &gOptionsWindow);//blit options menu to screen
-				if (turn%2 == 0 && inMenu){
+				if(inMenu || inMoves){
+					SDL_BlitScaled(gBackground, NULL, gScreenSurface, &gBack);//blit background to screen
+					SDL_BlitScaled(gMenuSheet, &gMenuBack, gScreenSurface, &gMenuBackWindow);//blit menu background to screen
+					//Blit options if it is your turn
 					SDL_BlitScaled(gMenuSheet, &gOptions, gScreenSurface, &gOptionsWindow);//blit options menu to screen
-					SDL_BlitScaled(gMenuSheet, &gSelectionArrow, gScreenSurface, &gCurrentArrowPos);//blit selection arrow onto screen
+					if (turn%2 == 0 && inMenu){
+						SDL_BlitScaled(gMenuSheet, &gOptions, gScreenSurface, &gOptionsWindow);//blit options menu to screen
+						SDL_BlitScaled(gMenuSheet, &gSelectionArrow, gScreenSurface, &gCurrentArrowPos);//blit selection arrow onto screen
+					}
+					else if(turn%2 == 0 && inMoves){
+						SDL_BlitScaled(gMenuSheet, &gMovesMenu, gScreenSurface, &gMovesMenuPos);//blit moves menu to screen
+						SDL_BlitScaled(gMenuSheet, &gSelectionArrow, gScreenSurface, &gCurrentArrowPos);//blit selection arrow onto screen
+						//blit available moves to screen
+						SDL_BlitScaled(gNames_Moves, &gMoves[WATERGUN], gScreenSurface, &gMovesWindow[0]);
+						SDL_BlitScaled(gNames_Moves, &gMoves[BUBBLEBEAM], gScreenSurface, &gMovesWindow[1]);
+						SDL_BlitScaled(gNames_Moves, &gMoves[DOUBLESLAP], gScreenSurface, &gMovesWindow[2]);
+						SDL_BlitScaled(gNames_Moves, &gMoves[FLAMETHROWER], gScreenSurface, &gMovesWindow[3]);
+					}
+					//Blit enemy level if pokemon is out
+					SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
+					SDL_BlitScaled(gMenuSheet, &gHealthBar[GREEN], gScreenSurface, &gOpponentHealth);//blit opponents health to screem
+					//Blit player level if pokemon is out
+					SDL_BlitScaled(gMenuSheet, &gPlayerLevel, gScreenSurface, &gPlayerLevelWindow);//blit level and health of player's pokemon
+					SDL_BlitScaled(gMenuSheet, &gHealthBar[GREEN], gScreenSurface, &gPlayerHealth);//blit players healt to screen
+//gPlayerHealth.w = 162/percentHealth;
+//percentHealth++;
+//usleep(200000);
 				}
-				else if(turn%2 == 0 && inMoves){
-					SDL_BlitScaled(gMenuSheet, &gMovesMenu, gScreenSurface, &gMovesMenuPos);//blit moves menu to screen
-					SDL_BlitScaled(gMenuSheet, &gSelectionArrow, gScreenSurface, &gCurrentArrowPos);//blit selection arrow onto screen
-					//blit available moves to screen
-					SDL_BlitScaled(gNames_Moves, &gMoves[WATERGUN], gScreenSurface, &gMovesWindow[0]);
-					SDL_BlitScaled(gNames_Moves, &gMoves[BUBBLEBEAM], gScreenSurface, &gMovesWindow[1]);
-					SDL_BlitScaled(gNames_Moves, &gMoves[DOUBLESLAP], gScreenSurface, &gMovesWindow[2]);
-					SDL_BlitScaled(gNames_Moves, &gMoves[FLAMETHROWER], gScreenSurface, &gMovesWindow[3]);
+				else if(inPokemon){
+					SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
+					for(int i = 0; i < 6; i++){
+						if(i == selected){
+							SDL_BlitScaled(gPokemonMenu, &gPokemonListSelect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
+						}
+						else{
+							SDL_BlitScaled(gPokemonMenu, &gPokemonListUnselect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
+							
+						}
+					}
 				}
-				//Blit enemy level if pokemon is out
-				SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
-				//Blit player level if pokemon is out
-				SDL_BlitScaled(gMenuSheet, &gPlayerLevel, gScreenSurface, &gPlayerLevelWindow);//blit level and health of player's pokemon
 				SDL_UpdateWindowSurface(gWindow);//update window
 			}
     }
@@ -681,25 +982,36 @@ void battleScene::moveArrow(string dir)
 	}
 }
 
-int battleScene::menuOption()
+int battleScene::menuOption(string state)
 {
 	if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
 		gCurrentArrowPos = gArrowPosition[4];
 		return 1;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[1].x && gCurrentArrowPos.y == gArrowPosition[1].y){
+		return 4;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
+		close();
+		return 3;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[4].x && gCurrentArrowPos.y == gArrowPosition[4].y){
+		gCurrentArrowPos = gArrowPosition[0];
+		return 2;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[5].x && gCurrentArrowPos.y == gArrowPosition[5].y){
+		gCurrentArrowPos = gArrowPosition[0];
+		return 2;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[6].x && gCurrentArrowPos.y == gArrowPosition[6].y){
+		gCurrentArrowPos = gArrowPosition[0];
+		return 2;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[7].x && gCurrentArrowPos.y == gArrowPosition[7].y){
+		gCurrentArrowPos = gArrowPosition[0];
+		return 2;
 	}
 }
 #endif
