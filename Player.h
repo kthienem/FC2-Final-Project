@@ -47,7 +47,7 @@ class Player {
 		int getopHealth();
 		int getopMaxHealth();
 		int mycheckKO(int); //check a certain poke for a ko used to see what switchable pokemon
-		int opcheckKo(int);
+		int opcheckKO(int);
 		int myCurrentPoke(); //get current pokemon's number
 		int opCurrentPoke(); //get current pokemon's number for op
 
