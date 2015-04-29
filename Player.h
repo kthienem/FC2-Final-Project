@@ -78,8 +78,7 @@ class Player {
 };
 Player::Player(int newGame){
 	if(newGame){
-		add_pokemon(8,1); // add a new pikachu to player pokemon
-		add_pokemon(11,1);
+		add_pokemon(7,1); // add a new pikachu to player pokemon
 		cp = 0;
 	}
 	else{
