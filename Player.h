@@ -11,6 +11,17 @@
 #include "Bulbasaur.h"
 #include "Charmander.h"
 #include "Rattata.h"
+#include "Pidgey.h"
+#include "Machop.h"
+#include "Drowzee.h"
+#include "Snorlax.h"
+#include "Zubat.h"
+#include "Mankey.h"
+#include "Electabuzz.h"
+#include "Slowpoke.h"
+#include "Ponyta.h"
+#include "Oddish.h"
+#include "Abra.h"
 using namespace std;
 
 class Player {

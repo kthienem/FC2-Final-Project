@@ -37,12 +37,11 @@ Pikachu::Pikachu(){ // default constructor
 	Pokemon::setmaxSpeed(rand() % 7 + 3); // random speed stat
 	Pokemon::setcurrSpeed(Pokemon::getmaxSpeed()); // set curr to max
 	Pokemon::setKO(0); // not KO'd
-	Pokemon::setmoveLevel(7); // learns new move at lv 7
+	Pokemon::setmoveLevel(5); // learns new move at lv 7
 	Pokemon::settype("electric");
 	Pokemon::setname("Pikachu");
 	Pokemon::setweak("grass");
-	//Pokemon::setmaxLevelExp(20);
 	// SET MOVES
 
-	Pokemon::setMoves(0, 5, 13, 8, 16); // tackle,shock,quickattack,headbutt,thunderbolt
+	Pokemon::setMoves(0, 5, 13, 16, 24); // tackle,shock,quickattack,thunderbolt,thunder
 }
