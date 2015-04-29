@@ -19,21 +19,22 @@ const int SCREEN_WIDTH = 768;
 const int SCREEN_HEIGHT = 576;
 
 enum Names{
-	PIKACHU,
-	CHARMANDER,
-	BULBASAUR,
-	SQUIRTLE,
+	BLANK,
 	RATTATA,
-	PIDGEY,
-	MACHOP,
-	DROWZEE,
 	SNORLAX,
 	ZUBAT,
+	PIDGEY,
+	MACHOP,
 	MANKEY,
+	PIKACHU,
 	ELECTABUZZ,
+	SQUIRTLE,
 	SLOWPOKE,
+	CHARMANDER,
 	PONYTA,
+	BULBASAUR,
 	ODDISH,
+	DROWZEE,
 	ABRA,
 	NAMES
 };
@@ -89,6 +90,7 @@ class battleScene{
 		void battle();//runs battle scene
 		void moveArrow(string);//moves arrow to appropriate position
 		int menuOption(string);//directs player to proper screen depending on their menu choice
+		void pokemonMenu(int);//function to update 
 
 	private:
 		int battleType;
@@ -130,13 +132,14 @@ class battleScene{
 		SDL_Rect gOpponentHealth;
 		SDL_Rect gPlayerHealth;
 		SDL_Surface* gBattleSprites;//image with pokemon for battle and selection menu
-		SDL_Rect gOpponentBattlePokemon[NAMES];
-		SDL_Rect gPlayerBattlePokemon[NAMES];
-		SDL_Rect gSelectPokemon[NAMES];
-		SDL_Rect gOpponentPokemon;
-		SDL_Rect gPlayerPokemon;
-		SDL_Rect gCurrentPlayerColor;
-		SDL_Rect gCurrentOpponentColor;
+		SDL_Rect gOpponentBattlePokemon[NAMES];//images for pokemon facing screen during battle
+		SDL_Rect gPlayerBattlePokemon[NAMES];//images for pokemon facing away during battle
+		SDL_Rect gSelectPokemon[NAMES];//images for small image of pokemon when viewing user's pokemon
+		SDL_Rect gCurrentPlayerColor;//current color of health bar for player
+		SDL_Rect gCurrentOpponentColor;//current color of health bar for opponent
+		SDL_Rect gOpponentPokemon;//current image for opponent pokemon
+		SDL_Rect gPlayerPokemon;//current image for player pokemon
+		SDL_Rect gPokemonSelectImage[6];//locations on window for selecting pokemon
 
 };
 
@@ -209,9 +212,6 @@ bool battleScene::loadMedia()
 	if(gBattleSprites == NULL) success - false;
 	else{
 		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 200, 200, 168));
-		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 216, 216, 216));
-		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 208, 208, 184));
-		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 96, 152, 128));
 	}
 
 	gNames_Moves = loadSurface("Names_Moves.png");//loads image with list of pokemon names and moves
@@ -915,6 +915,16 @@ bool battleScene::loadMedia()
 	gSelectPokemon[ABRA].w = 20;
 	gSelectPokemon[ABRA].h = 19;
 
+	gOpponentPokemon.x = 500;
+	gOpponentPokemon.y = 110;
+	gOpponentPokemon.w = 125;
+	gOpponentPokemon.h = 125;
+
+	gPlayerPokemon.x = 100;
+	gPlayerPokemon.y = 254;
+	gPlayerPokemon.w = 150;
+	gPlayerPokemon.h = 150;
+
 	return success;
 }
 
@@ -1109,22 +1119,15 @@ void battleScene::battle()
 					}
 					//Blit enemy level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
+					SDL_BlitScaled(gBattleSprites, &gOpponentBattlePokemon[(*myTrainer).opCurrentPoke()], gScreenSurface, &gOpponentPokemon);//blit image of opponents pokemon to screen
 					SDL_BlitScaled(gMenuSheet, &gCurrentOpponentColor, gScreenSurface, &gOpponentHealth);//blit opponents health to screem
 					//Blit player level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gPlayerLevel, gScreenSurface, &gPlayerLevelWindow);//blit level and health of player's pokemon
+					SDL_BlitScaled(gBattleSprites, &gPlayerBattlePokemon[(*myTrainer).myCurrentPoke()], gScreenSurface, &gPlayerPokemon);//blit image of opponents pokemon to screen
 					SDL_BlitScaled(gMenuSheet, &gCurrentPlayerColor, gScreenSurface, &gPlayerHealth);//blit players healt to screen
 				}
 				else if(inPokemon){
-					SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
-					for(int i = 0; i < 6; i++){
-						if(i == selected){
-							SDL_BlitScaled(gPokemonMenu, &gPokemonListSelect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
-						}
-						else{
-							SDL_BlitScaled(gPokemonMenu, &gPokemonListUnselect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
-							
-						}
-					}
+					pokemonMenu(selected);
 				}
 				gPlayerHealth.w = 162*(*myTrainer).getmyHealth()/(*myTrainer).getmyMaxHealth();
 				if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/2){
@@ -1291,5 +1294,19 @@ int battleScene::menuOption(string state)
 		gCurrentArrowPos = gArrowPosition[0];
 		return 4;
 	}
+}
+
+void battleScene::pokemonMenu(int selected)
+{
+	SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
+	for(int i = 0; i < 6; i++){
+		if(i == selected){
+			SDL_BlitScaled(gPokemonMenu, &gPokemonListSelect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
+		}
+		else{
+			SDL_BlitScaled(gPokemonMenu, &gPokemonListUnselect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
+		}
+	}
+
 }
 #endif
