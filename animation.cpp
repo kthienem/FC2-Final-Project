@@ -223,10 +223,14 @@ int main()
 			int frame = 0;			//count for the current frame being used for the animation
 
 			SDL_Rect characterRect;			//rectangle used for where to place the character
-			characterRect.x = MAP_SCREEN_WIDTH/2 - 9;	//place at center of screen
-			characterRect.y = MAP_SCREEN_HEIGHT/2 + 14;	//place at center of screen
+			characterRect.x = 247;	//place at center of screen
+			characterRect.y = 14;	//place at center of screen
 			characterRect.w = 50;			//size of portion of sprite sheet taken up by character
 			characterRect.h = 50;			//size of portion of sprite sheet taken up by character
+		//	characterRect.x = MAP_SCREEN_WIDTH/2 - 9;	//place at center of screen
+		//	characterRect.y = MAP_SCREEN_HEIGHT/2 + 14;	//place at center of screen
+		//	characterRect.w = 50;			//size of portion of sprite sheet taken up by character
+		//	characterRect.h = 50;			//size of portion of sprite sheet taken up by character
 
 
 			SDL_Rect stretch2windowRect;			//rectangle to stretch the background image to fit to window
@@ -237,19 +241,10 @@ int main()
 
 			SDL_Rect mapZoomRect;			// rectangle that zooms in on current viewable map
 		// x,y must always be x=1+16a, y=1+16b in order to stay alligned with map cells
-//			mapZoomRect.x = 1185;			//begin image in middle of map
-//			mapZoomRect.y = 17;
-//			mapZoomRect.x = 1777;			//begin image in middle of map
-//			mapZoomRect.y = 625;
-			mapZoomRect.x = 705;			//begin image in middle of map
-			mapZoomRect.y = 257;
+			mapZoomRect.x = 1;			//begin image in middle of map
+			mapZoomRect.y = 1;
 			mapZoomRect.w = 384;
 			mapZoomRect.h = 288;
-//PokeCenter Testing...
-		characterRect.x = 599;			//begin image in middle of map
-		characterRect.y = 462;
-		mapZoomRect.x = 1841;			//begin image in middle of map
-		mapZoomRect.y = 721;
 
 
 			int caveChoice=0;
@@ -743,6 +738,7 @@ int main()
 					exitingBuilding=0;
 					isWarpTile=0;
 					caughtFish=0;
+
 				}
 			}//end game loop
 		}
