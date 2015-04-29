@@ -11,6 +11,17 @@
 #include "Bulbasaur.h"
 #include "Charmander.h"
 #include "Rattata.h"
+#include "Snorlax.h"
+#include "Pidgey.h"
+#include "Zubat.h"
+#include "Machop.h"
+#include "Mankey.h"
+#include "Electabuzz.h"
+#include "Slowpoke.h"
+#include "Ponyta.h"
+#include "Oddish.h"
+#include "Drowzee.h"
+#include "Abra.h"
 using namespace std;
 
 class Player {
@@ -79,7 +90,7 @@ void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or
 			newPoke_ptr = new Pikachu;
 			break;
 		case 8:
-			newPoke_ptr = new Electrabuzz;
+			newPoke_ptr = new Electabuzz;
 			break;
 		case 9:
 			newPoke_ptr = new Squirtle;
@@ -100,7 +111,7 @@ void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or
 			newPoke_ptr = new Oddish;
 			break;
 		case 15:
-			newPoke_ptr = new Drowsee;
+			newPoke_ptr = new Drowzee;
 			break;
 		case 16:
 			newPoke_ptr = new Abra;
@@ -404,7 +415,8 @@ void Player::load_pokemon_stats(){
 		inFile >> inInt;
 		(*myPoke[i]).setmaxHealth(inInt);
 		inFile >> inInt;
-    	(*myPoke[i]).setcurrHealth(inInt);
+    	cout << "inInt: for currHealth: " << inInt << endl;
+		(*myPoke[i]).setcurrHealth(inInt);
 		inFile >> inInt;
     	(*myPoke[i]).setlevel(inInt);
 		inFile >> inInt;
