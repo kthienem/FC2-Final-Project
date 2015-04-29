@@ -1129,7 +1129,18 @@ int battleScene::battle(int wildLevel)
 												//do nothing continue
 											}
 											else{
-												(*myTrainer).fight_comp();
+												int usko = (*myTrainer).fight_comp();
+												if(usko){
+													inMenu = false;
+													inPokemon = true;
+													inMoves = false;
+													if((*myTrainer).switchPoke(0) == -1){
+														quit = 1;	
+														(*myTrainer).pokeCenter();
+														return_value = 1;
+													}
+													continue;
+												}
 											}
 										}
 									}

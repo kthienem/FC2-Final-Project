@@ -691,7 +691,7 @@ int Player::run(){
 int Player::switchPoke(int newPoke){
 	cout << endl;
 	if(noValid()){
-		cout << "No useable pokemon, seg fault!" << endl << endl;
+		cout << "No useable pokemon! You whited out!" << endl << endl;
 		return(-1);
 	}
 	else{
