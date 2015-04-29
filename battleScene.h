@@ -87,7 +87,7 @@ class battleScene{
 		bool loadMedia();//load images to be used
 		void close();//free memory and delete window
 		SDL_Surface* loadSurface(string path);//optimize loaded images
-		void battle();//runs battle scene
+		void battle(int);//runs battle scene
 		void moveArrow(string);//moves arrow to appropriate position
 		int menuOption(string);//directs player to proper screen depending on their menu choice
 		void pokemonMenu(int);//function to update 
@@ -1040,7 +1040,7 @@ SDL_Surface* battleScene::loadSurface(string path)
 	return optimizedSurface;
 }
 
-void battleScene::battle()
+void battleScene::battle(int wildLevel)
 {
 	int turn = 0;
 	bool inMenu = true;
@@ -1062,7 +1062,13 @@ void battleScene::battle()
 			SDL_Event e;//variable for keyboard events entered by user
 			gCurrentArrowPos = gArrowPosition[0];
 			if(battleType == 0){
-     				(*myTrainer).wild_battle(); //load wild pokemon to fight
+     				(*myTrainer).wild_battle(wildLevel); //load wild pokemon to fight
+			}
+			else if(battleType == -1){
+				(*myTrainer).fish_battle(wildLevel);
+			}
+			else{
+				(*myTrainer).player_battle(battleType,wildLevel);
 			}
 			while(!quit){
 				while(SDL_PollEvent(&e) != 0){

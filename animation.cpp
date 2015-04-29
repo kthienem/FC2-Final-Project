@@ -603,17 +603,45 @@ int main()
 										talkToPillar(characterRect, &gymAnswers, &firstPillarx);
 								// Gym leader
 									if( cellColorThreshold[GYM_LEADER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_LEADER_CELL], gScreenSurface) ){
+										int wildLevel=0;
+									// base wild pokemon level off of current map location
+										if(mapZoomRect.x+(characterRect.x/2) < 300)
+											wildLevel= 1;
+										else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+											wildLevel= 2;
+										else if(mapZoomRect.x+(characterRect.x/2) < 800)
+											wildLevel= 3;
+										else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+											wildLevel= 4;
+										else if(mapZoomRect.y+(characterRect.y/2) < 350)
+											wildLevel= 6;
+										else
+											wildLevel= Nick.myLevel();
 										battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 										battleScene battleName(&Nick, gWindow,6);
-										battleName.battle();
+										battleName.battle(wildLevel);
 									}
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ){
+											int wildLevel=0;
+										// base wild pokemon level off of current map location
+											if(mapZoomRect.x+(characterRect.x/2) < 300)
+												wildLevel= 1;
+											else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+												wildLevel= 2;
+											else if(mapZoomRect.x+(characterRect.x/2) < 800)
+												wildLevel= 3;
+											else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+												wildLevel= 4;
+											else if(mapZoomRect.y+(characterRect.y/2) < 350)
+												wildLevel= 6;
+											else
+												wildLevel= Nick.myLevel();
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
-											battleName.battle();
+											battleName.battle(wildLevel);
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -623,10 +651,24 @@ int main()
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ){
+											int wildLevel=0;
+										// base wild pokemon level off of current map location
+											if(mapZoomRect.x+(characterRect.x/2) < 300)
+												wildLevel= 1;
+											else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+												wildLevel= 2;
+											else if(mapZoomRect.x+(characterRect.x/2) < 800)
+												wildLevel= 3;
+											else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+												wildLevel= 4;
+											else if(mapZoomRect.y+(characterRect.y/2) < 350)
+												wildLevel= 6;
+											else
+												wildLevel= Nick.myLevel();
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
-											battleName.battle();
+											battleName.battle(wildLevel);
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -636,10 +678,24 @@ int main()
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[i], gScreenSurface) ){
+											int wildLevel=0;
+										// base wild pokemon level off of current map location
+											if(mapZoomRect.x+(characterRect.x/2) < 300)
+												wildLevel= 1;
+											else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+												wildLevel= 2;
+											else if(mapZoomRect.x+(characterRect.x/2) < 800)
+												wildLevel= 3;
+											else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+												wildLevel= 4;
+											else if(mapZoomRect.y+(characterRect.y/2) < 350)
+												wildLevel= 6;
+											else
+												wildLevel= Nick.myLevel();
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
-											battleName.battle();
+											battleName.battle(wildLevel);
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -649,10 +705,24 @@ int main()
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ){
+											int wildLevel=0;
+										// base wild pokemon level off of current map location
+											if(mapZoomRect.x+(characterRect.x/2) < 300)
+												wildLevel= 1;
+											else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+												wildLevel= 2;
+											else if(mapZoomRect.x+(characterRect.x/2) < 800)
+												wildLevel= 3;
+											else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+												wildLevel= 4;
+											else if(mapZoomRect.y+(characterRect.y/2) < 350)
+												wildLevel= 6;
+											else
+												wildLevel= Nick.myLevel();
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
-											battleName.battle();
+											battleName.battle(wildLevel);
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -674,9 +744,23 @@ int main()
 
 
 						if(caughtFish==1){
+								int wildLevel=0;
+							// base wild pokemon level off of current map location
+								if(mapZoomRect.x+(characterRect.x/2) < 300)
+									wildLevel= 1;
+								else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+									wildLevel= 2;
+								else if(mapZoomRect.x+(characterRect.x/2) < 800)
+									wildLevel= 3;
+								else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+									wildLevel= 4;
+								else if(mapZoomRect.y+(characterRect.y/2) < 350)
+									wildLevel= 6;
+								else
+									wildLevel= Nick.myLevel();
 							battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 							battleScene battleName(&Nick, gWindow,-1);
-							battleName.battle();
+							battleName.battle(wildLevel);
 						}else if(caughtFish==2){
 							dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 1);
 						}
@@ -700,7 +784,7 @@ int main()
 							// battle sequence!
 								battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 								battleScene battleName(&Nick, gWindow,0);
-								battleName.battle();
+								battleName.battle(wildLevel);
 					//		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect);
 							}
 						}

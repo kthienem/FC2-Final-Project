@@ -605,7 +605,7 @@ void Player::learnNewMove(int i){
 	(*myPoke[i]).learnNewMove(); //teach pokemon i the new move
 }
 int Player::rand_between(int a, int b){
-	return((rand() % (b - a + 1)) + 1);
+	return((rand() % (b - a + 1)) + a);
 }
 int Player::getNumPoke(){
 	return myPoke.size();
