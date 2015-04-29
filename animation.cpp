@@ -51,6 +51,7 @@ enum pokeMaps
 	POKE_MESSAGE_START,
 	POKE_MESSAGE_CANT_PAUSE,
 	POKE_MESSAGE_LOAD_GAME,
+	POKE_MESSAGE_FISHING,
 	POKE_MENU_MAIN,
 	POKE_MENU_SAVED,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
@@ -168,13 +169,13 @@ void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, 
 void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect,Player*);
 SDL_Rect determineWarpLoc(SDL_Rect);
 void talkToPillar(SDL_Rect,int *,int *);
-void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int);
+void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int, int);
 bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect, Player*);
 void saveGame(SDL_Rect, SDL_Rect);
 void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);
 void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);
 int introSequence(SDL_Rect,SDL_Rect,SDL_Rect);
-//int goFish();
+int goFish(SDL_Rect,SDL_Rect,SDL_Rect,char);
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
 SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the images to be displayed
@@ -197,6 +198,11 @@ SDL_Rect gWalkLeft[WALKING_ANIMATION_FRAMES];	//series of frames from gSpriteShe
 SDL_Rect gWalkRight[WALKING_ANIMATION_FRAMES];	//animate walking right
 SDL_Rect gWalkUp[WALKING_ANIMATION_FRAMES];	//animate walking up the screen
 SDL_Rect gWalkDown[WALKING_ANIMATION_FRAMES];	//animate walking down the screen
+
+SDL_Rect gFishLeft[WALKING_ANIMATION_FRAMES];	//series of frames from gSpriteSheet to animate walking left
+SDL_Rect gFishRight[WALKING_ANIMATION_FRAMES];	//animate walking right
+SDL_Rect gFishUp[WALKING_ANIMATION_FRAMES];	//animate walking up the screen
+SDL_Rect gFishDown[WALKING_ANIMATION_FRAMES];	//animate walking down the screen
 
 int main()
 {
@@ -278,6 +284,7 @@ int main()
 			int isHealer= 0;
 			int isGym= 0;
 			int isWarpTile= 0;
+			int caughtFish=0;
 
 			int gymAnswers=0;
 			int firstPillarx=0;
@@ -321,7 +328,7 @@ int main()
 								if( gCurrentClip!=&gWalkUp[0] ) {	// ie. if he is NOT already walking up, change the direction he is facing to up
 									gCurrentClip= &gWalkUp[0];
 								}else if(mapZoomRect.x==1 && mapZoomRect.y==1 && characterRect.y==14 && (characterRect.x==247 || characterRect.x==279)){
-														dispMessage(characterRect, mapZoomRect, isCave, 0, 1, 0);
+														dispMessage(characterRect, mapZoomRect, isCave, 0, 1, 0, 0);
 								} else {	// else, make him continue walking up
 									if( mapZoomRect.y-15 < topEdge ) isOB=1;
 									if( isOB==0 ){
@@ -335,9 +342,9 @@ int main()
 											if( i== DOOR_BLUE_N_CELL || i== DOOR_BLUE_SE_CELL || i== DOOR_GREEN_S_CELL || i== DOOR_RED_NW_CELL || i== DOOR_RED_S_CELL || i== DOOR_WOOD_CELL || i== DOOR_MART_CELL){
 												if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface)) {
 													if( i==DOOR_MART_CELL )
-														dispMessage(characterRect, mapZoomRect, isCave, 1, 0, 0);
+														dispMessage(characterRect, mapZoomRect, isCave, 1, 0, 0, 0);
 													else
-														dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0);
+														dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0, 0);
 												}
 												
 											}else if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
@@ -415,7 +422,7 @@ int main()
 									}
 									if(isCave) {
 										if(mapZoomRect.x<=833) {
-											dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0);
+											dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0, 0);
 											SDL_Delay(3000);
 										}else{
 											int prevCave= caveChoice;
@@ -611,6 +618,10 @@ int main()
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											cout<<"littlebattle\n";
 										}
+								// Water
+									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WATER_CELL], gScreenSurface) ){
+										caughtFish=goFish(characterRect, stretch2windowRect, mapZoomRect, 'N');
+									}
 								}else if( gCurrentClip==&gWalkDown[0] ){
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
@@ -619,6 +630,10 @@ int main()
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											cout<<"littlebattle\n";
 										}
+								// Water
+									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WATER_CELL], gScreenSurface) ){
+										caughtFish=goFish(characterRect, stretch2windowRect, mapZoomRect,'S');
+									}
 								}else if( gCurrentClip==&gWalkLeft[0] ){
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
@@ -627,6 +642,10 @@ int main()
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											cout<<"littlebattle\n";
 										}
+								// Water
+									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface) ){
+										caughtFish=goFish(characterRect, stretch2windowRect, mapZoomRect,'W');
+									}
 								}else if( gCurrentClip==&gWalkRight[0] ){
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
@@ -635,12 +654,16 @@ int main()
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											cout<<"littlebattle\n";
 										}
+								// Water
+									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface) ){
+										caughtFish=goFish(characterRect, stretch2windowRect, mapZoomRect,'E');
+									}
 								}
 								break;
 				
 							case SDLK_p:	// Pause Menu
 								if(isPokeCenter || isGym)
-									dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 1);	// If inside, don't let the user pause!
+									dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 1, 0);	// If inside, don't let the user pause!
 								else
 									quit=pauseMenu(characterRect, stretch2windowRect, mapZoomRect,&Nick);	// Outside, so let the user pause
 								break;
@@ -649,6 +672,12 @@ int main()
 								break;
 						}
 
+
+						if(caughtFish==1){
+							battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+						}else if(caughtFish==2){
+							dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 1);
+						}
 
 						if(steponWildGrass){
 							if(rand()%100 < 15){
@@ -713,6 +742,7 @@ int main()
 					enteringBuilding=0;
 					exitingBuilding=0;
 					isWarpTile=0;
+					caughtFish=0;
 				}
 			}//end game loop
 		}
@@ -852,6 +882,11 @@ bool loadMedia()
 
 	gPokeMaps[ POKE_MESSAGE_CANT_PAUSE ] = loadSurface("pokeFrameCantPause.png");//load background image
 	if(gPokeMaps[ POKE_MESSAGE_CANT_PAUSE ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_FISHING ] = loadSurface("pokeFrameFishing.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_FISHING ] == NULL){//if not loaded properly return unsuccessful 
 		success = false;
 	}
 
@@ -1047,6 +1082,92 @@ bool loadMedia()
 		gWalkRight[3].y = 104;
 		gWalkRight[3].w = 32;
 		gWalkRight[3].h = 32;
+//FISHING
+int fishingOffset= 16*32-2;
+		//Set Fishing down clips
+		gFishDown[0].x = 2+fishingOffset;
+		gFishDown[0].y = 2;
+		gFishDown[0].w = 32;
+		gFishDown[0].h = 32;
+
+		gFishDown[1].x = 36+fishingOffset;
+		gFishDown[1].y = 2;
+		gFishDown[1].w = 32;
+		gFishDown[1].h = 32;
+
+		gFishDown[2].x = 70+fishingOffset;
+		gFishDown[2].y = 2;
+		gFishDown[2].w = 32;
+		gFishDown[2].h = 32;
+
+		gFishDown[3].x = 104+fishingOffset;
+		gFishDown[3].y = 2;
+		gFishDown[3].w = 32;
+		gFishDown[3].h = 32;
+
+		//Set fishing up clips
+		gFishUp[0].x = 2+fishingOffset;
+		gFishUp[0].y = 36;
+		gFishUp[0].w = 32;
+		gFishUp[0].h = 32;
+		
+		gFishUp[1].x = 36+fishingOffset;
+		gFishUp[1].y = 36;
+		gFishUp[1].w = 32;
+		gFishUp[1].h = 32;
+	
+		gFishUp[2].x = 70+fishingOffset;
+		gFishUp[2].y = 36;
+		gFishUp[2].w = 32;
+		gFishUp[2].h = 32;
+	
+		gFishUp[3].x = 104+fishingOffset;
+		gFishUp[3].y = 36;
+		gFishUp[3].w = 32;
+		gFishUp[3].h = 32;
+
+		//Set fishing left clips
+		gFishLeft[0].x = 2+fishingOffset;
+		gFishLeft[0].y = 70;
+		gFishLeft[0].w = 32;
+		gFishLeft[0].h = 32;
+
+		gFishLeft[1].x = 36+fishingOffset;
+		gFishLeft[1].y = 70;
+		gFishLeft[1].w = 32;
+		gFishLeft[1].h = 32;
+
+		gFishLeft[2].x = 70+fishingOffset;
+		gFishLeft[2].y = 70;
+		gFishLeft[2].w = 32;
+		gFishLeft[2].h = 32;
+
+		gFishLeft[3].x = 104+fishingOffset;
+		gFishLeft[3].y = 70;
+		gFishLeft[3].w = 32;
+		gFishLeft[3].h = 32;
+
+		//Set fishing right clips
+		gFishRight[0].x = 2+fishingOffset;
+		gFishRight[0].y = 104;
+		gFishRight[0].w = 32;
+		gFishRight[0].h = 32;
+
+		gFishRight[1].x = 36+fishingOffset;
+		gFishRight[1].y = 104;
+		gFishRight[1].w = 32;
+		gFishRight[1].h = 32;
+
+		gFishRight[2].x = 70+fishingOffset;
+		gFishRight[2].y = 104;
+		gFishRight[2].w = 32;
+		gFishRight[2].h = 32;
+
+		gFishRight[3].x = 104+fishingOffset;
+		gFishRight[3].y = 104;
+		gFishRight[3].w = 32;
+		gFishRight[3].h = 32;
+	
 	}
 
 	return success;
@@ -1375,7 +1496,7 @@ void talkToPillar(SDL_Rect characterRect, int *gymAnswers, int *firstPillarx ) {
 	}
 }
 
-void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int isMart, int isStart, int isInside) {
+void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int isMart, int isStart, int isInside, int isFishing) {
 
 	SDL_Rect stretchRect4;			//rectangle used for
 	stretchRect4.w = (MAP_SCREEN_WIDTH/6)*4;			//size of portion of sprite sheet taken up by character
@@ -1388,6 +1509,8 @@ void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int i
 		
 	if(isCave)
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_CAVE ], NULL, gScreenSurface, &stretchRect4);
+	else if(isFishing)
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_FISHING ], NULL, gScreenSurface, &stretchRect4);
 	else if(isStart)
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_START ], NULL, gScreenSurface, &stretchRect4);
 	else if(isMart)
@@ -1737,6 +1860,67 @@ for(int j=10; j>0; j-=5)
 
 }
 
-//int goFish() {
-//	return
-//}
+int goFish(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect, char direction) {
+	int caughtFish=0;
+	int fishFrame=2;
+	switch(direction){
+		case 'N':
+			for( int i=0; i<12; i++){
+				if(i<2) gCurrentClip = &gFishUp[fishFrame];
+				else gCurrentClip = &gFishUp[(fishFrame%2)+2];//set equal to proper frame of walking right sprites
+				SDL_Delay(250);
+				SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+				SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
+				SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+				fishFrame++;
+			}
+			gCurrentClip = &gWalkUp[0];
+			break;
+		case 'S':
+			characterRect.y+=8;
+			for( int i=0; i<12; i++){
+				if(i<2) gCurrentClip = &gFishDown[fishFrame];
+				else gCurrentClip = &gFishDown[(fishFrame%2)+2];//set equal to proper frame of walking right sprites
+				SDL_Delay(250);
+				SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+				SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
+				SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+				fishFrame++;
+			}
+			gCurrentClip = &gWalkDown[0];
+			break;
+		case 'E':
+			characterRect.x+=8;
+			for( int i=0; i<12; i++){
+				if(i<2) gCurrentClip = &gFishRight[fishFrame];
+				else gCurrentClip = &gFishRight[(fishFrame%2)+2];//set equal to proper frame of walking right sprites
+				SDL_Delay(250);
+				SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+				SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
+				SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+				fishFrame++;
+			}
+			gCurrentClip = &gWalkRight[0];
+			break;
+		case 'W':
+			characterRect.x-=8;
+			for( int i=0; i<12; i++){
+				if(i<2) gCurrentClip = &gFishLeft[fishFrame];
+				else gCurrentClip = &gFishLeft[(fishFrame%2)+2];//set equal to proper frame of walking right sprites
+				SDL_Delay(250);
+				SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+				SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
+				SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+				fishFrame++;
+			}
+			gCurrentClip = &gWalkLeft[0];
+			break;
+	}
+
+	if(rand()%100 < 40)
+		caughtFish=1;
+	else
+		caughtFish=2;
+
+	return caughtFish;
+}
