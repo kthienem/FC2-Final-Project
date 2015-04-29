@@ -206,6 +206,7 @@ void Player::wild_battle(int level_enc){
 	add_pokemon((rand()%16)+1,0,level_enc); // comp rand
 	op = 0; //opponent poke
 	cout << endl << "Wild Battle!" << endl;
+	cout << "A Wild, Level " << (*otherPoke[op]).getlevel() << " " << (*otherPoke[op]).getname() << "appeared!" << endl << endl;
 //	int choice;
 //	int KOed_poke, KOed_yourpoke;	
 //	choice = whatToDo();
@@ -329,6 +330,7 @@ void Player::fish_battle(int level_enc){
 	cout << endl << "Fish Battle!" << endl;
 	add_pokemon(rand_between(9,10),0,level_enc); // comp rand
 	op = 0; //opponent poke
+	cout << "A Wild, Level " << (*otherPoke[op]).getlevel() << " " << (*otherPoke[op]).getname() << "was hooked!" << endl << endl;
 /*	int	battleOn = 1;
 	int userMove;
 	int compMove;
