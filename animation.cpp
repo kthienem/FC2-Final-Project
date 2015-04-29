@@ -49,6 +49,7 @@ enum pokeMaps
 	POKE_MESSAGE_MART,
 	POKE_MESSAGE_START,
 	POKE_MESSAGE_CANT_PAUSE,
+	POKE_MESSAGE_LOAD_GAME,
 	POKE_MENU_MAIN,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
 };
@@ -170,7 +171,7 @@ bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect);
 void saveGame(SDL_Rect, SDL_Rect);
 void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);
 void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);
-void introSequence(SDL_Rect);
+int introSequence(SDL_Rect);
 //int goFish();
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
@@ -290,6 +291,8 @@ int main()
 			colorCodes= readColorCodes();
 
 
+			newGame= introSequence(stretch2windowRect);
+
 			if(!newGame){
 				loadGame(&gCurrentClip, &characterRect, &mapZoomRect);
 			}
@@ -297,7 +300,6 @@ int main()
 			int trainerCellx= characterRect.x+7;
 			int trainerCelly= characterRect.y+16;
 
-	//		introSequence(stretch2windowRect);
 
 			while(!quit){//while the user has not entered the event to quit
 				while(SDL_PollEvent(&e) != 0){//while there remains user entered events
@@ -843,6 +845,11 @@ bool loadMedia()
 
 	gPokeMaps[ POKE_MESSAGE_CANT_PAUSE ] = loadSurface("pokeFrameCantPause.png");//load background image
 	if(gPokeMaps[ POKE_MESSAGE_CANT_PAUSE ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_LOAD_GAME ] = loadSurface("pokeFrameLoadSaveIntro.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_LOAD_GAME ] == NULL){//if not loaded properly return unsuccessful 
 		success = false;
 	}
 
@@ -1550,7 +1557,10 @@ void battleCutScene(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rec
 
 }
 
-void introSequence(SDL_Rect stretch2windowRect){
+int introSequence(SDL_Rect stretch2windowRect){
+
+	int newGame=0;
+
 	SDL_Rect torchicRect;			//rectangle used for where to place the character
 	torchicRect.x = SCREEN_WIDTH;	//place at center of screen
 	torchicRect.y = 2*(SCREEN_HEIGHT/3)+10;	//place at center of screen
@@ -1563,7 +1573,28 @@ void introSequence(SDL_Rect stretch2windowRect){
 	stretchRect4.x = SCREEN_WIDTH/6;	//place at center of screen
 	stretchRect4.y = SCREEN_HEIGHT/5+15;	//place at center of screen
 
+	SDL_Rect stretchRect5;			//rectangle used for
+	stretchRect5.w = (SCREEN_WIDTH/2);			//size of portion of sprite sheet taken up by character
+	stretchRect5.h = (SCREEN_HEIGHT/5);			//size of portion of sprite sheet taken up by character
+	stretchRect5.x = SCREEN_WIDTH/4;	//place at center of screen
+	stretchRect5.y = 4*(SCREEN_HEIGHT/5)-3;	//place at center of screen
 
+	SDL_Rect stretchRect6;			//rectangle used for
+	stretchRect6.w = (stretchRect5.w/3)-4;			//size of portion of sprite sheet taken up by character
+	stretchRect6.h = stretchRect5.h-19;			//size of portion of sprite sheet taken up by character
+	stretchRect6.x = stretchRect5.x+stretchRect5.w/3 - 1;	//place at center of screen
+	stretchRect6.y = stretchRect5.y+10;	//place at center of screen
+	int initialMenuPos= stretchRect6.x;	//place at center of screen
+
+	SDL_Surface* transsurface;
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		transsurface = SDL_CreateRGBSurface(SDL_SWSURFACE,stretch2windowRect.w,stretch2windowRect.h,32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	#else
+		transsurface = SDL_CreateRGBSurface(SDL_SWSURFACE,stretch2windowRect.w,stretch2windowRect.h,32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+	#endif
+	SDL_FillRect(transsurface, &stretchRect6, SDL_MapRGBA(transsurface->format, 143, 200, 255, 120));
+
+	SDL_Event e;			//variable for keyboard events entered by user
 //torchic running
 for(int j=0; j<9; j++)
 	for(int i=0; i<4; i++){
@@ -1575,6 +1606,13 @@ for(int j=0; j<9; j++)
 		SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 		if(i==0) SDL_Delay(50);
 		SDL_Delay(150);
+
+		while(SDL_PollEvent(&e) != 0)//while there remains user entered events
+			if(e.type == SDL_KEYDOWN)//a key has been pressed
+				if(e.key.keysym.sym==SDLK_SPACE){//switch with key type parameter
+					i=4;
+					j=9;
+				}					
 	}
 //torchic falling
 for(int j=10; j>0; j-=5)
@@ -1588,18 +1626,81 @@ for(int j=10; j>0; j-=5)
 		SDL_Delay(150);
 	}
 		SDL_Delay(550);
-//pokemon title
-for(int i=0; i<6*6; i++){
-		SDL_BlitScaled(gIntroBackground, &gIntroTrees, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
-		gIntroTrees.x-=1;
-		if(gIntroTrees.x<=64) gIntroTrees.x=128;
-		SDL_BlitScaled(gIntroSprites, &gTorchic[5], gScreenSurface, &torchicRect);//put the character image onto gScreenSurface
-		torchicRect.x+=3;
-		SDL_BlitScaled(gIntroTitleSprites, &gPokeTitle[i%6], gScreenSurface, &stretchRect4);//put the background image onto gScreenSurface
-		SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
-		SDL_Delay(150);
 
-}
+	//pokemon title and menu
+	bool quit = false;
+	int i=0;
+	int titleSprite=0;
+
+	while(!quit){//while the user has not entered the event to quit
+		while(SDL_PollEvent(&e) != 0){//while there remains user entered events
+			if (e.type == SDL_QUIT){//entered event is equal to pressing red x in top right hand corner of window
+				quit = true;//set quit to true to exit the while loop
+			}
+			else if(e.type == SDL_KEYDOWN){//a key has been pressed
+				switch(e.key.keysym.sym)//switch with key type parameter
+				{
+					//frame is reset to zero after the switch. Thus each for loop will loop through the stages of walking sprites as gWalkx[1,2,3,0] in that order. Since gCurrentClip will end in gWalkx[0], we can check the direction the trainer is facing by seeing if the gCurrentClip == gWalkx[0]
+					case SDLK_LEFT://left arrow key
+						if(stretchRect6.x>initialMenuPos){
+							SDL_FillRect(transsurface, &stretchRect6, SDL_MapRGBA(transsurface->format, 0, 0, 0, 0));
+							stretchRect6.x -= stretchRect6.w;	//place at center of screen
+							SDL_FillRect(transsurface, &stretchRect6, SDL_MapRGBA(transsurface->format, 143, 200, 255, 120));
+						}
+						break;
+					case SDLK_RIGHT://left arrow key
+						if(stretchRect6.x<initialMenuPos+stretchRect6.w){
+							SDL_FillRect(transsurface, &stretchRect6, SDL_MapRGBA(transsurface->format, 0, 0, 0, 0));
+							stretchRect6.x += stretchRect6.w;	//place at center of screen
+							SDL_FillRect(transsurface, &stretchRect6, SDL_MapRGBA(transsurface->format, 143, 200, 255, 120));
+						}
+						break;
+					case SDLK_SPACE://space bar
+					//New Game
+						if(stretchRect6.x==initialMenuPos+stretchRect6.w){
+							newGame=1;
+							quit=true;
+					//Load Game
+						}else{
+							newGame=0;
+							quit=true;
+						}
+						break;
+				}
+				while(SDL_PollEvent(&e) != 0){		//while there remains user entered events
+					if (e.type == SDL_QUIT){	//entered event is equal to pressing red x in top right hand corner of window
+						quit = true;	//set quit to true to exit the while loop
+					}
+				}
+			}
+		}
+		if(!quit){
+			if(torchicRect.x<669){
+				gIntroTrees.x-=1;
+				if(gIntroTrees.x<=64) gIntroTrees.x=128;
+				torchicRect.x+=3;
+			}
+			if(i>1000) i=0;
+			i++;
+			titleSprite=i%20;
+			if(titleSprite>5) titleSprite=0;
+			SDL_BlitScaled(gIntroBackground, &gIntroTrees, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+			SDL_BlitScaled(gIntroSprites, &gTorchic[5], gScreenSurface, &torchicRect);//put the character image onto gScreenSurface
+			SDL_BlitScaled(gIntroTitleSprites, &gPokeTitle[titleSprite], gScreenSurface, &stretchRect4);//put the background image onto gScreenSurface
+			SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_LOAD_GAME ], NULL, gScreenSurface, &stretchRect5);//put the background image onto gScreenSurface
+	
+			SDL_FillRect(transsurface, &stretchRect6, SDL_MapRGBA(transsurface->format, 143, 200, 255, 120));
+			SDL_BlitSurface(transsurface,NULL,gScreenSurface,&stretch2windowRect);
+
+			SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+			SDL_Delay(150);
+		}
+
+	}
+
+
+
+	return(newGame);
 
 }
 
