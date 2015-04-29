@@ -55,7 +55,7 @@ class Moves{
 		string display();
 		int noMove();
 		int getmovenum();
-		void setmovenum();
+		void setmovenum(int);
 	private:
 		int myMove;
 		string type;
@@ -185,100 +185,113 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			base = 29;
 			modify = 1;
 			type.assign("electric");
+			break;
 		case MOVE_CONFUSION:
 			moveName.assign("thunderbolt");
 			setmovenum(17);
 			base = 15;
 			modify = 1;
 			type.assign("psychic");
+			break;
 		case MOVE_PSYCHIC:
 			moveName.assign("Psychic");
 			setmovenum(18);
 			base = 20;
 			modify = 1.3;
 			type.assign("psychic");
+			break;
 		case MOVE_PSYBEAM:
 			moveName.assign("psybeam");
 			setmovenum(19);
 			base = 15;
 			modify = 2;
 			type.assign("psychic");
+			break;
 		case MOVE_LOWKICK:
 			moveName.assign("low kick");
 			setmovenum(20);
 			base = 18;
 			modify = 1.5;
 			type.assign("fighting");
+			break;
 		case MOVE_SLASH:
 			moveName.assign("slash");
 			setmovenum(21);
 			base = 18;
 			modify = 1.3;
 			type.assign("normal");
+			break;
 		case MOVE_PECK:
 			moveName.assign("peck");
 			setmovenum(22);
 			base = 15;
 			modify = 1.6;
 			type.assign("flying");
+			break;
 		case MOVE_SEISMICTOSS:
 			moveName.assign("seismic toss");
 			setmovenum(23);
 			base = 22;
 			modify = 1.2;
 			type.assign("fighting");
+			break;
 		case MOVE_THUNDER:
 			moveName.assign("thunder");
 			setmovenum(24);
 			base = 25;
 			modify = 1;
 			type.assign("electric");
+			break;
 		case MOVE_HYDROPUMP:
 			moveName.assign("hydropump");
 			setmovenum(25);
 			base = 25;
 			modify = 1;
 			type.assign("water");
+			break;
 		case MOVE_FIREBLAST:
 			moveName.assign("fireblast");
 			setmovenum(26);
 			base = 25;
 			modify = 1;
 			type.assign("fire");
+			break;
 		case MOVE_SOLARBEAM:
 			moveName.assign("solar beam");
 			setmovenum(27);
 			base = 25;
 			modify = 1;
 			type.assign("grass");
+			break;
 		case MOVE_BODYSLAM:
 			moveName.assign("body slam");
 			setmovenum(28);
 			base = 20;
 			modify = 1.7;
 			type.assign("normal");
+			break;
 		case MOVE_SWIFT:
 			moveName.assign("swift");
 			setmovenum(29);
 			base = 16;
 			modify = 1.2;
 			type.assign("normal");
-
+			break;
 		default:
 			noMove();
 			break;
 	}
 }
 
-int getmovenum() {
+int Moves::getmovenum() {
 	return movenum;
 }
 
-void setmovenum(int m) {
+void Moves::setmovenum(int m) {
 	movenum = m;
 }
 
-void levelUp() {
+void Moves::levelUp() {
 	// do something to set myMove = to new value
 }
 
