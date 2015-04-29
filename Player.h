@@ -567,7 +567,6 @@ void Player::load_pokemon_stats(){
 		inFile >> inInt;
 		(*myPoke[i]).setmaxHealth(inInt);
 		inFile >> inInt;
-    	cout << "inInt: for currHealth: " << inInt << endl;
 		(*myPoke[i]).setcurrHealth(inInt);
 		inFile >> inInt;
     	(*myPoke[i]).setlevel(inInt);
