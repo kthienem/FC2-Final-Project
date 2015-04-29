@@ -376,6 +376,11 @@ void Player::fish_battle(int level_enc){
 			cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
 			cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
 		}
+Actual damage: 21
+KO
+No useable pokemon, seg fault!
+You.....1
+
 		if((*otherPoke[op]).getKO()){
 			cout << "Wild fish has fainted" << endl;
 			(*myPoke[cp]).incExp(25); //+25 exp
@@ -392,6 +397,11 @@ void Player::fish_battle(int level_enc){
 				cout << "No useable pokemon, seg fault!" << endl;
 				break;
 			}
+Actual damage: 21
+KO
+No useable pokemon, seg fault!
+You.....1
+
 			else{
 				while(1){
 					cout << "Choose next Poke: ";
@@ -465,7 +475,12 @@ void Player::player_battle(int pick, int level_enc){
 		cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
 		cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
 		if((*myPoke[cp]).getKO()){ //make sure current poke isn't KO'ed
-			if(noValid()){
+			if(noValid()){ctual damage: 21
+KO
+No useable pokemon, seg fault!
+You.....1
+
+
 				cout << "No useable pokemon, seg fault!" << endl;
 				break;
 			}
@@ -624,7 +639,8 @@ int Player::fight(int userMove){
 	(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
 	//check their ko and give exp
 	if((*otherPoke[op]).getKO()){
-		(*myPoke[cp]).incExp(25); //+25 exp
+		(*myPoke[cp]).incExp((*otherPoke[op]).getlevel()*7 + 10); //+25 exp
+		cout << "Gained " << ((*otherPoke[op]).getlevel()*7 + 10) << " exp!" << endl;
 		return 1; //return 1 for a KO
 	}
 	cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
@@ -634,7 +650,7 @@ int Player::fight(int userMove){
 int Player::catchPoke(){
 	if(myPoke.size()!=6){
 		int value = rand()%100;
-   	    cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*7) << endl;
+   	    cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*10) << endl;
     	if(value < (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*10)){
     		cout << "Caught" << endl;
     	    myPoke.push_back(otherPoke[op]);
