@@ -651,14 +651,17 @@ int Player::fight(int userMove){
 int Player::catchPoke(){
 	if(myPoke.size()!=6){
 		int value = rand()%100;
-   	    cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*10) << endl;
-    	if(value < (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*10)){
+		double max = (*otherPoke[op]).getmaxHealth();
+		double curr = (*otherPoke[op]).getcurrHealth();
+   	    //cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*10) << endl;
+		if(value > ((curr/max)*100)){
     		cout << "Caught" << endl;
     	    myPoke.push_back(otherPoke[op]);
        	    otherPoke.clear(); //get rid of him
 	   		return 1; //did catch
     	}
 		else{
+			cout << "Shoot, the wild pokemon escaped the Pokeball... should'a used a master ball or bought a falcon!" << endl << endl;
 			return 0; //did not catch
 		}
 	}
@@ -680,6 +683,7 @@ int Player::fight_comp(){
 int Player::run(){
 	int runChance = rand()%10;
 		if(runChance > 2){ //50percent maybe later based of speed	
+			cout << endl << "Ran away!" << endl << endl;
 			return 1; //end encouter
 		}
 		return 0;
