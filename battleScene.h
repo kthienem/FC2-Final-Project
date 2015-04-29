@@ -1062,6 +1062,9 @@ void battleScene::battle()
 									inMenu = true;
 									inMoves = false;
 									quit = (*myTrainer).fight(temp2);
+									if(!quit){
+										quit = (*myTrainer).fight_comp(); //have computer attack	
+									}
 									break;
 								}
 								default:

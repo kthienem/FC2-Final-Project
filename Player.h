@@ -78,7 +78,7 @@ class Player {
 };
 Player::Player(int newGame){
 	if(newGame){
-		add_pokemon(7,1); // add a new pikachu to player pokemon
+		add_pokemon(8,1); // add a new pikachu to player pokemon
 		add_pokemon(11,1);
 		cp = 0;
 	}
@@ -646,7 +646,7 @@ int Player::fight_comp(){
 		int compMove = (rand() % 4) + 1;
         cout << "Wild "<< (*otherPoke[op]).getname() << " attacked with " << (*otherPoke[op]).attackname(compMove-1) << endl;
         (*otherPoke[op]).attack(compMove,myPoke[cp]); // comp move random 1-4
-		if((*myPoke[cp]).getKO()){
+		if((*myPoke[cp]).getKO()){	
 			return 1; //return 1 for a KO
 		}
         cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
