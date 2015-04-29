@@ -42,8 +42,10 @@ class Player {
 		int fight_comp();
 		int fight(int);
 		int catchPoke(int, int);
-
-
+		int getmyHealth();
+		int getmyMaxHealth();
+		int getopHealth();
+		int getopMaxHealth();
 
 		int getMoveNum(int);
 		int getNumPoke();
@@ -665,5 +667,17 @@ int Player::switchPoke(int newPoke){
 }
 int Player::getMoveNum(int move){
 	return ((*myPoke[cp]).getMoveNum(move)); //returns enum value of the move
+}
+int Player::getmyHealth(){
+	return (*myPoke[cp]).getcurrHealth();
+}
+int Player::getmyMaxHealth(){
+	return (*myPoke[cp]).getmaxHealth();
+}
+int Player::getopHealth(){
+	return (*otherPoke[op]).getcurrHealth();
+}
+int Player::getopMaxHealth(){
+	return (*otherPoke[op]).getmaxHealth();
 }
 #endif
