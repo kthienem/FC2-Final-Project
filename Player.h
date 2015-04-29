@@ -72,9 +72,6 @@ class Player {
 		vector <Pokemon*> otherPoke; //array for pointers
 		int cp; //current pokemon
 		int op;
-		//Pokemon *myPoke[6]; // array of pointers to pokemon of player's pokemon
-		////Pokemon *otherPoke[6];
-		////Pokemon Pika(1);
 };
 Player::Player(int newGame){
 	if(newGame){
@@ -146,7 +143,6 @@ void Player::add_pokemon(int PokeNum, int person, int levelDesired){ //person 1 
 	for(int i = 1; i < levelDesired; i++){
 		(*newPoke_ptr).levelUp();
 	}
-	//myPoke[createPokemon++] = new Pokemon(PokeNum);
 	if(person == 1){ //limit to 6 here and need to in the catch time too
 		myPoke.push_back(newPoke_ptr);
 	}
@@ -207,301 +203,21 @@ void Player::wild_battle(int level_enc){
 	op = 0; //opponent poke
 	cout << endl << "Wild Battle!" << endl;
 	cout << "A Wild, Level " << (*otherPoke[op]).getlevel() << " " << (*otherPoke[op]).getname() << "appeared!" << endl << endl;
-//	int choice;
-//	int KOed_poke, KOed_yourpoke;	
-//	choice = whatToDo();
-//	int newPoke = 0;
-//	int move = 0;	
-	/*switch(choice){
-		case 1: //fight can check speed to decide who first
-			if(fight(move)){
-				return; //end encounter killed wild poke
-			}
-			if(fight_comp()){ //computer turn
-				cp = switchPoke(newPoke);
-				if(cp == -1){
-					return; //exit battle no more useable pokemon
-				}	
-			}
-			break;
-		case 2: //catch
-			if(catchPoke(cp,op)){ //end encouter
-				return;
-			}
-			break;
-		case 3: //run
-			if(run()){
-				return;
-			}
-			break;
-		case 4: //switch poke
-			cp = switchPoke(newPoke); //set current poke to who we switch
-			if(cp == -1){
-				return;
-			}
-			else if(cp == -2){
-				while(1){
-					cp = switchPoke(newPoke);
-					if(cp != -2){
-						break;
-					}
-				}
-			}
-			break;
-
-	}*/	
-
-	/*while(battleOn){
-		if((*myPoke[cp]).getKO()){ //make sure current poke isn't KO'ed
-			if(noValid()){
-				cout << "No useable pokemon, seg fault!" << endl;
-				break;
-			}
-			else{
-				while(1){
-					cout << "Choose next Poke: ";
-					cin >> cp;
-					if(checkValidPoke(cp)){ //if there exists another pokemon not ko'ed
-						cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl;
-						break;
-					}
-					cout << "Please pick a valid pokemon!" << endl;
-					if(cp == -1) break; //break case if entered value is -1
-				}
-			}
-		}
-		cout << endl << "-----------------------" << endl;
-		cout << "What move would you like to use: ";
-		cin >> userMove;
-		
-		while((userMove > 5) || (userMove < 1)){
-			cout << "Please choose a valid move (1-4): ";
-			cin >> userMove;
-		}
-		if(userMove == 5){ //catch, problem with if you choose an invalid number then it doesn't load the catch function, should use sub functions to change that
-			int value = rand()%100;
-			cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*7) << endl;
-			if(value < (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*7)){
-				cout << "Caught" << endl;
-				myPoke.push_back(otherPoke[op]);
-				otherPoke.clear(); //get rid of him
-				break;
-			}
-		}
-		else if(userMove != 5){ //skip attack phase if used
-			cout << (*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
-			(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
-			cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
-			cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
-		}
-		if((*otherPoke[op]).getKO()){
-			cout << "Wild pokemon has fainted" << endl;
-			(*myPoke[cp]).incExp(25); //+25 exp
-			break;	
-		}	
-		cout << endl << "-----------------------" << endl;
-		compMove = (rand() % 4) + 1;
-		cout << "Wild "<< (*otherPoke[op]).getname() << " attacked with " << (*otherPoke[op]).attackname(compMove-1) << endl;
-		(*otherPoke[op]).attack(compMove,myPoke[cp]); // comp move random 1-4
-		cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
-		cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
-		if((*myPoke[cp]).getKO()){ //make sure current poke isn't KO'ed
-			if(noValid()){
-				cout << "No useable pokemon, seg fault!" << endl;
-				break;
-			}
-			else{
-				while(1){
-					cout << "Choose next Poke: ";
-					cin >> cp;
-					if(checkValidPoke(cp)){ //if there exists another pokemon not ko'ed
-						cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl;
-						break;
-					}
-					cout << "Please pick a valid pokemon!" << endl;
-					if(cp == -1) break; //break case if entered value is -1
-				}
-			}
-		}
-	}*/
 }
+
 void Player::fish_battle(int level_enc){	
 	otherPoke.clear();
 	cout << endl << "Fish Battle!" << endl;
 	add_pokemon(rand_between(9,10),0,level_enc); // comp rand
 	op = 0; //opponent poke
 	cout << "A Wild, Level " << (*otherPoke[op]).getlevel() << " " << (*otherPoke[op]).getname() << "was hooked!" << endl << endl;
-/*	int	battleOn = 1;
-	int userMove;
-	int compMove;
-	cout << "Caught a Fish!" << endl;
-	while(battleOn){
-		if((*myPoke[cp]).getKO()){ //make sure current poke isn't KO'ed
-			if(noValid()){
-				cout << "No useable pokemon, seg fault!" << endl;
-				break;
-			}
-			else{
-				while(1){
-					cout << "Choose next Poke: ";
-					cin >> cp;
-					if(checkValidPoke(cp)){ //if there exists another pokemon not ko'ed
-						cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl;
-						break;
-					}
-					cout << "Please pick a valid pokemon!" << endl;
-					if(cp == -1) break; //break case if entered value is -1
-				}
-			}
-		}
-		cout << endl << "-----------------------" << endl;
-		cout << "What move would you like to use: ";
-		cin >> userMove;
-		
-		while((userMove > 5) || (userMove < 1)){
-			cout << "Please choose a valid move (1-4): ";
-			cin >> userMove;
-		}
-		if(userMove == 5){ //catch, problem with if you choose an invalid number then it doesn't load the catch function, should use sub functions to change that
-			int value = rand()%100;
-			cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*7) << endl;
-			if(value < (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*7)){
-				cout << "Caught" << endl;
-				myPoke.push_back(otherPoke[op]);
-				otherPoke.clear(); //get rid of him
-				break;
-			}
-		}
-		else if(userMove != 5){ //skip attack phase if used
-			cout << (*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
-			(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
-			cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
-			cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
-		}
-Actual damage: 21
-KO
-No useable pokemon, seg fault!
-You.....1
-
-		if((*otherPoke[op]).getKO()){
-			cout << "Wild fish has fainted" << endl;
-			(*myPoke[cp]).incExp(25); //+25 exp
-			break;	
-		}	
-		cout << endl << "-----------------------" << endl;
-		compMove = (rand() % 4) + 1;
-		cout << "Wild "<< (*otherPoke[op]).getname() << " attacked with " << (*otherPoke[op]).attackname(compMove-1) << endl;
-		(*otherPoke[op]).attack(compMove,myPoke[cp]); // comp move random 1-4
-		cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
-		cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
-		if((*myPoke[cp]).getKO()){ //make sure current poke isn't KO'ed
-			if(noValid()){
-				cout << "No useable pokemon, seg fault!" << endl;
-				break;
-			}
-Actual damage: 21
-KO
-No useable pokemon, seg fault!
-You.....1
-
-			else{
-				while(1){
-					cout << "Choose next Poke: ";
-					cin >> cp;
-					if(checkValidPoke(cp)){ //if there exists another pokemon not ko'ed
-						cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl;
-						break;
-					}
-					cout << "Please pick a valid pokemon!" << endl;
-					if(cp == -1) break; //break case if entered value is -1
-				}
-			}
-		}
-	}*/
 }
+
 void Player::player_battle(int pick, int level_enc){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
 	cout << endl << "Trainer Battle!" << endl;
 	create_trainer(pick,level_enc);
 	op = 0;
-/*
-	int op = 0; //opponent poke
-	int	battleOn = 1;
-	int userMove;
-	int compMove;
-	cout << "Player Battle! vs Gary!" << endl;
-	while(battleOn){
-		if((*myPoke[cp]).getKO()){ //make sure current poke isn't KO'ed
-			if(noValid()){
-				cout << "No useable pokemon, seg fault!" << endl;
-				break;
-			}
-			else{
-				while(1){
-					cout << "Choose next Poke: ";
-					cin >> cp;
-					if(checkValidPoke(cp)){ //if there exists another pokemon not ko'ed
-						cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl;
-						break;
-					}
-					cout << "Please pick a valid pokemon!" << endl;
-					if(cp == -1) break; //break case if entered value is -1
-				}
-			}
-		}
-		cout << endl << "-----------------------" << endl;
-		cout << "What move would you like to use: ";
-		cin >> userMove;
-		while((userMove > 4) || userMove < 1){
-			cout << "Please choose a valid move (1-4):";
-			cin >> userMove;
-		}
-		cout << (*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
-		(*myPoke[cp]).attack(userMove,otherPoke[op]); //attack their pokemon with move
-		cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
-		cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
-		if((*otherPoke[op]).getKO()){
-			cout << "Pokemon has fainted" << endl;
-			(*myPoke[cp]).incExp(25); //+25 exp
-			if(noValid_other()){
-				cout << "You have defeated Gary!" << endl;
-				break;
-			}
-			else{
-				op++; //next user pokemon
-			}
-		}	
-		cout << endl << "-----------------------" << endl;
-		cout << "Gary's " << (*otherPoke[op]).getname() << " attacked!" << endl;
-		compMove = (rand() % 4) + 1;
-		(*otherPoke[op]).attack(compMove,myPoke[cp]); // comp move random 1-4
-		cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
-		cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
-		if((*myPoke[cp]).getKO()){ //make sure current poke isn't KO'ed
-			if(noValid()){ctual damage: 21
-KO
-No useable pokemon, seg fault!
-You.....1
-
-
-				cout << "No useable pokemon, seg fault!" << endl;
-				break;
-			}
-			else{
-				while(1){
-					cout << "Choose next Poke: ";
-					cin >> cp;
-					if(checkValidPoke(cp)){ //if there exists another pokemon not ko'ed
-						cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl;
-						break;
-					}
-					cout << "Please pick a valid pokemon!" << endl;
-					if(cp == -1) break; //break case if entered value is -1
-				}
-			}
-		}
-		
-	}*/
 }
 
 void Player::pokeCenter(){
@@ -569,7 +285,6 @@ void Player::save_pokemon_stats(){
 		outFile << (*myPoke[i]).getcurrSpeed() << " ";
 		outFile << (*myPoke[i]).getKO() << " ";
 		outFile << (*myPoke[i]).getmoveLevel() << " ";
-		//outFile << (*myPoke[i]).getMoveNums << " "; //help with this one to save moves! need to make edits in Moves.h
 		outFile << endl; //end of one pokemon
 
 	}
@@ -617,7 +332,6 @@ void Player::load_pokemon_stats(){
 			//learn new move
 		}
 	}
-		//(*myPoke[i]).setMoveNums(); //help with this one to save moves! need to make edits in Moves.h
     inFile.close();
 }
 void Player::learnNewMove(int i){
@@ -635,9 +349,6 @@ int Player::whatToDo(){
 	cin >> choice;	
 }
 int Player::fight(int userMove){
-//	int choice;
-//	cout << "Choose what move to use: 1,2,3 or 4";
-//	cin >> choice;
 	cout << "Level " << (*myPoke[cp]).getlevel() << " " <<(*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
 	(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
 	//check their ko and give exp
@@ -646,8 +357,6 @@ int Player::fight(int userMove){
 		cout << "Gained " << ((*otherPoke[op]).getlevel()*7 + 10) << " exp!" << endl;
 		return 1; //return 1 for a KO
 	}
-//	cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
-//	cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
 	return 0;
 }
 int Player::catchPoke(){
@@ -655,7 +364,6 @@ int Player::catchPoke(){
 		int value = rand()%100;
 		double max = (*otherPoke[op]).getmaxHealth();
 		double curr = (*otherPoke[op]).getcurrHealth();
-   	    //cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*10) << endl;
 		if(value > ((curr/max)*100)){
     		cout << "Caught" << endl;
     	    myPoke.push_back(otherPoke[op]);
@@ -678,8 +386,6 @@ int Player::fight_comp(){
 		if((*myPoke[cp]).getKO()){	
 			return 1; //return 1 for a KO
 		}
-//        cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
-  //      cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
 		return 0;
 }
 int Player::run(){
