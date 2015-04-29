@@ -318,8 +318,8 @@ void Player::wild_battle(){
 void Player::fish_battle(){	
 	otherPoke.clear();
 	add_pokemon(rand_between(9,10),0); // comp rand
-	int op = 0; //opponent poke
-	int	battleOn = 1;
+	op = 0; //opponent poke
+/*	int	battleOn = 1;
 	int userMove;
 	int compMove;
 	cout << "Caught a Fish!" << endl;
@@ -395,7 +395,7 @@ void Player::fish_battle(){
 				}
 			}
 		}
-	}
+	}*/
 }
 void Player::player_battle(int pick){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
