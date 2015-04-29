@@ -1124,6 +1124,10 @@ int battleScene::battle(int wildLevel)
 											if(quit){
 												return_value = 3; //caught
 											}
+											else if((*myTrainer).getNumPoke()==6){
+												continue;
+												//do nothing continue
+											}
 											else{
 												(*myTrainer).fight_comp();
 											}
@@ -1179,6 +1183,9 @@ int battleScene::battle(int wildLevel)
 												}
 												gCurrentArrowPos = gArrowPosition[0];
 											}
+										}
+										else{ //quit = 1
+											return_value = 2; //we koed them
 										}
 									}
 									else{ //trainer case where we need to check ko's
