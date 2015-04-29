@@ -4,6 +4,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <vector>
+#include <fstream>
 #include "Pokemon.h"
 #include "Squirtle.h"
 #include "Pikachu.h"
@@ -356,7 +357,7 @@ void Player::save_pokemon_stats(){
     	outFile << (*myPoke[i]).getmaxAttack() << " ";
     	outFile << (*myPoke[i]).getcurrAttack() << " ";
 		outFile << (*myPoke[i]).getmaxDef() << " ";
-		outfile << endl; //end of one pokemon
+		outFile << endl; //end of one pokemon
 
 	}
     outFile.close();
@@ -366,8 +367,10 @@ void Player::load_pokemon_stats(){
     ifstream inFile;
     inFile.open( "savePoke.txt",ios::in );
 	int temp;
-    inFile >> temp;
+    int var;
+	inFile >> temp;
     var = temp;
+	cout << var; //just a test
 
     inFile.close();
 }
