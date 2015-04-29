@@ -44,6 +44,7 @@ class Player {
 
 
 
+		int getMoveNum(int);
 		int getNumPoke();
 		void wild_battle();
 		void fish_battle();
@@ -653,5 +654,8 @@ int Player::switchPoke(int newPoke){
 			return(-2); //there are valid pokemon, but this isn't one
 		}
 	}
+}
+int Player::getMoveNum(int move){
+	return ((*myPoke[cp]).getMoveNum(move)); //returns enum value of the move
 }
 #endif
