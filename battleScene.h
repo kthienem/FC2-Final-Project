@@ -464,9 +464,9 @@ bool battleScene::loadMedia()
 	gMoves[SHOCK].w = 155;
 	gMoves[SHOCK].h = 20;
 
-	gMoves[KARATECHOP].x = 142;
-	gMoves[KARATECHOP].y = 120;
-	gMoves[KARATECHOP].w = 155;
+	gMoves[KARATECHOP].x = 0;
+	gMoves[KARATECHOP].y = 340;
+	gMoves[KARATECHOP].w = 128;
 	gMoves[KARATECHOP].h = 20;
 
 	gMoves[GUST].x = 142;
@@ -494,9 +494,9 @@ bool battleScene::loadMedia()
 	gMoves[RAZORLEAF].w = 155;
 	gMoves[RAZORLEAF].h = 20;
 
-	gMoves[WINGATTACK].x = 142;
-	gMoves[WINGATTACK].y = 240;
-	gMoves[WINGATTACK].w = 155;
+	gMoves[WINGATTACK].x = 0;
+	gMoves[WINGATTACK].y = 320;
+	gMoves[WINGATTACK].w = 128;
 	gMoves[WINGATTACK].h = 20;
 
 	gMoves[QUICKATTACK].x = 142;
@@ -578,6 +578,11 @@ bool battleScene::loadMedia()
 	gMoves[SWIFT].y = 580;
 	gMoves[SWIFT].w = 155;
 	gMoves[SWIFT].h = 20;
+
+	gMoves[CONFUSION].x = 142;
+	gMoves[CONFUSION].y = 240;
+	gMoves[CONFUSION].w = 155;
+	gMoves[CONFUSION].h = 20;
 	
 	//Window position for Move 1
 	gMovesWindow[0].x = 40;
