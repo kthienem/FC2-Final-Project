@@ -495,11 +495,9 @@ void Player::create_trainer(int pick){
 			add_pokemon(rand_between(11,12),0); //fire
 			add_pokemon(rand_between(1,2),0); //norm
 			break;
-		case 2: //yellow electric fight
-			add_pokemon(rand_between(7,8),0);
-			add_pokemon(rand_between(5,6),0);
-			add_pokemon(rand_between(5,6),0);
-			add_pokemon(rand_between(7,8),0);
+		case 2: //fisherman water and norm
+			add_pokemon(rand_between(9,10),0);
+			add_pokemon(rand_between(1,2),0);
 			break;
 		case 3: //ranger grass and fly
 			add_pokemon(rand_between(13,14),0);
@@ -509,10 +507,12 @@ void Player::create_trainer(int pick){
 			add_pokemon(rand_between(13,14),0);
 			add_pokemon(rand_between(9,10),0);
 			add_pokemon(rand_between(13,14),0);
-			break;
-		case 5: //fisherman water and norm
-			add_pokemon(rand_between(9,10),0);
-			add_pokemon(rand_between(1,2),0);
+			break;	
+		case 5: //yellow electric fight
+			add_pokemon(rand_between(7,8),0);
+			add_pokemon(rand_between(5,6),0);
+			add_pokemon(rand_between(5,6),0);
+			add_pokemon(rand_between(7,8),0);
 			break;
 		case 6: //gym leader psychic
 			add_pokemon(rand_between(15,16),0);
