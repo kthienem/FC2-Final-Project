@@ -167,7 +167,7 @@ void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_
 SDL_Rect determineWarpLoc(SDL_Rect);
 void talkToPillar(SDL_Rect,int *,int *);
 void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int);
-bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect);
+bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect, Player*);
 void saveGame(SDL_Rect, SDL_Rect);
 void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);
 void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);
@@ -639,7 +639,7 @@ int main()
 								if(isPokeCenter || isGym)
 									dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 1);	// If inside, don't let the user pause!
 								else
-									quit=pauseMenu(characterRect, stretch2windowRect, mapZoomRect);	// Outside, so let the user pause
+									quit=pauseMenu(characterRect, stretch2windowRect, mapZoomRect,&Nick);	// Outside, so let the user pause
 								break;
 
 							default://do nothing when any other keys are pressed
@@ -1400,7 +1400,7 @@ void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int i
 	SDL_Delay(4000);
 }
 
-bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect) {
+bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect, Player *Nick_ptr) {
 	SDL_Rect stretchRect4;			//rectangle used for
 	stretchRect4.w = SCREEN_WIDTH/4;			//size of portion of sprite sheet taken up by character
 	stretchRect4.h = (SCREEN_HEIGHT/2);			//size of portion of sprite sheet taken up by character
@@ -1467,6 +1467,7 @@ bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect map
 					//Save
 						}else if(stretchRect5.y==(stretchRect4.y+16)+1*stretchRect5.h){
 							saveGame(characterRect, mapZoomRect);
+							(*Nick_ptr).save_pokemon_stats();
 					//Quit Game
 						}else if(stretchRect5.y==(stretchRect4.y+16)+2*stretchRect5.h){
 							quitGame = true;
@@ -1488,7 +1489,7 @@ bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect map
 }
 
 void saveGame(SDL_Rect characterRect, SDL_Rect mapZoomRect) {
-
+	
 	ofstream outFile;
 	outFile.open( "savedGame.txt", ios::out );
 

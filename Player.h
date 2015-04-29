@@ -58,6 +58,9 @@ Player::Player(int newGame){
 		add_pokemon(11,1);
 		cp = 0;
 	}
+	else{
+		load_pokemon_stats();
+	}
 }
 void Player::Battle(){
 //	wild_battle();
