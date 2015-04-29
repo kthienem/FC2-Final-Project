@@ -115,7 +115,6 @@ void Pokemon::heal(){ //pokeCenter and other healing uses
 
 void Pokemon::levelUp() {
 	level++; // increment level by 1
-	cout << endl << "Level UP!!!" << "Now level: " << level << endl << endl;
 	maxHealth+=7; // increment max health
 	currHealth+=7; // leveling up heals by 7
 	exp = exp - maxLevelExp; // set exp to the overflow 
@@ -202,6 +201,7 @@ void Pokemon::subHealth(int dam) {
 		cout << "KO" << endl;
 	}
 	//cout << "Health is now: " << getcurrHealth() << endl;
+	cout << endl;
 }
 
 void Pokemon::addHealth(int add) {
@@ -226,6 +226,7 @@ int Pokemon::incExp(int e) {
 	exp+=e; //add e to exp
 	if(exp >= maxLevelExp){
 		levelUp();
+		cout << "Level Up! Now Level: " << level << endl << endl;
 	}
 	return exp;
 }

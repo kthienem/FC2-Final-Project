@@ -78,8 +78,7 @@ class Player {
 };
 Player::Player(int newGame){
 	if(newGame){
-		add_pokemon(7,1,0); // add a new pikachu to player pokemon
-		add_pokemon(12,1,0); // add a new pikachu to player pokemon
+		add_pokemon(7,1,2); // add a new pikachu to player pokemon
 		cp = 0;
 	}
 	else{
@@ -206,7 +205,7 @@ void Player::wild_battle(int level_enc){
 	otherPoke.clear();
 	add_pokemon((rand()%16)+1,0,level_enc); // comp rand
 	op = 0; //opponent poke
-	cout << "Wild Battle!" << endl;
+	cout << endl << "Wild Battle!" << endl;
 //	int choice;
 //	int KOed_poke, KOed_yourpoke;	
 //	choice = whatToDo();
@@ -327,6 +326,7 @@ void Player::wild_battle(int level_enc){
 }
 void Player::fish_battle(int level_enc){	
 	otherPoke.clear();
+	cout << endl << "Fish Battle!" << endl;
 	add_pokemon(rand_between(9,10),0,level_enc); // comp rand
 	op = 0; //opponent poke
 /*	int	battleOn = 1;
@@ -419,6 +419,7 @@ You.....1
 }
 void Player::player_battle(int pick, int level_enc){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
+	cout << endl << "Trainer Battle!" << endl;
 	create_trainer(pick,level_enc);
 	op = 0;
 /*
@@ -635,7 +636,7 @@ int Player::fight(int userMove){
 //	int choice;
 //	cout << "Choose what move to use: 1,2,3 or 4";
 //	cin >> choice;
-	cout << (*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
+	cout << "Level " << (*myPoke[cp]).getlevel() << " " <<(*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
 	(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
 	//check their ko and give exp
 	if((*otherPoke[op]).getKO()){
@@ -667,7 +668,7 @@ int Player::catchPoke(){
 }
 int Player::fight_comp(){
 		int compMove = (rand() % 4) + 1;
-        cout << "Wild "<< (*otherPoke[op]).getname() << " attacked with " << (*otherPoke[op]).attackname(compMove-1) << endl;
+        cout << "Wild, Level " << (*otherPoke[op]).getlevel() << " " << (*otherPoke[op]).getname() << " attacked with " << (*otherPoke[op]).attackname(compMove-1) << endl;
         (*otherPoke[op]).attack(compMove,myPoke[cp]); // comp move random 1-4
 		if((*myPoke[cp]).getKO()){	
 			return 1; //return 1 for a KO
@@ -684,18 +685,19 @@ int Player::run(){
 		return 0;
 }
 int Player::switchPoke(int newPoke){
+	cout << endl;
 	if(noValid()){
-		cout << "No useable pokemon, seg fault!" << endl;
+		cout << "No useable pokemon, seg fault!" << endl << endl;
 		return(-1);
 	}
 	else{
 		if(checkValidPoke(newPoke)){
 			cp = newPoke;
-    	    cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl;
+    	    cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl <<endl;
 			return(newPoke);
 		}
 		else{
- 	         cout << "Please pick a valid pokemon!" << endl;
+ 	         cout << "Please pick a valid pokemon!" << endl << endl;
 			return(-2); //there are valid pokemon, but this isn't one
 		}
 	}
