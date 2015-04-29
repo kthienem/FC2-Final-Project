@@ -46,6 +46,7 @@ class Player {
 		int getmyMaxHealth();
 		int getopHealth();
 		int getopMaxHealth();
+		int checkKO(int); //check a certain poke for a ko used to see what switchable pokemon
 
 		int getMoveNum(int);
 		int getNumPoke();
@@ -399,6 +400,8 @@ void Player::fish_battle(){
 void Player::player_battle(int pick){
 	otherPoke.clear(); //clear other so that it can be filled with player pokemon	
 	create_trainer(pick);
+	op = 0;
+/*
 	int op = 0; //opponent poke
 	int	battleOn = 1;
 	int userMove;
@@ -470,7 +473,7 @@ void Player::player_battle(int pick){
 			}
 		}
 		
-	}
+	}*/
 }
 
 void Player::pokeCenter(){
@@ -480,6 +483,7 @@ void Player::pokeCenter(){
 }
 
 void Player::create_trainer(int pick){
+	otherPoke.clear();	
 	switch(pick){
 		case 1: //chick fire and norm
 			add_pokemon(rand_between(11,12),0); //fire
@@ -679,5 +683,8 @@ int Player::getopHealth(){
 }
 int Player::getopMaxHealth(){
 	return (*otherPoke[op]).getmaxHealth();
+}
+int Player::checkKO(int poke){
+	return (*myPoke[poke]).getKO();
 }
 #endif
