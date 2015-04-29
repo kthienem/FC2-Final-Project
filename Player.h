@@ -41,7 +41,7 @@ class Player {
 		int run();
 		int fight_comp();
 		int fight(int);
-		int catchPoke(int, int);
+		int catchPoke();
 		int getmyHealth();
 		int getmyMaxHealth();
 		int getopHealth();
@@ -53,7 +53,7 @@ class Player {
 		int myLevel();
 		int anyLevel(int);
 		int opLevel();
-		int NextOp(int); //checks if this opint is less than size to see if it can switch to that pokemon for them
+		int NextOp(); //checks if this opint is less than size to see if it can switch to that pokemon for them
 		int whatPokeinParty(int);
 		int getMoveNum(int);
 		int getNumPoke();
@@ -79,6 +79,7 @@ class Player {
 Player::Player(int newGame){
 	if(newGame){
 		add_pokemon(7,1,0); // add a new pikachu to player pokemon
+		add_pokemon(12,1,0); // add a new pikachu to player pokemon
 		cp = 0;
 	}
 	else{
@@ -630,7 +631,7 @@ int Player::fight(int userMove){
 	cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
 	return 0;
 }
-int Player::catchPoke(int cp, int op){
+int Player::catchPoke(){
 	int value = rand()%100;
     cout << "Rand value: " << value << " Your chance was: " << (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*7) << endl;
     if(value < (((*otherPoke[op]).getmaxHealth()/(*otherPoke[op]).getcurrHealth())*10)){
@@ -656,7 +657,7 @@ int Player::fight_comp(){
 }
 int Player::run(){
 	int runChance = rand()%10;
-		if(runChance > 4){ //50percent maybe later based of speed	
+		if(runChance > 2){ //50percent maybe later based of speed	
 			return 1; //end encouter
 		}
 		return 0;
@@ -668,6 +669,7 @@ int Player::switchPoke(int newPoke){
 	}
 	else{
 		if(checkValidPoke(newPoke)){
+			cp = newPoke;
     	    cout << "I choose you " << (*myPoke[cp]).getname() << " !" << endl;
 			return(newPoke);
 		}
@@ -716,8 +718,9 @@ int Player::opLevel(){
 int Player::whatPokeinParty(int poke){
 	return ((*myPoke[poke]).getnum());
 }
-int Player::NextOp(int poke){
-	if(poke < otherPoke.size()){
+int Player::NextOp(){
+	if(op < otherPoke.size()){
+		op++;
 		return 1; //yes he has another pokemon
 	}
 	else{

@@ -87,13 +87,15 @@ class battleScene{
 		bool loadMedia();//load images to be used
 		void close();//free memory and delete window
 		SDL_Surface* loadSurface(string path);//optimize loaded images
-		void battle(int);//runs battle scene
+		int battle(int);//runs battle scene
 		void moveArrow(string);//moves arrow to appropriate position
 		int menuOption(string);//directs player to proper screen depending on their menu choice
 		void pokemonMenu(int);//function to update 
 
 	private:
 		int battleType;
+		int nextPoke;
+		int return_value;
 		Player* myTrainer;
 		SDL_Window* gWindow;
 		SDL_Surface* gScreenSurface;
@@ -1040,7 +1042,7 @@ SDL_Surface* battleScene::loadSurface(string path)
 	return optimizedSurface;
 }
 
-void battleScene::battle(int wildLevel)
+int battleScene::battle(int wildLevel)
 {
 	int turn = 0;
 	bool inMenu = true;
@@ -1103,10 +1105,29 @@ void battleScene::battle(int wildLevel)
 										inMenu = false;
 										inMoves = true;
 									}
-									else if(temp1 == 6) quit = true;
+									else if(temp1 == 6){
+										quit = (*myTrainer).run();
+										if(quit){
+											return_value = 4;
+										}
+										else{
+											(*myTrainer).fight_comp();
+										}
+									}
 									else if(temp1 == 7){
 										inMenu = false;
 										inPokemon = true;
+									}
+									else if(temp1 == 8){
+										if(battleType <= 0){
+											quit = (*myTrainer).catchPoke();
+											if(quit){
+												return_value = 3; //caught
+											}
+											else{
+												(*myTrainer).fight_comp();
+											}
+										}
 									}
 									break;
 								}
@@ -1143,9 +1164,31 @@ void battleScene::battle(int wildLevel)
 									int temp2 = menuOption("inMoves");
 									inMenu = true;
 									inMoves = false;
-									quit = (*myTrainer).fight(temp2);
-									if(!quit){
-										quit = (*myTrainer).fight_comp(); //have computer attack	
+									if(battleType <= 0){	
+										quit = (*myTrainer).fight(temp2);
+										if(!quit){
+											int ko2_us = (*myTrainer).fight_comp(); //have computer attack	
+											if(ko2_us){
+												inMenu = false;
+												inMoves = false;
+												inPokemon = true;
+											}
+										}
+									}
+									else{ //trainer case where we need to check ko's
+										int ko_them = (*myTrainer).fight(temp2);
+										if(ko_them){
+											if(!((*myTrainer).NextOp())){
+												return_value = 2; //defeated enemy trainer
+												quit = 1;
+											}
+										}
+										int ko_us = (*myTrainer).fight_comp();
+										if(ko_us){
+											inMenu = false;
+											inMoves = false;
+											inPokemon = true; 
+										}
 									}
 									break;
 								}
@@ -1169,8 +1212,20 @@ void battleScene::battle(int wildLevel)
 									break;
 								}
 								case SDLK_SPACE:
-								{
+								{	
+									nextPoke = selected;
 									int temp2 = menuOption("inPokemon");
+									int anyPoke = (*myTrainer).switchPoke(nextPoke);
+									if(anyPoke==-1){
+										return_value = 1; //whited out
+										(*myTrainer).pokeCenter();
+										quit = 1;
+									}
+									else if(anyPoke==-2){
+										inMenu = false;
+										inMoves = false;
+										inPokemon = true; 
+									}	
 									inMenu = true;
 									inPokemon = false;
 									break;
@@ -1240,7 +1295,7 @@ void battleScene::battle(int wildLevel)
 			}
     }
   }
-
+	return(return_value);
 }
 
 void battleScene::moveArrow(string dir)
@@ -1361,6 +1416,7 @@ int battleScene::menuOption(string state)
 		return 7;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
+		return 8;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
 		return 6;
