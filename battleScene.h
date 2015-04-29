@@ -1093,10 +1093,10 @@ void battleScene::battle()
 						SDL_BlitScaled(gMenuSheet, &gMovesMenu, gScreenSurface, &gMovesMenuPos);//blit moves menu to screen
 						SDL_BlitScaled(gMenuSheet, &gSelectionArrow, gScreenSurface, &gCurrentArrowPos);//blit selection arrow onto screen
 						//blit available moves to screen
-						SDL_BlitScaled(gNames_Moves, &gMoves[WATERGUN], gScreenSurface, &gMovesWindow[0]);
-						SDL_BlitScaled(gNames_Moves, &gMoves[BUBBLEBEAM], gScreenSurface, &gMovesWindow[1]);
-						SDL_BlitScaled(gNames_Moves, &gMoves[DOUBLESLAP], gScreenSurface, &gMovesWindow[2]);
-						SDL_BlitScaled(gNames_Moves, &gMoves[FLAMETHROWER], gScreenSurface, &gMovesWindow[3]);
+						SDL_BlitScaled(gNames_Moves, &gMoves[(*myTrainer).getMoveNum(0)], gScreenSurface, &gMovesWindow[0]);
+						SDL_BlitScaled(gNames_Moves, &gMoves[(*myTrainer).getMoveNum(1)], gScreenSurface, &gMovesWindow[1]);
+						SDL_BlitScaled(gNames_Moves, &gMoves[(*myTrainer).getMoveNum(2)], gScreenSurface, &gMovesWindow[2]);
+						SDL_BlitScaled(gNames_Moves, &gMoves[(*myTrainer).getMoveNum(3)], gScreenSurface, &gMovesWindow[3]);
 					}
 					//Blit enemy level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
