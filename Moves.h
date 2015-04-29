@@ -55,7 +55,7 @@ class Moves{
 		string display();
 		int noMove();
 		int getmovenum();
-		void setmovenum();
+		void setmovenum(int);
 	private:
 		int myMove;
 		string type;
@@ -270,15 +270,15 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 	}
 }
 
-int getmovenum() {
+int Moves::getmovenum() {
 	return movenum;
 }
 
-void setmovenum(int m) {
+void Moves::setmovenum(int m) {
 	movenum = m;
 }
 
-void levelUp() {
+void Moves::levelUp() {
 	// do something to set myMove = to new value
 }
 
