@@ -27,6 +27,7 @@ using namespace std;
 class Player {
 	public:
 		Player(int=1); // constructor
+		void learnNewMove(int);
 		void Battle(); // initiate battle sequence
 		void Menu(); // initiate menu interface
 		void Roam(); // initiate field interface (free roam)
@@ -578,9 +579,16 @@ void Player::load_pokemon_stats(){
 		(*myPoke[i]).setKO(inInt);
 		inFile >> inInt;
 		(*myPoke[i]).setmoveLevel(inInt);
+		if((*myPoke[i]).getlevel() >= (*myPoke[i]).getmoveLevel()){
+			learnNewMove(i);
+			//learn new move
+		}
 	}
 		//(*myPoke[i]).setMoveNums(); //help with this one to save moves! need to make edits in Moves.h
     inFile.close();
+}
+void Player::learnNewMove(int i){
+	(*myPoke[i]).learnNewMove(); //teach pokemon i the new move
 }
 int Player::rand_between(int a, int b){
 	return((rand() % (b - a + 1)) + 1);

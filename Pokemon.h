@@ -55,6 +55,7 @@ class Pokemon{
 		int getKO();
 		void heal();
 		void settype(string);
+		void learnNewMove();
 		string gettype();
 		string getname();
 		string getweak(); 
@@ -330,6 +331,13 @@ int Pokemon::getmaxHealth(){
 string Pokemon::attackname(int moveNum){
 	return myMoves[moveNum].display();
 
+}
+
+void Pokemon::learnNewMove(){
+		myMoves[0] = myMoves[1]; // first move is removed
+        myMoves[1] = myMoves[2];
+        myMoves[2] = myMoves[3];
+        myMoves[3] = myMoves[4];	
 }
 
 void Pokemon::setMoves(int mv1, int mv2, int mv3, int mv4, int mv5) {
