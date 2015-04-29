@@ -11,17 +11,6 @@
 #include "Bulbasaur.h"
 #include "Charmander.h"
 #include "Rattata.h"
-#include "Pidgey.h"
-#include "Machop.h"
-#include "Drowzee.h"
-#include "Snorlax.h"
-#include "Zubat.h"
-#include "Mankey.h"
-#include "Electabuzz.h"
-#include "Slowpoke.h"
-#include "Ponyta.h"
-#include "Oddish.h"
-#include "Abra.h"
 using namespace std;
 
 class Player {
@@ -92,7 +81,7 @@ void Player::add_pokemon(int PokeNum, int person){ //person 1 or 0 for player or
 			break;
 	};
 	//myPoke[createPokemon++] = new Pokemon(PokeNum);
-	if(person == 1){
+	if(person == 1){ //limit to 6 here and need to in the catch time too
 		myPoke.push_back(newPoke_ptr);
 	}
 	else{
@@ -348,6 +337,7 @@ void Player::create_trainer(int pick){
 void Player::save_pokemon_stats(){
 	ofstream outFile;
     outFile.open( "savePoke.txt", ios::out );
+	outFile << myPoke.size(); //how many pokemon
 	for(int i = 0; i < myPoke.size(); i++){
     	outFile << (*myPoke[i]).getmaxHealth() << " ";
     	outFile << (*myPoke[i]).getcurrHealth() << " ";
@@ -357,6 +347,15 @@ void Player::save_pokemon_stats(){
     	outFile << (*myPoke[i]).getmaxAttack() << " ";
     	outFile << (*myPoke[i]).getcurrAttack() << " ";
 		outFile << (*myPoke[i]).getmaxDef() << " ";
+		outFile << (*myPoke[i]).getcurrDef() << " ";
+		outFile << (*myPoke[i]).getmaxSpeed() << " ";
+		outFile << (*myPoke[i]).getcurrSpeed() << " ";
+		outFile << (*myPoke[i]).getKO() << " ";
+		outFile << (*myPoke[i]).getmoveLevel() << " ";
+		outFile << (*myPoke[i]).gettype() << " ";
+		outFile << (*myPoke[i]).getname() << " ";
+		outFile << (*myPoke[i]).getweak() << " ";
+		//outFile << (*myPoke[i]).getMoveNums << " "; //help with this one to save moves! need to make edits in Moves.h
 		outFile << endl; //end of one pokemon
 
 	}
@@ -365,13 +364,46 @@ void Player::save_pokemon_stats(){
 
 void Player::load_pokemon_stats(){
     ifstream inFile;
-    inFile.open( "savePoke.txt",ios::in );
-	int temp;
-    int var;
-	inFile >> temp;
-    var = temp;
-	cout << var; //just a test
-
+	string inStr;
+	int inInt, numPoke;
+    inFile.open( "savePoke.txt",ios::in);
+	inFile >> numPoke;
+	for(int i = 0; i < numPoke; i++){
+		myPoke.push_back(new Pokemon);
+		inFile >> inInt;
+		(*myPoke[i]).setmaxHealth(inInt);
+		inFile >> inInt;
+    	(*myPoke[i]).setcurrHealth(inInt);
+		inFile >> inInt;
+    	(*myPoke[i]).setlevel(inInt);
+		inFile >> inInt;
+    	(*myPoke[i]).setexp(inInt);
+		inFile >> inInt;
+    	(*myPoke[i]).setmaxLevelExp(inInt);
+		inFile >> inInt;
+    	(*myPoke[i]).setmaxAttack(inInt);
+		inFile >> inInt;
+    	(*myPoke[i]).setcurrAttack(inInt);
+		inFile >> inInt;
+		(*myPoke[i]).setmaxDef(inInt);
+		inFile >> inInt;
+		(*myPoke[i]).setcurrDef(inInt);
+		inFile >> inInt;
+		(*myPoke[i]).setmaxSpeed(inInt);
+		inFile >> inInt;
+		(*myPoke[i]).setcurrSpeed(inInt);
+		inFile >> inInt;
+		(*myPoke[i]).setKO(inInt);
+		inFile >> inInt;
+		(*myPoke[i]).setmoveLevel(inInt);
+		inFile >> inStr;
+		(*myPoke[i]).settype(inStr);
+		inFile >> inStr;
+		(*myPoke[i]).setname(inStr);
+		inFile >> inStr;
+		(*myPoke[i]).setweak(inStr);
+	}
+		//(*myPoke[i]).setMoveNums(); //help with this one to save moves! need to make edits in Moves.h
     inFile.close();
 }
 #endif
