@@ -46,7 +46,11 @@ class Player {
 		int getmyMaxHealth();
 		int getopHealth();
 		int getopMaxHealth();
-		int checkKO(int); //check a certain poke for a ko used to see what switchable pokemon
+		int mycheckKO(int); //check a certain poke for a ko used to see what switchable pokemon
+		int opcheckKo(int);
+		int myCurrentPoke(); //get current pokemon's number
+		int opCurrentPoke(); //get current pokemon's number for op
+
 
 		int getMoveNum(int);
 		int getNumPoke();
@@ -684,7 +688,16 @@ int Player::getopHealth(){
 int Player::getopMaxHealth(){
 	return (*otherPoke[op]).getmaxHealth();
 }
-int Player::checkKO(int poke){
+int Player::mycheckKO(int poke){
 	return (*myPoke[poke]).getKO();
+}
+int Player::opcheckKO(int poke){
+	return (*otherPoke[poke]).getKO();
+}
+int Player::myCurrentPoke(){
+	return ((*myPoke[cp]).getnum());
+}
+int Player::opCurrentPoke(){
+	return ((*otherPoke[op]).getnum());
 }
 #endif
