@@ -22,8 +22,8 @@ enum Names{
 	BLANK,
 	RATTATA,
 	SNORLAX,
-	ZUBAT,
 	PIDGEY,
+	ZUBAT,
 	MACHOP,
 	MANKEY,
 	PIKACHU,
@@ -1172,22 +1172,37 @@ int battleScene::battle(int wildLevel)
 												inMenu = false;
 												inMoves = false;
 												inPokemon = true;
+												if((*myTrainer).switchPoke(0) == -1){
+													quit = 1;	
+													(*myTrainer).pokeCenter();
+													return_value = 1;
+													return 1;
+												}
+												gCurrentArrowPos = gArrowPosition[0];
 											}
 										}
 									}
 									else{ //trainer case where we need to check ko's
 										int ko_them = (*myTrainer).fight(temp2);
+										quit = 0;
 										if(ko_them){
 											if(!((*myTrainer).NextOp())){
 												return_value = 2; //defeated enemy trainer
 												quit = 1;
 											}
 										}
-										int ko_us = (*myTrainer).fight_comp();
-										if(ko_us){
-											inMenu = false;
-											inMoves = false;
-											inPokemon = true; 
+										if(!quit){
+											int ko_us = (*myTrainer).fight_comp();
+											if(ko_us){
+												inMenu = false;
+												inMoves = false;
+												inPokemon = true; 
+												if((*myTrainer).switchPoke(0) == -1){
+													quit = 1;	
+													(*myTrainer).pokeCenter();
+													return_value = 1;
+												}
+											}
 										}
 									}
 									break;
@@ -1225,9 +1240,13 @@ int battleScene::battle(int wildLevel)
 										inMenu = false;
 										inMoves = false;
 										inPokemon = true; 
-									}	
-									inMenu = true;
-									inPokemon = false;
+									}
+									else{
+										inMoves = false;	
+										inMenu = true;
+										inPokemon = false;
+									}
+									gCurrentArrowPos = gArrowPosition[0];
 									break;
 								}
 								default:
