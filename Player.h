@@ -53,7 +53,7 @@ class Player {
 		int myLevel();
 		int opLevel();
 
-
+		int whatPokeinParty(int);
 		int getMoveNum(int);
 		int getNumPoke();
 		void wild_battle();
@@ -707,5 +707,8 @@ int Player::myLevel(){
 }
 int Player::opLevel(){
 	return ((*otherPoke[op]).getlevel());
+}
+int Player::whatPokeinParty(int poke){
+	return ((*myPoke[poke]).getnum());
 }
 #endif
