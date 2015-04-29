@@ -1,3 +1,3 @@
-3 0 39 39 2 0 80 10 6 4 2 3 3 0 5 electric Pikachu grass 
-34 34 2 0 80 13 9 3 2 2 0 0 9 fire Charmander water 
-27 27 1 0 50 8 8 4 4 5 5 0 9 fire Charmander water 
+2 1
+7 32 0 1 0 50 3 3 1 1 6 6 1 5 
+11 27 0 1 25 50 6 6 1 1 3 3 1 9 
