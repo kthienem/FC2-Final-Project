@@ -52,7 +52,7 @@ class Player {
 		int opCurrentPoke(); //get current pokemon's number for op
 		int myLevel();
 		int opLevel();
-
+		int NextOp(int); //checks if this opint is less than size to see if it can switch to that pokemon for them
 		int whatPokeinParty(int);
 		int getMoveNum(int);
 		int getNumPoke();
@@ -710,5 +710,13 @@ int Player::opLevel(){
 }
 int Player::whatPokeinParty(int poke){
 	return ((*myPoke[poke]).getnum());
+}
+int Player::NextOp(int poke){
+	if(poke < otherPoke.size()){
+		return 1; //yes he has another pokemon
+	}
+	else{
+		return 0; //no more pokemon reached max
+	}
 }
 #endif
