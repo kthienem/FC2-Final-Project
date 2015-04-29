@@ -45,17 +45,18 @@ enum PokeMoves{
 	WATERGUN,
 	CUT,
 	SHOCK,
-	DOUBLESLAP,
+	KARATECHOP,
 	GUST,
 	HEADBUTT,
 	BITE,
 	BUBBLEBEAM,
 	RAZORLEAF,
-	CONFUSION,
+	WINGATTACK,
 	QUICKATTACK,
 	FLAMETHROWER,
 	VINEWHIP,
 	THUNDERBOLT,
+	CONFUSION,
 	PSYCHIC,
 	PSYBEAM,
 	LOWKICK,
@@ -463,10 +464,10 @@ bool battleScene::loadMedia()
 	gMoves[SHOCK].w = 155;
 	gMoves[SHOCK].h = 20;
 
-	gMoves[DOUBLESLAP].x = 142;
-	gMoves[DOUBLESLAP].y = 120;
-	gMoves[DOUBLESLAP].w = 155;
-	gMoves[DOUBLESLAP].h = 20;
+	gMoves[KARATECHOP].x = 142;
+	gMoves[KARATECHOP].y = 120;
+	gMoves[KARATECHOP].w = 155;
+	gMoves[KARATECHOP].h = 20;
 
 	gMoves[GUST].x = 142;
 	gMoves[GUST].y = 140;
@@ -493,10 +494,10 @@ bool battleScene::loadMedia()
 	gMoves[RAZORLEAF].w = 155;
 	gMoves[RAZORLEAF].h = 20;
 
-	gMoves[CONFUSION].x = 142;
-	gMoves[CONFUSION].y = 240;
-	gMoves[CONFUSION].w = 155;
-	gMoves[CONFUSION].h = 20;
+	gMoves[WINGATTACK].x = 142;
+	gMoves[WINGATTACK].y = 240;
+	gMoves[WINGATTACK].w = 155;
+	gMoves[WINGATTACK].h = 20;
 
 	gMoves[QUICKATTACK].x = 142;
 	gMoves[QUICKATTACK].y = 260;
