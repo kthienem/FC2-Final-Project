@@ -27,6 +27,8 @@ class Player {
 		void pokeCenter();
 		void player_battle(int);
 		void create_trainer(int);
+		void save_pokemon_stats();
+		void load_pokemon_stats();
 	private:
 		int createPokemon; // number of pokemon owned by player
 		vector <Pokemon*> myPoke; //array for pointers
@@ -329,5 +331,33 @@ void Player::create_trainer(int pick){
 			add_pokemon(4,0);
 			break;
 	}
+}
+
+void Player::save_pokemon_stats(){
+	ofstream outFile;
+    outFile.open( "savePoke.txt", ios::out );
+	for(int i = 0; i < myPoke.size(); i++){
+    	outFile << (*myPoke[i]).getmaxHealth() << " ";
+    	outFile << (*myPoke[i]).getcurrHealth() << " ";
+    	outFile << (*myPoke[i]).getlevel() << " ";
+    	outFile << (*myPoke[i]).getexp() << " ";
+    	outFile << (*myPoke[i]).getmaxLevelExp() << " ";
+    	outFile << (*myPoke[i]).getmaxAttack() << " ";
+    	outFile << (*myPoke[i]).getcurrAttack() << " ";
+		outFile << (*myPoke[i]).getmaxDef() << " ";
+		outfile << endl; //end of one pokemon
+
+	}
+    outFile.close();
+}
+
+void Player::load_pokemon_stats(){
+    ifstream inFile;
+    inFile.open( "savePoke.txt",ios::in );
+	int temp;
+    inFile >> temp;
+    var = temp;
+
+    inFile.close();
 }
 #endif

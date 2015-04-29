@@ -20,7 +20,8 @@ using namespace std;
 
 class Pokemon{
 	public:
-		Pokemon(int=0);
+		Pokemon(); //default constructor
+//		Pokemon(int,int,int,int,int); //non-default
 		void levelUp();	// level+1, add attack,def,reset exp
 		//virtual void attack() = 0;
 		void attack(int,Pokemon*); //takes in input for what move to use
@@ -84,10 +85,14 @@ class Pokemon{
 		vector <Moves> myMoves;// then we can use for example myMoves[2].attack()
 };
 
-Pokemon::Pokemon(int pokeNum){
+Pokemon::Pokemon(){
 	srand(time(NULL)); // seed rand
 	maxLevelExp = 50; //genaric maxlevelexp	
 }
+//non-default for loading a pokemon
+//Pokemon::Pokemon(int,int,int,int,int,int,int,int,int,int,int,int,string,string,string){ //check if knows 5 move
+
+//}
 
 void Pokemon::heal(){ //pokeCenter and other healing uses
 	currHealth = maxHealth; //restore health
@@ -117,8 +122,8 @@ void Pokemon::levelUp() {
 	myMoves.pop_back(); // remove move from back
 	myMoves.push_back(newmove); // add new move to the back
 */
-	if(level == 5){ //at level 5 learn new moves
-		cout << "Learned new move! Placed as move 4 and replaced move 1" << endl;
+	if(level == moveLevel){ //at level 5 learn new moves
+		cout << "Learned new move: " << myMoves[4].display() << " Replaced move: " << myMoves[0].display() << endl;
 		myMoves[0] = myMoves[1]; // first move is removed
 		myMoves[1] = myMoves[2];
 		myMoves[2] = myMoves[3];
