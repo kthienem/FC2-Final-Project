@@ -26,6 +26,7 @@ Drowzee::Drowzee() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(15); // set pokemon number	
 	Pokemon::setmaxHealth(24); // set max health
 	Pokemon::setcurrHealth(24); // set curr to max Health
 	Pokemon::setlevel(1);

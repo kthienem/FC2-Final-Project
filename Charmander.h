@@ -26,6 +26,7 @@ Charmander::Charmander() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(11); // set pokemon number	
 	Pokemon::setmaxHealth(27); // set max health
 	Pokemon::setcurrHealth(27); // set curr to max Health
 	Pokemon::setlevel(1);

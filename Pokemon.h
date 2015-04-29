@@ -22,6 +22,8 @@ class Pokemon{
 	public:
 		Pokemon(); //default constructor
 //		Pokemon(int,int,int,int,int); //non-default
+		int getnum();
+		void setnum(int);
 		void levelUp();	// level+1, add attack,def,reset exp
 		//virtual void attack() = 0;
 		void attack(int,Pokemon*); //takes in input for what move to use
@@ -66,6 +68,7 @@ class Pokemon{
 		int getmaxLevelExp();
 		string attackname(int);
 	private:
+		int num; // number of Pokemon
 		int maxHealth;
 		int currHealth;
 		int level;
@@ -94,6 +97,14 @@ Pokemon::Pokemon(){
 //Pokemon::Pokemon(int,int,int,int,int,int,int,int,int,int,int,int,string,string,string){ //check if knows 5 move
 
 //}
+
+void Pokemon::setnum(int n) {
+	num = n;
+}
+
+int Pokemon::getnum() {
+	return num;
+}
 
 void Pokemon::heal(){ //pokeCenter and other healing uses
 	currHealth = maxHealth; //restore health

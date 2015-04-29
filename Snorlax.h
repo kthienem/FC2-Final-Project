@@ -26,6 +26,7 @@ Snorlax::Snorlax() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(2); // set pokemon number	
 	Pokemon::setmaxHealth(40); // set max health
 	Pokemon::setcurrHealth(40); // set curr to max Health
 	Pokemon::setlevel(1);

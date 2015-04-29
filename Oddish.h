@@ -26,6 +26,7 @@ Oddish::Oddish() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(14); // set pokemon number	
 	Pokemon::setmaxHealth(23); // set max health
 	Pokemon::setcurrHealth(23); // set curr to max Health
 	Pokemon::setlevel(1);

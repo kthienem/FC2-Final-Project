@@ -26,6 +26,7 @@ Pidgey::Pidgey(){ // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(3); // set pokemon number	
 	Pokemon::setmaxHealth(22); // set max health
 	Pokemon::setcurrHealth(22); // set curr to max Health
 	Pokemon::setlevel(1);

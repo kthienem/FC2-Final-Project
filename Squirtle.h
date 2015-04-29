@@ -26,6 +26,7 @@ Squirtle::Squirtle() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(9); // set pokemon number	
 	Pokemon::setmaxHealth(30); // set max health
 	Pokemon::setcurrHealth(30); // set curr to max Health
 	Pokemon::setlevel(1);
