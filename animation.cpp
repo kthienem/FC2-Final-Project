@@ -208,8 +208,8 @@ int main()
 		}
 		else{//if media is successfully loaded begin displaying images
 //LOADINGSEQUENCE HERE - RETURNS NEW GAME
-			int newGame=0;
-			Player Nick;
+			int newGame=1;
+			Player Nick(newGame);
 
 
 
