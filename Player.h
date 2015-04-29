@@ -51,6 +51,7 @@ class Player {
 		int myCurrentPoke(); //get current pokemon's number
 		int opCurrentPoke(); //get current pokemon's number for op
 		int myLevel();
+		int anyLevel(int);
 		int opLevel();
 		int NextOp(int); //checks if this opint is less than size to see if it can switch to that pokemon for them
 		int whatPokeinParty(int);
@@ -704,6 +705,9 @@ int Player::opCurrentPoke(){
 }
 int Player::myLevel(){
 	return ((*myPoke[cp]).getlevel());
+}
+int Player::anyLevel(int poke){
+	return ((*myPoke[poke]).getlevel());
 }
 int Player::opLevel(){
 	return ((*otherPoke[op]).getlevel());
