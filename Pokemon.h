@@ -63,6 +63,7 @@ class Pokemon{
 		void setMoves(int,int,int,int,int);
 		int incExp(int);
 		void setmaxLevelExp(int);
+		int getmaxLevelExp();
 		string attackname(int);
 	private:
 		int maxHealth;
@@ -306,6 +307,9 @@ string Pokemon::getweak() {
 }
 void Pokemon::setmaxLevelExp(int newMax){
 	maxLevelExp = newMax;
+}
+int Pokemon::getmaxLevelExp(){
+	return maxLevelExp;
 }
 int Pokemon::getmaxHealth(){
 	return maxHealth;
