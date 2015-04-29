@@ -19,56 +19,57 @@ const int SCREEN_WIDTH = 768;
 const int SCREEN_HEIGHT = 576;
 
 enum Names{
-	PIKACHU,
-	CHARMANDER,
-	BULBASAUR,
-	SQUIRTLE,
+	BLANK,
 	RATTATA,
-	PIDGEY,
-	MACHOP,
-	DROWZEE,
 	SNORLAX,
 	ZUBAT,
+	PIDGEY,
+	MACHOP,
 	MANKEY,
+	PIKACHU,
 	ELECTABUZZ,
+	SQUIRTLE,
 	SLOWPOKE,
+	CHARMANDER,
 	PONYTA,
+	BULBASAUR,
 	ODDISH,
+	DROWZEE,
 	ABRA,
 	NAMES
 };
 
 enum PokeMoves{
-	TACKLE,
-	SCRATCH,
-	EMBER,
-	WATERGUN,
-	CUT,
-	SHOCK,
-	KARATECHOP,
-	GUST,
-	HEADBUTT,
-	BITE,
-	BUBBLEBEAM,
-	RAZORLEAF,
-	WINGATTACK,
-	QUICKATTACK,
-	FLAMETHROWER,
-	VINEWHIP,
-	THUNDERBOLT,
-	CONFUSION,
-	PSYCHIC,
-	PSYBEAM,
-	LOWKICK,
-	SLASH,
-	PECK,
-	SEISMICTOSS,
-	THUNDER,
-	HYDROPUMP,
-	FIREBLAST,
-	SOLARBEAM,
-	BODYSLAM,
-	SWIFT,
+	TACKLE,			//0
+	SCRATCH,		//1
+	EMBER,			//2
+	WATERGUN,		//3
+	CUT,				//4
+	SHOCK,			//5
+	KARATECHOP,	//6
+	GUST,				//7
+	HEADBUTT,		//8
+	BITE,				//9
+	BUBBLEBEAM,	//10
+	RAZORLEAF,	//11
+	WINGATTACK,	//12
+	QUICKATTACK,//13
+	FLAMETHROWER,//14
+	VINEWHIP,		//15
+	THUNDERBOLT,//16
+	CONFUSION,	//17
+	PSYCHIC,		//18
+	PSYBEAM,		//19
+	LOWKICK,		//20
+	SLASH,			//21
+	PECK,				//22
+	SEISMICTOSS,//23
+	THUNDER,		//24
+	HYDROPUMP,	//25
+	FIREBLAST,	//26
+	SOLARBEAM,	//27
+	BODYSLAM,		//28
+	SWIFT,			//29
 	MOVES
 };
 
@@ -89,6 +90,7 @@ class battleScene{
 		void battle();//runs battle scene
 		void moveArrow(string);//moves arrow to appropriate position
 		int menuOption(string);//directs player to proper screen depending on their menu choice
+		void pokemonMenu(int);//function to update 
 
 	private:
 		int battleType;
@@ -130,11 +132,14 @@ class battleScene{
 		SDL_Rect gOpponentHealth;
 		SDL_Rect gPlayerHealth;
 		SDL_Surface* gBattleSprites;//image with pokemon for battle and selection menu
-		SDL_Rect gOpponentBattlePokemon[NAMES];
-		SDL_Rect gPlayerBattlePokemon[NAMES];
-		SDL_Rect gSelectPokemon[NAMES];
-		SDL_Rect gOpponentPokemon;
-		SDL_Rect gPlayerPokemon;
+		SDL_Rect gOpponentBattlePokemon[NAMES];//images for pokemon facing screen during battle
+		SDL_Rect gPlayerBattlePokemon[NAMES];//images for pokemon facing away during battle
+		SDL_Rect gSelectPokemon[NAMES];//images for small image of pokemon when viewing user's pokemon
+		SDL_Rect gCurrentPlayerColor;//current color of health bar for player
+		SDL_Rect gCurrentOpponentColor;//current color of health bar for opponent
+		SDL_Rect gOpponentPokemon;//current image for opponent pokemon
+		SDL_Rect gPlayerPokemon;//current image for player pokemon
+		SDL_Rect gPokemonSelectImage[6];//locations on window for selecting pokemon
 
 };
 
@@ -207,9 +212,6 @@ bool battleScene::loadMedia()
 	if(gBattleSprites == NULL) success - false;
 	else{
 		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 200, 200, 168));
-		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 216, 216, 216));
-		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 208, 208, 184));
-		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 96, 152, 128));
 	}
 
 	gNames_Moves = loadSurface("Names_Moves.png");//loads image with list of pokemon names and moves
@@ -464,9 +466,9 @@ bool battleScene::loadMedia()
 	gMoves[SHOCK].w = 155;
 	gMoves[SHOCK].h = 20;
 
-	gMoves[KARATECHOP].x = 142;
-	gMoves[KARATECHOP].y = 120;
-	gMoves[KARATECHOP].w = 155;
+	gMoves[KARATECHOP].x = 0;
+	gMoves[KARATECHOP].y = 340;
+	gMoves[KARATECHOP].w = 128;
 	gMoves[KARATECHOP].h = 20;
 
 	gMoves[GUST].x = 142;
@@ -494,9 +496,9 @@ bool battleScene::loadMedia()
 	gMoves[RAZORLEAF].w = 155;
 	gMoves[RAZORLEAF].h = 20;
 
-	gMoves[WINGATTACK].x = 142;
-	gMoves[WINGATTACK].y = 240;
-	gMoves[WINGATTACK].w = 155;
+	gMoves[WINGATTACK].x = 0;
+	gMoves[WINGATTACK].y = 320;
+	gMoves[WINGATTACK].w = 128;
 	gMoves[WINGATTACK].h = 20;
 
 	gMoves[QUICKATTACK].x = 142;
@@ -578,6 +580,11 @@ bool battleScene::loadMedia()
 	gMoves[SWIFT].y = 580;
 	gMoves[SWIFT].w = 155;
 	gMoves[SWIFT].h = 20;
+
+	gMoves[CONFUSION].x = 142;
+	gMoves[CONFUSION].y = 240;
+	gMoves[CONFUSION].w = 155;
+	gMoves[CONFUSION].h = 20;
 	
 	//Window position for Move 1
 	gMovesWindow[0].x = 40;
@@ -908,6 +915,16 @@ bool battleScene::loadMedia()
 	gSelectPokemon[ABRA].w = 20;
 	gSelectPokemon[ABRA].h = 19;
 
+	gOpponentPokemon.x = 500;
+	gOpponentPokemon.y = 110;
+	gOpponentPokemon.w = 125;
+	gOpponentPokemon.h = 125;
+
+	gPlayerPokemon.x = 100;
+	gPlayerPokemon.y = 254;
+	gPlayerPokemon.w = 150;
+	gPlayerPokemon.h = 150;
+
 	return success;
 }
 
@@ -953,8 +970,9 @@ void battleScene::battle()
 	bool inMenu = true;
 	bool inMoves = false;
 	bool inPokemon = false;
-	int percentHealth = 1;
 	int selected = 0;
+	gCurrentPlayerColor = gHealthBar[GREEN];
+	gCurrentOpponentColor = gHealthBar[GREEN];
 
 	if(!init()){//initializes window, if it fails display error message
     cout << "Failed to initialize!" << endl;
@@ -1101,25 +1119,35 @@ void battleScene::battle()
 					}
 					//Blit enemy level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
-					SDL_BlitScaled(gMenuSheet, &gHealthBar[GREEN], gScreenSurface, &gOpponentHealth);//blit opponents health to screem
+					SDL_BlitScaled(gBattleSprites, &gOpponentBattlePokemon[(*myTrainer).opCurrentPoke()], gScreenSurface, &gOpponentPokemon);//blit image of opponents pokemon to screen
+					SDL_BlitScaled(gMenuSheet, &gCurrentOpponentColor, gScreenSurface, &gOpponentHealth);//blit opponents health to screem
 					//Blit player level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gPlayerLevel, gScreenSurface, &gPlayerLevelWindow);//blit level and health of player's pokemon
-					SDL_BlitScaled(gMenuSheet, &gHealthBar[GREEN], gScreenSurface, &gPlayerHealth);//blit players healt to screen
-//gPlayerHealth.w = 162/percentHealth;
-//percentHealth++;
-//usleep(200000);
+					SDL_BlitScaled(gBattleSprites, &gPlayerBattlePokemon[(*myTrainer).myCurrentPoke()], gScreenSurface, &gPlayerPokemon);//blit image of opponents pokemon to screen
+					SDL_BlitScaled(gMenuSheet, &gCurrentPlayerColor, gScreenSurface, &gPlayerHealth);//blit players healt to screen
 				}
 				else if(inPokemon){
-					SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
-					for(int i = 0; i < 6; i++){
-						if(i == selected){
-							SDL_BlitScaled(gPokemonMenu, &gPokemonListSelect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
-						}
-						else{
-							SDL_BlitScaled(gPokemonMenu, &gPokemonListUnselect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
-							
-						}
-					}
+					pokemonMenu(selected);
+				}
+				gPlayerHealth.w = 162*(*myTrainer).getmyHealth()/(*myTrainer).getmyMaxHealth();
+				if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/2){
+					gCurrentPlayerColor = gHealthBar[GREEN];
+				}
+				else if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/4){
+					gCurrentPlayerColor = gHealthBar[YELLOW];
+				}
+				else{
+					gCurrentPlayerColor = gHealthBar[RED];
+				}
+				gOpponentHealth.w = 144*(*myTrainer).getopHealth()/(*myTrainer).getopMaxHealth();
+				if((*myTrainer).getopHealth() > (*myTrainer).getopMaxHealth()/2){
+					gCurrentOpponentColor = gHealthBar[GREEN];
+				}
+				else if((*myTrainer).getopHealth() > (*myTrainer).getopMaxHealth()/4){
+					gCurrentOpponentColor = gHealthBar[YELLOW];
+				}
+				else{
+					gCurrentOpponentColor = gHealthBar[RED];
 				}
 				SDL_UpdateWindowSurface(gWindow);//update window
 			}
@@ -1266,5 +1294,19 @@ int battleScene::menuOption(string state)
 		gCurrentArrowPos = gArrowPosition[0];
 		return 4;
 	}
+}
+
+void battleScene::pokemonMenu(int selected)
+{
+	SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
+	for(int i = 0; i < 6; i++){
+		if(i == selected){
+			SDL_BlitScaled(gPokemonMenu, &gPokemonListSelect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
+		}
+		else{
+			SDL_BlitScaled(gPokemonMenu, &gPokemonListUnselect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
+		}
+	}
+
 }
 #endif

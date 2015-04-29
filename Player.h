@@ -46,8 +46,15 @@ class Player {
 		int getmyMaxHealth();
 		int getopHealth();
 		int getopMaxHealth();
-		int checkKO(int); //check a certain poke for a ko used to see what switchable pokemon
-
+		int mycheckKO(int); //check a certain poke for a ko used to see what switchable pokemon
+		int opcheckKO(int);
+		int myCurrentPoke(); //get current pokemon's number
+		int opCurrentPoke(); //get current pokemon's number for op
+		int myLevel();
+		int anyLevel(int);
+		int opLevel();
+		int NextOp(int); //checks if this opint is less than size to see if it can switch to that pokemon for them
+		int whatPokeinParty(int);
 		int getMoveNum(int);
 		int getNumPoke();
 		void wild_battle();
@@ -684,7 +691,36 @@ int Player::getopHealth(){
 int Player::getopMaxHealth(){
 	return (*otherPoke[op]).getmaxHealth();
 }
-int Player::checkKO(int poke){
+int Player::mycheckKO(int poke){
 	return (*myPoke[poke]).getKO();
+}
+int Player::opcheckKO(int poke){
+	return (*otherPoke[poke]).getKO();
+}
+int Player::myCurrentPoke(){
+	return ((*myPoke[cp]).getnum());
+}
+int Player::opCurrentPoke(){
+	return ((*otherPoke[op]).getnum());
+}
+int Player::myLevel(){
+	return ((*myPoke[cp]).getlevel());
+}
+int Player::anyLevel(int poke){
+	return ((*myPoke[poke]).getlevel());
+}
+int Player::opLevel(){
+	return ((*otherPoke[op]).getlevel());
+}
+int Player::whatPokeinParty(int poke){
+	return ((*myPoke[poke]).getnum());
+}
+int Player::NextOp(int poke){
+	if(poke < otherPoke.size()){
+		return 1; //yes he has another pokemon
+	}
+	else{
+		return 0; //no more pokemon reached max
+	}
 }
 #endif

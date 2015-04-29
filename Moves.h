@@ -68,214 +68,214 @@ class Moves{
 Moves::Moves(int myMove) { //using a int sets base stats for a move
 	switch (myMove) {
 		case MOVE_TACKLE: //0
-			moveName = "tackle";
+			moveName.assign("tackle");
 			setmovenum(0);
 			base = 5; //base power of tackle
 			modify = 2; //divides attackpower of pokemon by 2
-			type = "normal"; //type of attaack
+			type.assign("normal"); //type of attaack
 			break;
 		case MOVE_SCRATCH: //1
-			moveName = "scratch";
+			moveName.assign("scratch");
 			setmovenum(1);
 			base = 8;
 			modify = 2;
-			type = "normal";
+			type.assign("normal");
 			break;
 		case MOVE_EMBER: //2	
-			moveName = "ember";
+			moveName.assign("ember");
 			setmovenum(2);
 			base = 12;
 			modify = 2;
-			type = "fire";
+			type.assign("fire");
 			break;
-		case MOVE_WATERGUN: //3
-			moveName = "watergun";
+		case MOVE_WATERGUN:
+			moveName.assign("watergun");
 			setmovenum(3);
 			base = 9;
 			modify = 3;
-			type = "water";
+			type.assign("water");
 			break;
-		case MOVE_CUT: //4
-			moveName = "cut";
+		case MOVE_CUT:
+			moveName.assign("cut");
 			setmovenum(4);
 			base = 12;
 			modify = 1;
-			type = "normal";
+			type.assign("normal");
 			break;
-		case MOVE_SHOCK: //5
-			moveName = "shock";
+		case MOVE_SHOCK:
+			moveName.assign("shock");
 			setmovenum(5);
 			base = 13;
 			modify = 1.2;
-			type = "electric";
+			type.assign("electric");
 			break;
-		case MOVE_KARATECHOP: //6
-			moveName = "karate chop";
+		case MOVE_KARATECHOP:
+			moveName.assign("karate chop");
 			setmovenum(6);
 			base = 14;
 			modify = 2;
-			type = "fighting";
+			type.assign("fighting");
 			break;
-		case MOVE_GUST: //7
-			moveName = "gust";
+		case MOVE_GUST:
+			moveName.assign("gust");
 			setmovenum(7);
 			base = 14;
 			modify = 2;
-			type = "flying";
+			type.assign("flying");
 			break;
 		case MOVE_HEADBUTT:
-			moveName = "headbutt";
+			moveName.assign("headbutt");
 			setmovenum(8);
 			base = 16;
 			modify = 1.4;
-			type = "normal";
+			type.assign("normal");
 			break;
 		case MOVE_BITE:
-			moveName = "bite";
+			moveName.assign("bite");
 			setmovenum(9);
 			base = 18;
 			modify = 2;
-			type = "normal";
+			type.assign("normal");
 			break;
 		case MOVE_BUBBLEBEAM:
-			moveName = "bubblebeam";
+			moveName.assign("bubblebeam");
 			setmovenum(10);
 			base = 20;
 			modify = 1.6;
-			type = "water";
+			type.assign("water");
 			break;
 		case MOVE_RAZORLEAF:
-			moveName = "razorleaf";
+			moveName.assign("razorleaf");
 			setmovenum(11);
 			base = 20;
 			modify = 1.4;
-			type = "grass";
-			break;	
-		case MOVE_CONFUSION:
-			moveName = "confusion";
-			setmovenum(12);
-			base = 15;
-			modify = 1;
-			type = "psychic";
+			type.assign("grass");
 			break;
 		case MOVE_WINGATTACK:
-			moveName = "wing attack";
-			setmovenum(13);
+			moveName.assign("wing attack");
+			setmovenum(12);
 			base = 20;
 			modify = 1.4;
-			type = "flying";
+			type.assign("flying");
 			break;
 		case MOVE_QUICKATTACK:
-			moveName = "quick attack";
-			setmovenum(14);
+			moveName.assign("quick attack");
+			setmovenum(13);
 			base = 18;
 			modify = 1.8;
-			type = "normal";
+			type.assign("normal");
 			break;	
 		case MOVE_FLAMETHROWER:
-			moveName = "flamethrower";
-			setmovenum(15);
+			moveName.assign("flamethrower");
+			setmovenum(14);
 			base = 25;
 			modify = 1;
-			type = "fire";
+			type.assign("fire");
 			break;
 		case MOVE_VINEWHIP:
-			moveName = "vine whip";
-			setmovenum(16);
+			moveName.assign("vine whip");
+			setmovenum(15);
 			base = 27;
 			modify = 1;
-			type = "grass";
+			type.assign("grass");
 			break;
 		case MOVE_THUNDERBOLT:
-			moveName = "thunderbolt";
-			setmovenum(17);
+			moveName.assign("thunderbolt");
+			setmovenum(16);
 			base = 29;
 			modify = 1;
-			type = "electric";
+			type.assign("electric");
+			break;
+		case MOVE_CONFUSION:
+			moveName.assign("thunderbolt");
+			setmovenum(17);
+			base = 15;
+			modify = 1;
+			type.assign("psychic");
 			break;
 		case MOVE_PSYCHIC:
-			moveName = "Psychic";
+			moveName.assign("Psychic");
 			setmovenum(18);
 			base = 20;
 			modify = 1.3;
-			type = "psychic";
+			type.assign("psychic");
 			break;
 		case MOVE_PSYBEAM:
-			moveName = "psybeam";
+			moveName.assign("psybeam");
 			setmovenum(19);
 			base = 15;
 			modify = 2;
-			type = "psychic";
+			type.assign("psychic");
 			break;
 		case MOVE_LOWKICK:
-			moveName = "low kick";
+			moveName.assign("low kick");
 			setmovenum(20);
 			base = 18;
 			modify = 1.5;
-			type = "fighting";
+			type.assign("fighting");
 			break;
 		case MOVE_SLASH:
-			moveName = "slash";
+			moveName.assign("slash");
 			setmovenum(21);
 			base = 18;
 			modify = 1.3;
-			type = "normal";
+			type.assign("normal");
 			break;
 		case MOVE_PECK:
-			moveName = "peck";
+			moveName.assign("peck");
 			setmovenum(22);
 			base = 15;
 			modify = 1.6;
-			type = "flying";
+			type.assign("flying");
 			break;
 		case MOVE_SEISMICTOSS:
-			moveName = "seismic toss";
+			moveName.assign("seismic toss");
 			setmovenum(23);
 			base = 22;
 			modify = 1.2;
-			type = "fighting";
+			type.assign("fighting");
 			break;
 		case MOVE_THUNDER:
-			moveName = "thunder";
+			moveName.assign("thunder");
 			setmovenum(24);
 			base = 25;
 			modify = 1;
-			type = "electric";
+			type.assign("electric");
 			break;
 		case MOVE_HYDROPUMP:
-			moveName = "hydropump";
+			moveName.assign("hydropump");
 			setmovenum(25);
 			base = 25;
 			modify = 1;
-			type = "water";
+			type.assign("water");
 			break;
 		case MOVE_FIREBLAST:
-			moveName = "fireblast";
+			moveName.assign("fireblast");
 			setmovenum(26);
 			base = 25;
 			modify = 1;
-			type = "fire";
+			type.assign("fire");
 			break;
 		case MOVE_SOLARBEAM:
-			moveName = "solar beam";
+			moveName.assign("solar beam");
 			setmovenum(27);
 			base = 25;
 			modify = 1;
-			type = "grass";
+			type.assign("grass");
 			break;
 		case MOVE_BODYSLAM:
-			moveName = "body slam";
+			moveName.assign("body slam");
 			setmovenum(28);
 			base = 20;
 			modify = 1.7;
-			type = "normal";
+			type.assign("normal");
 			break;
 		case MOVE_SWIFT:
-			moveName = "swift";
+			moveName.assign("swift");
 			setmovenum(29);
 			base = 16;
 			modify = 1.2;
-			type = "normal";
+			type.assign("normal");
 			break;
 		default:
 			noMove();
