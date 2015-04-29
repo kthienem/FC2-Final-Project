@@ -208,11 +208,7 @@ int main()
 		}
 		else{//if media is successfully loaded begin displaying images
 //LOADINGSEQUENCE HERE - RETURNS NEW GAME
-			int newGame=1;
-			Player Nick(newGame);
-
-
-
+			int newGame;
 			bool quit = false;		//boolean variable for when the user wants to quit
 			SDL_Event e;			//variable for keyboard events entered by user
 			gBackground = gPokeMaps[ POKE_CENTER_MAP ];			// PokeCenter
@@ -297,6 +293,8 @@ int main()
 			if(!newGame){
 				loadGame(&gCurrentClip, &characterRect, &mapZoomRect);
 			}
+			
+			Player Nick(newGame);
 
 			int trainerCellx= characterRect.x+7;
 			int trainerCelly= characterRect.y+16;
