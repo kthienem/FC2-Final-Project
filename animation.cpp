@@ -52,6 +52,7 @@ enum pokeMaps
 	POKE_MESSAGE_CANT_PAUSE,
 	POKE_MESSAGE_LOAD_GAME,
 	POKE_MENU_MAIN,
+	POKE_MENU_SAVED,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
 };
 //Color code contents
@@ -172,7 +173,7 @@ bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect, Player*);
 void saveGame(SDL_Rect, SDL_Rect);
 void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);
 void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);
-int introSequence(SDL_Rect);
+int introSequence(SDL_Rect,SDL_Rect,SDL_Rect);
 //int goFish();
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
@@ -212,7 +213,6 @@ int main()
 			int newGame;
 			bool quit = false;		//boolean variable for when the user wants to quit
 			SDL_Event e;			//variable for keyboard events entered by user
-			gBackground = gPokeMaps[ POKE_CENTER_MAP ];			// PokeCenter
 			gCurrentClip = &gWalkDown[0];	//sets first image to be used for the walking player
 			int frame = 0;			//count for the current frame being used for the animation
 
@@ -244,6 +244,7 @@ int main()
 		characterRect.y = 462;
 		mapZoomRect.x = 1841;			//begin image in middle of map
 		mapZoomRect.y = 721;
+
 
 			int caveChoice=0;
 			int caveMapX[4]= {	1777,	1761,	1809,	1761};
@@ -288,11 +289,15 @@ int main()
 
 			colorCodes= readColorCodes();
 
+			newGame= introSequence(characterRect,stretch2windowRect,mapZoomRect);
 
-			newGame= introSequence(stretch2windowRect);
 
 			if(!newGame){
 				loadGame(&gCurrentClip, &characterRect, &mapZoomRect);
+				gBackground = gPokeMaps[ POKE_CENTER_MAP ];			// PokeCenter
+				SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+				SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
+				SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 			}
 			
 			Player Nick(newGame);
@@ -300,9 +305,6 @@ int main()
 			int trainerCellx= characterRect.x+7;
 			int trainerCelly= characterRect.y+16;
 
-			SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
-			SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
-			SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 
 
 			while(!quit){//while the user has not entered the event to quit
@@ -863,6 +865,11 @@ bool loadMedia()
 		success = false;
 	}
 
+	gPokeMaps[ POKE_MENU_SAVED ] = loadSurface("pokeFrameSaved.png");//load background image
+	if(gPokeMaps[ POKE_MENU_SAVED ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
 	gIntroBackground = loadSurface("IntroBackground.png");//load sprite sheet containing animation images
 	if(gIntroBackground == NULL){//if not loaded properly return unsuccessful
 		success = false;
@@ -1415,6 +1422,13 @@ bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect map
 	stretchRect5.x = stretchRect4.x+15;	//place at center of screen
 	stretchRect5.y = stretchRect4.y+16;	//place at center of screen
 
+	SDL_Rect savedRect;			//rectangle used for
+	savedRect.w = 300;			//size of portion of sprite sheet taken up by character
+	savedRect.h = 140;			//size of portion of sprite sheet taken up by character
+	savedRect.x = MAP_SCREEN_WIDTH/3;	//place at center of screen
+	savedRect.y = MAP_SCREEN_HEIGHT/3;	//place at center of screen
+
+
 	SDL_Surface* transsurface;
 	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 		transsurface = SDL_CreateRGBSurface(SDL_SWSURFACE,stretch2windowRect.w,stretch2windowRect.h,32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
@@ -1470,6 +1484,15 @@ bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect map
 						}else if(stretchRect5.y==(stretchRect4.y+16)+1*stretchRect5.h){
 							saveGame(characterRect, mapZoomRect);
 							(*Nick_ptr).save_pokemon_stats();
+						// blit "saved" to middle of screen for a second
+							SDL_BlitScaled(gPokeMaps[ POKE_MENU_SAVED ], NULL, gScreenSurface, &savedRect);
+							SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+							SDL_Delay(1500);
+							SDL_BlitScaled(gPokeMaps[ POKE_MAP_ROUTE1 ], &mapZoomRect, gScreenSurface, &stretch2windowRect);
+							SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);
+							SDL_BlitScaled(gPokeMaps[ POKE_MENU_MAIN ], NULL, gScreenSurface, &stretchRect4);
+							SDL_BlitSurface(transsurface,NULL,gScreenSurface,&stretch2windowRect);
+							SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 					//Quit Game
 						}else if(stretchRect5.y==(stretchRect4.y+16)+2*stretchRect5.h){
 							quitGame = true;
@@ -1563,7 +1586,7 @@ void battleCutScene(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rec
 
 }
 
-int introSequence(SDL_Rect stretch2windowRect){
+int introSequence(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect){
 
 	int newGame=0;
 
@@ -1703,8 +1726,12 @@ for(int j=10; j>0; j-=5)
 		}
 
 	}
-
-
+		if(newGame){
+			gBackground = gPokeMaps[ POKE_CENTER_MAP ];			// PokeCenter
+			SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
+			SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
+			SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+		}
 
 	return(newGame);
 
