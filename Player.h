@@ -643,8 +643,8 @@ int Player::fight(int userMove){
 		cout << "Gained " << ((*otherPoke[op]).getlevel()*7 + 10) << " exp!" << endl;
 		return 1; //return 1 for a KO
 	}
-	cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
-	cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
+//	cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
+//	cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
 	return 0;
 }
 int Player::catchPoke(){
@@ -672,8 +672,8 @@ int Player::fight_comp(){
 		if((*myPoke[cp]).getKO()){	
 			return 1; //return 1 for a KO
 		}
-        cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
-        cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
+//        cout << "Your health: " << (*myPoke[cp]).getcurrHealth() << endl;
+  //      cout << "Their health: " << (*otherPoke[op]).getcurrHealth() << endl;
 		return 0;
 }
 int Player::run(){
