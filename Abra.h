@@ -26,6 +26,7 @@ Abra::Abra() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(16); // set pokemon number	
 	Pokemon::setmaxHealth(20); // set max health
 	Pokemon::setcurrHealth(20); // set curr to max Health
 	Pokemon::setlevel(1);

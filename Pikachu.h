@@ -26,6 +26,7 @@ Pikachu::Pikachu(){ // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(7); // set pokemon number	
 	Pokemon::setmaxHealth(32); // set max health
 	Pokemon::setcurrHealth(32); // set curr to max Health
 	Pokemon::setlevel(1);

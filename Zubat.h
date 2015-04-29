@@ -26,6 +26,7 @@ Zubat::Zubat() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(4); // set pokemon number	
 	Pokemon::setmaxHealth(26); // set max health
 	Pokemon::setcurrHealth(26); // set curr to max Health
 	Pokemon::setlevel(1);
