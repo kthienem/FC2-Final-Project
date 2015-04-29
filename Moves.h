@@ -150,48 +150,48 @@ Moves::Moves(int myMove) { //using a int sets base stats for a move
 			base = 20;
 			modify = 1.4;
 			type = "grass";
+			break;	
+		case MOVE_CONFUSION:
+			moveName = "confusion";
+			setmovenum(12);
+			base = 15;
+			modify = 1;
+			type = "psychic";
 			break;
 		case MOVE_WINGATTACK:
 			moveName = "wing attack";
-			setmovenum(12);
+			setmovenum(13);
 			base = 20;
 			modify = 1.4;
 			type = "flying";
 			break;
 		case MOVE_QUICKATTACK:
 			moveName = "quick attack";
-			setmovenum(13);
+			setmovenum(14);
 			base = 18;
 			modify = 1.8;
 			type = "normal";
 			break;	
 		case MOVE_FLAMETHROWER:
 			moveName = "flamethrower";
-			setmovenum(14);
+			setmovenum(15);
 			base = 25;
 			modify = 1;
 			type = "fire";
 			break;
 		case MOVE_VINEWHIP:
 			moveName = "vine whip";
-			setmovenum(15);
+			setmovenum(16);
 			base = 27;
 			modify = 1;
 			type = "grass";
 			break;
 		case MOVE_THUNDERBOLT:
 			moveName = "thunderbolt";
-			setmovenum(16);
+			setmovenum(17);
 			base = 29;
 			modify = 1;
 			type = "electric";
-			break;
-		case MOVE_CONFUSION:
-			moveName = "thunderbolt";
-			setmovenum(17);
-			base = 15;
-			modify = 1;
-			type = "psychic";
 			break;
 		case MOVE_PSYCHIC:
 			moveName = "Psychic";
