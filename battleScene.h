@@ -1111,7 +1111,7 @@ int battleScene::battle(int wildLevel)
 											return_value = 4;
 										}
 										else{
-											(*myTrainer).fight_comp();
+											quit = (*myTrainer).fight_comp();
 										}
 									}
 									else if(temp1 == 7){
@@ -1176,7 +1176,6 @@ int battleScene::battle(int wildLevel)
 													quit = 1;	
 													(*myTrainer).pokeCenter();
 													return_value = 1;
-													return 1;
 												}
 												gCurrentArrowPos = gArrowPosition[0];
 											}
