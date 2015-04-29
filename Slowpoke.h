@@ -1,7 +1,7 @@
 // Specific Pokemon class
 
-#ifndef SQURITLE_H
-#define SQURITLE_H
+#ifndef SLOWPOKE_H
+#define SLOWPOKE_H
 #include <string>
 #include <cstdlib> // for randomness
 #include "Pokemon.h" // include base class
@@ -9,10 +9,10 @@
 
 using namespace std;
 
-class Squirtle: public Pokemon {
+class Slowpoke: public Pokemon {
 	public:
-		Squirtle(); // default constructor
-		~Squirtle(); // non-default constructor
+		Slowpoke(); // default constructor
+		~Slowpoke(); // non-default constructor
 
 	private:
 		// Include sprites here
@@ -22,27 +22,27 @@ class Squirtle: public Pokemon {
 
 #endif
 
-Squirtle::Squirtle() { // default constructor
+Slowpoke::Slowpoke() { // default constructor
 	
 	// SET STATS
 	
-	Pokemon::setmaxHealth(30); // set max health
-	Pokemon::setcurrHealth(30); // set curr to max Health
+	Pokemon::setmaxHealth(28); // set max health
+	Pokemon::setcurrHealth(28); // set curr to max Health
 	Pokemon::setlevel(1);
 	Pokemon::setexp(0);
-	Pokemon::setmaxAttack(rand() % 7); // random attack stat
+	Pokemon::setmaxAttack((rand() % 7) + 1); // random attack stat
 	Pokemon::setcurrAttack(Pokemon::getmaxAttack()); // set curr to max
 	Pokemon::setmaxDef((rand() % 7) + 3); // random def stat
 	Pokemon::setcurrDef(Pokemon::getmaxDef()); // set curr to random
-	Pokemon::setmaxSpeed(rand() % 7); // random speed stat
+	Pokemon::setmaxSpeed((rand() % 5)); // random speed stat
 	Pokemon::setcurrSpeed(Pokemon::getmaxSpeed()); // set curr to max
 	Pokemon::setKO(0); // not KO'd
-	Pokemon::setmoveLevel(8); // learns new move at lv 8
+	Pokemon::setmoveLevel(6); // learns new move at lv 9
 	Pokemon::settype("water");
-	Pokemon::setname("Squirtle");
+	Pokemon::setname("Slowpoke");
 	Pokemon::setweak("electric");
 
 	// SET MOVES
 
-	Pokemon::setMoves(0, 3, 8, 10, 25); // tackle,watergun,headbutt,bubblebeam,hydropump
+	Pokemon::setMoves(0, 3, 10, 8, 19); // tackle,watergun,bubblebeam,headbutt,psybeam
 }
