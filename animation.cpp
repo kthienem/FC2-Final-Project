@@ -683,6 +683,21 @@ int main()
 
 						if(steponWildGrass){
 							if(rand()%100 < 15){
+								int wildLevel=0;
+							// base wild pokemon level off of current map location
+								if(mapZoomRect.x+(characterRect.x/2) < 300)
+									wildLevel= 1;
+								else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+									wildLevel= 2;
+								else if(mapZoomRect.x+(characterRect.x/2) < 800)
+									wildLevel= 3;
+								else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+									wildLevel= 4;
+								else if(mapZoomRect.y+(characterRect.y/2) < 350)
+									wildLevel= 6;
+								else
+									wildLevel= Nick.myLevel();
+							// battle sequence!
 								battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 								battleScene battleName(&Nick, gWindow,0);
 								battleName.battle();
