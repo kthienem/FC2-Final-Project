@@ -604,14 +604,16 @@ int main()
 								// Gym leader
 									if( cellColorThreshold[GYM_LEADER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_LEADER_CELL], gScreenSurface) ){
 										battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
-										cout<<"BATTLETIME\n";
+										battleScene battleName(&Nick, gWindow,6);
+										battleName.battle();
 									}
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ){
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
-											cout<<"littlebattle\n";
+											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
+											battleName.battle();
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -623,7 +625,8 @@ int main()
 										if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ){
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
-											cout<<"littlebattle\n";
+											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
+											battleName.battle();
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -635,7 +638,8 @@ int main()
 										if( cellColorThreshold[i] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[i], gScreenSurface) ){
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
-											cout<<"littlebattle\n";
+											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
+											battleName.battle();
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -647,7 +651,8 @@ int main()
 										if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ){
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
-											cout<<"littlebattle\n";
+											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
+											battleName.battle();
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -670,6 +675,8 @@ int main()
 
 						if(caughtFish==1){
 							battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
+							battleScene battleName(&Nick, gWindow,-1);
+							battleName.battle();
 						}else if(caughtFish==2){
 							dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 1);
 						}
