@@ -719,7 +719,7 @@ int Player::whatPokeinParty(int poke){
 	return ((*myPoke[poke]).getnum());
 }
 int Player::NextOp(){
-	if(op < otherPoke.size()){
+	if(op < (otherPoke.size()-1)){
 		op++;
 		return 1; //yes he has another pokemon
 	}
