@@ -296,7 +296,7 @@ int main()
 
 			if(!newGame){
 				loadGame(&gCurrentClip, &characterRect, &mapZoomRect);
-				gBackground = gPokeMaps[ POKE_CENTER_MAP ];			// PokeCenter
+				gBackground = gPokeMaps[ POKE_MAP_ROUTE1 ];			// PokeCenter
 				SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
 				SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
 				SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
