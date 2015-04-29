@@ -952,7 +952,6 @@ void battleScene::battle()
 	bool inMenu = true;
 	bool inMoves = false;
 	bool inPokemon = false;
-	int percentHealth = 1;
 	int selected = 0;
 
 	if(!init()){//initializes window, if it fails display error message
@@ -1104,9 +1103,6 @@ void battleScene::battle()
 					//Blit player level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gPlayerLevel, gScreenSurface, &gPlayerLevelWindow);//blit level and health of player's pokemon
 					SDL_BlitScaled(gMenuSheet, &gHealthBar[GREEN], gScreenSurface, &gPlayerHealth);//blit players healt to screen
-//gPlayerHealth.w = 162/percentHealth;
-//percentHealth++;
-//usleep(200000);
 				}
 				else if(inPokemon){
 					SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
@@ -1120,6 +1116,9 @@ void battleScene::battle()
 						}
 					}
 				}
+				gPlayerHealth.w = 162*(*myTrainer).getmyHealth()/(*myTrainer).getmyMaxHealth();
+				gOpponentHealth.w = 144*(*myTrainer).getopHealth()/(*myTrainer).getopMaxHealth();
+//cout << (*myTrainer).getmyHealth() << endl;
 				SDL_UpdateWindowSurface(gWindow);//update window
 			}
     }
