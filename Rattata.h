@@ -25,7 +25,8 @@ class Rattata: public Pokemon {
 Rattata::Rattata() { // default constructor
 	
 	// SET STATS
-	
+
+	Pokemon::setnum(1); // set pokemon number	
 	Pokemon::setmaxHealth(24); // set max health
 	Pokemon::setcurrHealth(24); // set curr to max Health
 	Pokemon::setlevel(1);

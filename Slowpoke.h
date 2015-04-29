@@ -26,6 +26,7 @@ Slowpoke::Slowpoke() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(10); // set pokemon number	
 	Pokemon::setmaxHealth(28); // set max health
 	Pokemon::setcurrHealth(28); // set curr to max Health
 	Pokemon::setlevel(1);

@@ -26,6 +26,7 @@ Bulbasaur::Bulbasaur() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(13); // set pokemon number	
 	Pokemon::setmaxHealth(35); // set max health
 	Pokemon::setcurrHealth(35); // set curr to max Health
 	Pokemon::setlevel(1);

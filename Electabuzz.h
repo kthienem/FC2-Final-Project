@@ -26,6 +26,7 @@ Electabuzz::Electabuzz() { // default constructor
 	
 	// SET STATS
 	
+	Pokemon::setnum(8); // set pokemon number	
 	Pokemon::setmaxHealth(30); // set max health
 	Pokemon::setcurrHealth(30); // set curr to max Health
 	Pokemon::setlevel(1);
