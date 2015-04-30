@@ -1,4 +1,5 @@
-/* This file contains functions to display the graphics needed for a battle scene in game.
+/* This file contains functions to display the graphics needed for a battle
+ * scene in game.
  *
  */
 
@@ -18,86 +19,86 @@ using namespace std;
 const int SCREEN_WIDTH = 768;
 const int SCREEN_HEIGHT = 576;
 
-enum Names{
-	BLANK,
-	RATTATA,
-	SNORLAX,
-	ZUBAT,
-	PIDGEY,
-	MACHOP,
-	MANKEY,
-	PIKACHU,
-	ELECTABUZZ,
-	SQUIRTLE,
-	SLOWPOKE,
-	CHARMANDER,
-	PONYTA,
-	BULBASAUR,
-	ODDISH,
-	DROWZEE,
-	ABRA,
+enum Names{//used to index arrays that contain information about pokemon images
+	BLANK,			//0
+	RATTATA,		//1
+	SNORLAX,		//2
+	ZUBAT,			//3
+	PIDGEY,			//4
+	MACHOP,			//5
+	MANKEY,			//6
+	PIKACHU,		//7
+	ELECTABUZZ,	//8
+	SQUIRTLE,		//9
+	SLOWPOKE,		//10
+	CHARMANDER,	//11
+	PONYTA,			//12
+	BULBASAUR,	//13
+	ODDISH,			//14
+	DROWZEE,		//15
+	ABRA,				//16
 	NAMES
 };
 
 enum PokeMoves{
-	TACKLE,			//0
-	SCRATCH,		//1
-	EMBER,			//2
-	WATERGUN,		//3
-	CUT,				//4
-	SHOCK,			//5
-	KARATECHOP,	//6
-	GUST,				//7
-	HEADBUTT,		//8
-	BITE,				//9
-	BUBBLEBEAM,	//10
-	RAZORLEAF,	//11
-	WINGATTACK,	//12
-	QUICKATTACK,//13
-	FLAMETHROWER,//14
-	VINEWHIP,		//15
-	THUNDERBOLT,//16
-	CONFUSION,	//17
-	PSYCHIC,		//18
-	PSYBEAM,		//19
-	LOWKICK,		//20
-	SLASH,			//21
-	PECK,				//22
-	SEISMICTOSS,//23
-	THUNDER,		//24
-	HYDROPUMP,	//25
-	FIREBLAST,	//26
-	SOLARBEAM,	//27
-	BODYSLAM,		//28
-	SWIFT,			//29
+	TACKLE,				//0
+	SCRATCH,			//1
+	EMBER,				//2
+	WATERGUN,			//3
+	CUT,					//4
+	SHOCK,				//5
+	KARATECHOP,		//6
+	GUST,					//7
+	HEADBUTT,			//8
+	BITE,					//9
+	BUBBLEBEAM,		//10
+	RAZORLEAF,		//11
+	WINGATTACK,		//12
+	QUICKATTACK,	//13
+	FLAMETHROWER,	//14
+	VINEWHIP,			//15
+	THUNDERBOLT,	//16
+	CONFUSION,		//17
+	PSYCHIC,			//18
+	PSYBEAM,			//19
+	LOWKICK,			//20
+	SLASH,				//21
+	PECK,					//22
+	SEISMICTOSS,	//23
+	THUNDER,			//24
+	HYDROPUMP,		//25
+	FIREBLAST,		//26
+	SOLARBEAM,		//27
+	BODYSLAM,			//28
+	SWIFT,				//29
 	MOVES
 };
 
 enum Health{
-	GREEN,
-	YELLOW,
-	RED,
+	GREEN,		//0
+	YELLOW,		//1
+	RED,			//2
 	COLORS
 };
 
 class battleScene{
 	public:
-		battleScene(Player*, SDL_Window*, int);
+		battleScene(Player*, SDL_Window*, int);//non-default constructor
 		bool init();//initialize display window
-		bool loadMedia();//load images to be used
+		bool loadMedia();//load images to be used along with SDL_Rects
 		void close();//free memory and delete window
 		SDL_Surface* loadSurface(string path);//optimize loaded images
 		void battle();//runs battle scene
 		void moveArrow(string);//moves arrow to appropriate position
 		int menuOption(string);//directs player to proper screen depending on their menu choice
-		void pokemonMenu(int);//function to update 
+		void pokemonMenu(int);//function to update screen to list of player's pokemon
 
 	private:
-		int battleType;
-		Player* myTrainer;
-		SDL_Window* gWindow;
-		SDL_Surface* gScreenSurface;
-		SDL_Surface* gBackground;
+		int battleType;//the type of battle that the player is entering, wild, trainer, etc.
+		Player* myTrainer;//an object of type Player to access the player's pokemon and their stats
+		SDL_Window* gWindow;//window that images are updated to
+		SDL_Surface* gScreenSurface;//the screen surface that images are blitted to
+		SDL_Surface* gBackground;//points to image of battle background
 		SDL_Rect gBack;//where field background will go in window
 		SDL_Surface* gMenuSheet;//sprite sheet containing menu images
 		SDL_Rect gMenuBack;//where the menu background is loacted in sprite sheet
@@ -118,19 +119,19 @@ class battleScene{
 		SDL_Rect gMovesMenu;//image for menu containing pokemons moves
 		SDL_Rect gMovesMenuPos;//position in window for moves menu
 		SDL_Rect gCurrentArrowPos;//current poition of selection arrow
-		SDL_Surface* gPokemonMenu;
-		SDL_Rect gPokemon;//location on image for list of pokemon
-		SDL_Rect gPokemonWindow;//where list of pokemon will go in window
+		SDL_Surface* gPokemonMenu;//image containing list of player's pokemon
+		SDL_Rect gPokemon;//location on image for nackground to list of pokemon
+		SDL_Rect gPokemonWindow;//where background for the list of pokemon will go in window
 		SDL_Rect gPokemonListSelect;//image for selected pokemon in list
-		SDL_Rect gPokemonListUnselect;//image for no selected pokemon in list
-		SDL_Rect gPokemonListWindow[6];//images for pokemon list
+		SDL_Rect gPokemonListUnselect;//image for non selected pokemon in list
+		SDL_Rect gPokemonListWindow[6];//images for pokemon in list
 		SDL_Surface* gNames_Moves;//image file with names of pokemon and moves
-		SDL_Rect gPokemonNames[NAMES];
-		SDL_Rect gMoves[MOVES];
-		SDL_Rect gMovesWindow[4];
-		SDL_Rect gHealthBar[COLORS];
-		SDL_Rect gOpponentHealth;
-		SDL_Rect gPlayerHealth;
+		SDL_Rect gPokemonNames[NAMES];//rectangles for names of pokemon in image file
+		SDL_Rect gMoves[MOVES];//recatngles for names of moves in image file
+		SDL_Rect gMovesWindow[4];//where the four pokemon moves go in the window
+		SDL_Rect gHealthBar[COLORS];//images for the different colors of the health bar
+		SDL_Rect gOpponentHealth;//where the opponents health goes on the screen
+		SDL_Rect gPlayerHealth;//where the players health goes on the screen
 		SDL_Surface* gBattleSprites;//image with pokemon for battle and selection menu
 		SDL_Rect gOpponentBattlePokemon[NAMES];//images for pokemon facing screen during battle
 		SDL_Rect gPlayerBattlePokemon[NAMES];//images for pokemon facing away during battle
@@ -148,11 +149,10 @@ class battleScene{
 
 battleScene::battleScene(Player* myPlayer, SDL_Window* myWindow, int type)
 {
-	gWindow = myWindow;
-	battleType = type;
-	myTrainer = myPlayer;
-	gScreenSurface = NULL;
-	gBackground = NULL;
+	gWindow = myWindow;//points to the window that is used for the rest of the games graphics
+	battleType = type;//the type of battle that the player is entering into
+	myTrainer = myPlayer;//copy of the Player object that is being used for the game
+	gScreenSurface = NULL;//the screen that images are blitted to
 }
 
 bool battleScene::init()
@@ -165,9 +165,7 @@ bool battleScene::init()
 		success = false;
 	}
 	else{
-	//	gWindow = SDL_CreateWindow("Battle", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);//create window with undefined position and previously given dimensions
-
-		if(gWindow == NULL){
+		if(gWindow == NULL){//Error if window could not be 
 			cout << "Window could not be created! SDL Error: " << SDL_GetError() << endl;
 			success = false;
 		}
@@ -202,92 +200,100 @@ bool battleScene::loadMedia()
 	gMenuSheet = loadSurface("HP_Bars_In-battle_Menu.png");//load sprite sheet with menu and HP bars
 	if(gMenuSheet == NULL) success = false;
 	else{
-		SDL_SetColorKey(gMenuSheet, SDL_TRUE, SDL_MapRGB(gMenuSheet->format, 255, 255, 255));
+		SDL_SetColorKey(gMenuSheet, SDL_TRUE, SDL_MapRGB(gMenuSheet->format, 255, 255, 255));//set transparency
 	}
 
 	gPokemonMenu = loadSurface("Pokemon_Menu.png");//loads list of available pokemon
 	if(gPokemonMenu == NULL) success = false;
 	else{
-		SDL_SetColorKey(gPokemonMenu, SDL_TRUE, SDL_MapRGB(gPokemonMenu->format, 0, 128, 0));
+		SDL_SetColorKey(gPokemonMenu, SDL_TRUE, SDL_MapRGB(gPokemonMenu->format, 0, 128, 0));//set transparency
 	}
 
 	gBattleSprites = loadSurface("Pokemon.png");//loads image with different pokemon for battle
 	if(gBattleSprites == NULL) success - false;
 	else{
-		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 200, 200, 168));
+		SDL_SetColorKey(gBattleSprites, SDL_TRUE, SDL_MapRGB(gBattleSprites->format, 200, 200, 168));//set transparency
 	}
 
 	gNames_Moves = loadSurface("Names_Moves.png");//loads image with list of pokemon names and moves
 	if(gNames_Moves == NULL) success = false;
 	else{
-		SDL_SetColorKey(gNames_Moves, SDL_TRUE, SDL_MapRGB(gNames_Moves->format, 255, 255, 255));
+		SDL_SetColorKey(gNames_Moves, SDL_TRUE, SDL_MapRGB(gNames_Moves->format, 255, 255, 255));//set transparency
 	}
 
+	//Location of menu background on image
 	gMenuBack.x = 297;
 	gMenuBack.y = 56;
 	gMenuBack.w = 240;
 	gMenuBack.h = 48;
 
+	//location of menu background on window
 	gMenuBackWindow.x = 0;
 	gMenuBackWindow.y = 404;
 	gMenuBackWindow.w = SCREEN_WIDTH;
 	gMenuBackWindow.h = SCREEN_HEIGHT-404;
 
+	//location of options on sprite sheet
 	gOptions.x = 146;
 	gOptions.y = 4;
 	gOptions.w = 120;
 	gOptions.h = 48;
 
+	//location of options menu on window
 	gOptionsWindow.x = SCREEN_WIDTH/2;
 	gOptionsWindow.y = 404;
 	gOptionsWindow.w = SCREEN_WIDTH/2;
 	gOptionsWindow.h = SCREEN_HEIGHT-404;
 
+	//location of opponents level and health info on sprite sheet
 	gOpponentLevel.x = 3;
 	gOpponentLevel.y = 3;
 	gOpponentLevel.w = 100;
 	gOpponentLevel.h = 29;
 
-	//Scaled by factor of 2.175, use to scale health bar
+	//location of opponents level and health info on window
 	gOpponentLevelWindow.x = 50;
 	gOpponentLevelWindow.y = 40;
 	gOpponentLevelWindow.w = 300;
 	gOpponentLevelWindow.h = 87;
 
+	//location of players level and health info on sprite sheet
 	gPlayerLevel.x = 3;
 	gPlayerLevel.y = 44;
 	gPlayerLevel.w = 104;
 	gPlayerLevel.h = 37;
 
+	//location of players level and health info on window
 	gPlayerLevelWindow.x = (SCREEN_WIDTH/2) + 20;
 	gPlayerLevelWindow.y = 275;
 	gPlayerLevelWindow.w = 350;
 	gPlayerLevelWindow.h = 125;
 
+	//location of selection arrow on sprite sheet
 	gSelectionArrow.x = 269;
 	gSelectionArrow.y = 4;
 	gSelectionArrow.w = 5;
 	gSelectionArrow.h = 9;
 
-	//fight position
+	//fight option position
 	gArrowPosition[0].x = 415;
 	gArrowPosition[0].y = 452;
 	gArrowPosition[0].w = 14;
 	gArrowPosition[0].h = 26;
 
-	//pokemon position
+	//pokemon option position
 	gArrowPosition[1].x = 415;
 	gArrowPosition[1].y = 509;
 	gArrowPosition[1].w = 14;
 	gArrowPosition[1].h = 26;
 
-	//bag position
+	//bag option position
 	gArrowPosition[2].x = 595;
 	gArrowPosition[2].y = 452;
 	gArrowPosition[2].w = 14;
 	gArrowPosition[2].h = 26;
 
-	//run position
+	//run option position
 	gArrowPosition[3].x = 595;
 	gArrowPosition[3].y = 509;
 	gArrowPosition[3].w = 14;
@@ -317,51 +323,61 @@ bool battleScene::loadMedia()
 	gArrowPosition[7].w = 14;
 	gArrowPosition[7].h = 26;
 
+	//location of empty pokeball on sprite sheet, not implemented in game
 	gEmptyPokeball.x = 123;
 	gEmptyPokeball.y = 65;
 	gEmptyPokeball.w = 7;
 	gEmptyPokeball.h = 7;
 
+	//location of live pokeball in sprite sheet, no implemented in game
 	gLivePokeball.x = 133;
 	gLivePokeball.y = 65;
 	gLivePokeball.w = 7;
 	gLivePokeball.h = 7;
 
+	//location of dead pokeball in sprite sheet, not implemented in game
 	gDeadPokeball.x = 143;
 	gDeadPokeball.y = 65;
 	gDeadPokeball.w = 7;
 	gDeadPokeball.h = 7;
 
+	//location of list of players available pokeballs in sprite sheet, not implemented in game
 	gPokeballs.x = 178;
 	gPokeballs.y = 65;
 	gPokeballs.w = 104;
 	gPokeballs.h = 12;
 	
+	//location of list of players available pokeballs in window, not implemented in game
 	gPokeballsWindow.x = (SCREEN_WIDTH/2) + 20;
 	gPokeballsWindow.y = 350;
 	gPokeballsWindow.w = 300;
 	gPokeballsWindow.h = 20;
 
+	//location of moves menu in sprite sheet
 	gMovesMenu.x = 297;
 	gMovesMenu.y = 4;
 	gMovesMenu.w = 239;
 	gMovesMenu.h = 47;
 
+	//location of moves menu in window
 	gMovesMenuPos.x = 0;
 	gMovesMenuPos.y = 404;
 	gMovesMenuPos.w = SCREEN_WIDTH;
 	gMovesMenuPos.h = SCREEN_HEIGHT - 404;
 
+	//location of pokemon selection menu background in sprite sheet
 	gPokemon.x = 5;
 	gPokemon.y = 5;
 	gPokemon.w = 240;
 	gPokemon.h = 160;
 
+	//location of pokemon selection menu background in window
 	gPokemonWindow.x = 0;
 	gPokemonWindow.y = 0;
 	gPokemonWindow.w = SCREEN_WIDTH;
 	gPokemonWindow.h = SCREEN_HEIGHT;
 
+	//location of pokemons names in sprite sheet
 	gPokemonNames[PIKACHU].x = 0;
 	gPokemonNames[PIKACHU].y = 20;
 	gPokemonNames[PIKACHU].w = 128;
@@ -442,6 +458,7 @@ bool battleScene::loadMedia()
 	gPokemonNames[ABRA].w = 128;
 	gPokemonNames[ABRA].h = 20;
 
+	//location of moves names in sprite sheet
 	gMoves[TACKLE].x = 142;
 	gMoves[TACKLE].y = 0;
 	gMoves[TACKLE].w = 155;
@@ -616,71 +633,85 @@ bool battleScene::loadMedia()
 	gMovesWindow[3].w = 150;
 	gMovesWindow[3].h = 26;
 
+	//location of green health bar in sprite sheet
 	gHealthBar[GREEN].x = 117;
 	gHealthBar[GREEN].y = 9;
 	gHealthBar[GREEN].w = 1;
 	gHealthBar[GREEN].h = 3;
 
+	//location of yellow health bar in sprite sheet
 	gHealthBar[YELLOW].x = 117;
 	gHealthBar[YELLOW].y = 13;
 	gHealthBar[YELLOW].w = 1;
 	gHealthBar[YELLOW].h = 3;
 
+	//location of red health bar in sprite sheet
 	gHealthBar[RED].x = 117;
 	gHealthBar[RED].y = 17;
 	gHealthBar[RED].w = 1;
 	gHealthBar[RED].h = 3;
 
+	//location of opponents health in window
 	gOpponentHealth.x = 168;
 	gOpponentHealth.y = 91;
 	gOpponentHealth.w = 144;
 	gOpponentHealth.h = 10;
 
+	//location of players health in window
 	gPlayerHealth.x = 566;
 	gPlayerHealth.y = 333;
 	gPlayerHealth.w = 162;
 	gPlayerHealth.h = 10;
 
+	//location of selected pokemon in sprite sheet for pokemon menu
 	gPokemonListSelect.x = 162;
 	gPokemonListSelect.y = 203;
 	gPokemonListSelect.w = 149;
 	gPokemonListSelect.h = 24;
 
+	//location of unselected pokemon in sprite sheet for pokemon menu
 	gPokemonListUnselect.x = 162;
 	gPokemonListUnselect.y = 179;
 	gPokemonListUnselect.w = 149;
 	gPokemonListUnselect.h = 21;
 
+	//location of first pokemon in list in window
 	gPokemonListWindow[0].x = 75;
 	gPokemonListWindow[0].y = 30;
 	gPokemonListWindow[0].w = 650;
 	gPokemonListWindow[0].h = 75;
 
+	//location of second pokemon in list in window
 	gPokemonListWindow[1].x = 75;
 	gPokemonListWindow[1].y = 115;
 	gPokemonListWindow[1].w = 650;
 	gPokemonListWindow[1].h = 75;
 
+	//location of third pokemon in list in window
 	gPokemonListWindow[2].x = 75;
 	gPokemonListWindow[2].y = 200;
 	gPokemonListWindow[2].w = 650;
 	gPokemonListWindow[2].h = 75;
 
+	//location of fourth pokemon in list in window
 	gPokemonListWindow[3].x = 75;
 	gPokemonListWindow[3].y = 285;
 	gPokemonListWindow[3].w = 650;
 	gPokemonListWindow[3].h = 75;
 
+	//location of fifth pokemon in list in window
 	gPokemonListWindow[4].x = 75;
 	gPokemonListWindow[4].y = 370;
 	gPokemonListWindow[4].w = 650;
 	gPokemonListWindow[4].h = 75;
 
+	//location of sixth pokemon in list in window
 	gPokemonListWindow[5].x = 75;
 	gPokemonListWindow[5].y = 455;
 	gPokemonListWindow[5].w = 650;
 	gPokemonListWindow[5].h = 75;
 
+	//locations for image of battle pokemon facing user in sprites sheet
 	gOpponentBattlePokemon[PIKACHU].x = 496;
 	gOpponentBattlePokemon[PIKACHU].y = 203;
 	gOpponentBattlePokemon[PIKACHU].w = 42;
@@ -761,6 +792,7 @@ bool battleScene::loadMedia()
 	gOpponentBattlePokemon[ABRA].w = 44;
 	gOpponentBattlePokemon[ABRA].h = 38;
 
+	//locations of battle pokemon facing away from the user in sprite sheet
 	gPlayerBattlePokemon[PIKACHU].x = 552;
 	gPlayerBattlePokemon[PIKACHU].y = 205;
 	gPlayerBattlePokemon[PIKACHU].w = 52;
@@ -841,6 +873,7 @@ bool battleScene::loadMedia()
 	gPlayerBattlePokemon[ABRA].w = 41;
 	gPlayerBattlePokemon[ABRA].h = 41;
 
+	//locations of images for pokemon used in selection menu in sprite sheet
 	gSelectPokemon[PIKACHU].x = 618;
 	gSelectPokemon[PIKACHU].y = 208;
 	gSelectPokemon[PIKACHU].w = 20;
@@ -921,26 +954,31 @@ bool battleScene::loadMedia()
 	gSelectPokemon[ABRA].w = 20;
 	gSelectPokemon[ABRA].h = 19;
 
+	//location of opponents pokemon on window
 	gOpponentPokemon.x = 500;
 	gOpponentPokemon.y = 110;
 	gOpponentPokemon.w = 125;
 	gOpponentPokemon.h = 125;
 
+	//location of opponents pokemon name on window
 	gOpponentName.x = 80;
 	gOpponentName.y = 50;
 	gOpponentName.w = 150;
 	gOpponentName.h = 30;
 
+	//location of players pokemon on window
 	gPlayerPokemon.x = 100;
 	gPlayerPokemon.y = 254;
 	gPlayerPokemon.w = 150;
 	gPlayerPokemon.h = 150;
 
+	//location of player pokemon name on window
 	gPlayerName.x = 460;
 	gPlayerName.y = 290;
 	gPlayerName.w = 150;
 	gPlayerName.h = 30;
 
+	//locations of names in selection menu on window
 	gPokemonSelectName[0].x = 250;
 	gPokemonSelectName[0].y = 40;
 	gPokemonSelectName[0].w = 150;
@@ -971,6 +1009,7 @@ bool battleScene::loadMedia()
 	gPokemonSelectName[5].w = 150;
 	gPokemonSelectName[5].h = 30;
 
+	//locations of images of pokemon in selection menu on window
 	gPokemonSelectImage[0].x = 170;
 	gPokemonSelectImage[0].y = 42;
 	gPokemonSelectImage[0].w = 50;
@@ -1001,7 +1040,7 @@ bool battleScene::loadMedia()
 	gPokemonSelectImage[5].w = 50;
 	gPokemonSelectImage[5].h = 50;
 
-	return success;
+	return success;//return in the function successfully loaded all the media
 }
 
 void battleScene::close()
@@ -1042,11 +1081,13 @@ SDL_Surface* battleScene::loadSurface(string path)
 
 void battleScene::battle()
 {
-	int turn = 0;
+	int turn = 0;//used to determine if it is the players turn or not
+	//boolean variables to determine what state the screen should be in
 	bool inMenu = true;
 	bool inMoves = false;
 	bool inPokemon = false;
-	int selected = 0;
+	int selected = 0;//determines which of the pokemon is currently selected in pokemon selection menu
+	//set the color of health bars to green to begin
 	gCurrentPlayerColor = gHealthBar[GREEN];
 	gCurrentOpponentColor = gHealthBar[GREEN];
 
@@ -1064,7 +1105,7 @@ void battleScene::battle()
 			if(battleType == 0){
      				(*myTrainer).wild_battle(); //load wild pokemon to fight
 			}
-			while(!quit){
+			while(!quit){//while the player has not clicked the red x
 				while(SDL_PollEvent(&e) != 0){
 					if(e.type == SDL_QUIT) quit = true;//event entered was x-ing out of window, set quit to true
 					else if(e.type == SDL_KEYDOWN){//key has been pressed
@@ -1092,13 +1133,13 @@ void battleScene::battle()
 								}
 								case SDLK_SPACE:
 								{
-									int temp1 = menuOption("inMenu");
-									if (temp1 == 5){
+									int temp1 = menuOption("inMenu");//returns an integer based on where the arrow currently is
+									if (temp1 == 5){//if user has chosen to fight
 										inMenu = false;
 										inMoves = true;
 									}
-									else if(temp1 == 6) quit = true;
-									else if(temp1 == 7){
+									else if(temp1 == 6) quit = true;//if user has chosen to run
+									else if(temp1 == 7){//if user has chose to view list of pokemon
 										inMenu = false;
 										inPokemon = true;
 									}
@@ -1154,16 +1195,16 @@ void battleScene::battle()
 							switch(e.key.keysym.sym){//switch with key type parameter
 								case SDLK_UP:
 								{
-									if(selected > 0) selected--;
+									if(selected > 0) selected--;//move arrow up if not at top item
 									break;
 								}
 								case SDLK_DOWN:
 								{
-									if(selected < (*myTrainer).getNumPoke()-1) selected++;
+									if(selected < (*myTrainer).getNumPoke()-1) selected++;//move arrow down if not at bottom item
 									break;
 								}
 								case SDLK_SPACE:
-								{
+								{//return to options menu when a pokemon is selected
 									int temp2 = menuOption("inPokemon");
 									inMenu = true;
 									inPokemon = false;
@@ -1199,28 +1240,28 @@ void battleScene::battle()
 					//Blit enemy level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gOpponentLevel, gScreenSurface, &gOpponentLevelWindow);//blit level and health of enemy pokemon
 					SDL_BlitScaled(gBattleSprites, &gOpponentBattlePokemon[(*myTrainer).opCurrentPoke()], gScreenSurface, &gOpponentPokemon);//blit image of opponents pokemon to screen
-					SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).opCurrentPoke()], gScreenSurface, &gOpponentName);
+					SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).opCurrentPoke()], gScreenSurface, &gOpponentName);//blits name of opponents pokemon to screen
 					SDL_BlitScaled(gMenuSheet, &gCurrentOpponentColor, gScreenSurface, &gOpponentHealth);//blit opponents health to screem
 					//Blit player level if pokemon is out
 					SDL_BlitScaled(gMenuSheet, &gPlayerLevel, gScreenSurface, &gPlayerLevelWindow);//blit level and health of player's pokemon
 					SDL_BlitScaled(gBattleSprites, &gPlayerBattlePokemon[(*myTrainer).myCurrentPoke()], gScreenSurface, &gPlayerPokemon);//blit image of opponents pokemon to screen
-					SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).myCurrentPoke()], gScreenSurface, &gPlayerName);
+					SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).myCurrentPoke()], gScreenSurface, &gPlayerName);//blits name of players pokemon to screen
 					SDL_BlitScaled(gMenuSheet, &gCurrentPlayerColor, gScreenSurface, &gPlayerHealth);//blit players healt to screen
 				}
-				else if(inPokemon){
+				else if(inPokemon){//if in pokemon menu run function to blit proper images to screen
 					pokemonMenu(selected);
 				}
-				gPlayerHealth.w = 162*(*myTrainer).getmyHealth()/(*myTrainer).getmyMaxHealth();
-				if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/2){
+				gPlayerHealth.w = 162*(*myTrainer).getmyHealth()/(*myTrainer).getmyMaxHealth();//scale the width of health bar to match the ratio of current health to max health
+				if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/2){//if greater than half max health color is green
 					gCurrentPlayerColor = gHealthBar[GREEN];
 				}
-				else if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/4){
+				else if((*myTrainer).getmyHealth() > (*myTrainer).getmyMaxHealth()/4){//if greater than 1/4 and less than 1/2 max health color is yellow
 					gCurrentPlayerColor = gHealthBar[YELLOW];
 				}
-				else{
+				else{//if less than 1/4 max health color is red
 					gCurrentPlayerColor = gHealthBar[RED];
 				}
-				gOpponentHealth.w = 144*(*myTrainer).getopHealth()/(*myTrainer).getopMaxHealth();
+				gOpponentHealth.w = 144*(*myTrainer).getopHealth()/(*myTrainer).getopMaxHealth();//scale width of health bar to match the ratio of current health to max health
 				if((*myTrainer).getopHealth() > (*myTrainer).getopMaxHealth()/2){
 					gCurrentOpponentColor = gHealthBar[GREEN];
 				}
@@ -1238,9 +1279,9 @@ void battleScene::battle()
 }
 
 void battleScene::moveArrow(string dir)
-{
+{//checks which the direction the user wants to move the arrow then checks where it is at an moves it accordingly
 	if(dir == "up"){
-		if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
+		if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){//arrow is in top left of corner of options menu so can't go up, leave the arrow where it is
 			gCurrentArrowPos = gArrowPosition[0];
 		}
 		else if(gCurrentArrowPos.x == gArrowPosition[1].x && gCurrentArrowPos.y == gArrowPosition[1].y){
@@ -1346,7 +1387,7 @@ void battleScene::moveArrow(string dir)
 }
 
 int battleScene::menuOption(string state)
-{
+{//checks where the arrow currently is and returns a value that lets the battle function know what to do
 	if(gCurrentArrowPos.x == gArrowPosition[0].x && gCurrentArrowPos.y == gArrowPosition[0].y){
 		gCurrentArrowPos = gArrowPosition[4];
 		return 5;
@@ -1380,15 +1421,15 @@ int battleScene::menuOption(string state)
 void battleScene::pokemonMenu(int selected)
 {
 	SDL_BlitScaled(gPokemonMenu, &gPokemon, gScreenSurface, &gPokemonWindow);//blit background of pokemon list
-	for(int i = 0; i < (*myTrainer).getNumPoke(); i++){
+	for(int i = 0; i < (*myTrainer).getNumPoke(); i++){//loop through all of the trainers pokemon
 		if(i == selected){
-			SDL_BlitScaled(gPokemonMenu, &gPokemonListSelect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
+			SDL_BlitScaled(gPokemonMenu, &gPokemonListSelect, gScreenSurface, &gPokemonListWindow[i]);//blit the selected image to screen if that pokemon is currently selected
 		}
 		else{
-			SDL_BlitScaled(gPokemonMenu, &gPokemonListUnselect, gScreenSurface, &gPokemonListWindow[i]);//blit first pokemon in list
+			SDL_BlitScaled(gPokemonMenu, &gPokemonListUnselect, gScreenSurface, &gPokemonListWindow[i]);//blit fthe unselected image to screen if that pokemon is not selected
 		}
-		SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).whatPokeinParty(i)], gScreenSurface, &gPokemonSelectName[i]);
-		SDL_BlitScaled(gBattleSprites, &gSelectPokemon[(*myTrainer).whatPokeinParty(i)], gScreenSurface, &gPokemonSelectImage[i]);
+		SDL_BlitScaled(gNames_Moves, &gPokemonNames[(*myTrainer).whatPokeinParty(i)], gScreenSurface, &gPokemonSelectName[i]);//blit the name of the pokemon
+		SDL_BlitScaled(gBattleSprites, &gSelectPokemon[(*myTrainer).whatPokeinParty(i)], gScreenSurface, &gPokemonSelectImage[i]);//blit the image of the pokemon
 	}
 
 }
