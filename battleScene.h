@@ -1111,7 +1111,18 @@ int battleScene::battle(int wildLevel)
 											return_value = 4;
 										}
 										else{
-											quit = (*myTrainer).fight_comp();
+											int theyKoUs = (*myTrainer).fight_comp();
+											if(theyKoUs){
+												inMenu = false;
+												inPokemon = true;
+												inMoves = false;
+												if((*myTrainer).switchPoke(0) == -1){
+													quit = 1;	
+													(*myTrainer).pokeCenter(1);
+													return_value = 1;
+												}
+												continue;
+											}
 										}
 									}
 									else if(temp1 == 7){
