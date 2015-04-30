@@ -59,7 +59,7 @@ class Player {
 		int getNumPoke();
 		void wild_battle(int);
 		void fish_battle(int);
-		void pokeCenter();
+		void pokeCenter(int);
 		void player_battle(int,int);
 		void create_trainer(int,int);
 		void save_pokemon_stats();
@@ -210,7 +210,7 @@ void Player::fish_battle(int level_enc){
 	cout << endl << "Fish Battle!" << endl;
 	add_pokemon(rand_between(9,10),0,level_enc); // comp rand
 	op = 0; //opponent poke
-	cout << "A Wild, Level " << (*otherPoke[op]).getlevel() << " " << (*otherPoke[op]).getname() << "was hooked!" << endl << endl;
+	cout << "A Wild, Level " << (*otherPoke[op]).getlevel() << " " << (*otherPoke[op]).getname() << " was hooked!" << endl << endl;
 }
 
 void Player::player_battle(int pick, int level_enc){
@@ -220,9 +220,12 @@ void Player::player_battle(int pick, int level_enc){
 	op = 0;
 }
 
-void Player::pokeCenter(){
+void Player::pokeCenter(int whiteout){
 	for(int i = 0; i < myPoke.size(); i++){
 		(*myPoke[i]).heal();
+		if(whiteout){
+			(*myPoke[i]).setexp(0); //clear current experience on whiteout
+		}
 	}
 }
 

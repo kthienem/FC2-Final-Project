@@ -1544,7 +1544,7 @@ void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackgr
 								break;
 							case SDLK_SPACE://space bar
 								if( gBackground == gPokeMaps[ POKE_CENTER_YES_MAP ] ) {
-									(*Nick).pokeCenter();//heals all pokemon
+									(*Nick).pokeCenter(0);//heals all pokemon non whiteout case
 									gBackground = gPokeMaps[ POKE_CENTER_HEALING_MAP ];
 									SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
 									SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface

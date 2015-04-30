@@ -1136,7 +1136,7 @@ int battleScene::battle(int wildLevel)
 													inMoves = false;
 													if((*myTrainer).switchPoke(0) == -1){
 														quit = 1;	
-														(*myTrainer).pokeCenter();
+														(*myTrainer).pokeCenter(1);
 														return_value = 1;
 													}
 													continue;
@@ -1189,7 +1189,7 @@ int battleScene::battle(int wildLevel)
 												inPokemon = true;
 												if((*myTrainer).switchPoke(0) == -1){
 													quit = 1;	
-													(*myTrainer).pokeCenter();
+													(*myTrainer).pokeCenter(1); //1 for whiteout so erase all current exp
 													return_value = 1;
 												}
 												gCurrentArrowPos = gArrowPosition[0];
@@ -1216,7 +1216,7 @@ int battleScene::battle(int wildLevel)
 												inPokemon = true; 
 												if((*myTrainer).switchPoke(0) == -1){
 													quit = 1;	
-													(*myTrainer).pokeCenter();
+													(*myTrainer).pokeCenter(1); //whiteout
 													return_value = 1;
 												}
 											}
@@ -1250,7 +1250,7 @@ int battleScene::battle(int wildLevel)
 									int anyPoke = (*myTrainer).switchPoke(nextPoke);
 									if(anyPoke==-1){
 										return_value = 1; //whited out
-										(*myTrainer).pokeCenter();
+										(*myTrainer).pokeCenter(1);
 										quit = 1;
 									}
 									else if(anyPoke==-2){
