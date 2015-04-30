@@ -74,6 +74,7 @@ class Player {
 		int op;
 };
 Player::Player(int newGame){
+	srand(time(NULL));
 	if(newGame){
 		add_pokemon(7,1,2); // add a new pikachu to player pokemon
 		cp = 0;

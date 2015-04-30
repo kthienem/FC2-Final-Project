@@ -888,7 +888,7 @@ int main()
 											leaveMap3x=849;
 											leaveMap3y=65;
 								}
-		cout<<"You....."<<battleResult<<endl;
+		//cout<<"You....."<<battleResult<<endl;
 							}
 						}
 				
