@@ -19,7 +19,6 @@ using namespace std;
 const int SCREEN_WIDTH = 768;
 const int SCREEN_HEIGHT = 576;
 
-<<<<<<< HEAD
 enum Names{//used to index arrays that contain information about pokemon images
 	BLANK,			//0
 	RATTATA,		//1
@@ -38,26 +37,6 @@ enum Names{//used to index arrays that contain information about pokemon images
 	ODDISH,			//14
 	DROWZEE,		//15
 	ABRA,				//16
-=======
-enum Names{
-	BLANK,
-	RATTATA,
-	SNORLAX,
-	PIDGEY,
-	ZUBAT,
-	MACHOP,
-	MANKEY,
-	PIKACHU,
-	ELECTABUZZ,
-	SQUIRTLE,
-	SLOWPOKE,
-	CHARMANDER,
-	PONYTA,
-	BULBASAUR,
-	ODDISH,
-	DROWZEE,
-	ABRA,
->>>>>>> 1ea872a081e30795224b78ed0219f4b880d59e7f
 	NAMES
 };
 
@@ -115,21 +94,11 @@ class battleScene{
 		void pokemonMenu(int);//function to update screen to list of player's pokemon
 
 	private:
-<<<<<<< HEAD
 		int battleType;//the type of battle that the player is entering, wild, trainer, etc.
 		Player* myTrainer;//an object of type Player to access the player's pokemon and their stats
 		SDL_Window* gWindow;//window that images are updated to
 		SDL_Surface* gScreenSurface;//the screen surface that images are blitted to
 		SDL_Surface* gBackground;//points to image of battle background
-=======
-		int battleType;
-		int nextPoke;
-		int return_value;
-		Player* myTrainer;
-		SDL_Window* gWindow;
-		SDL_Surface* gScreenSurface;
-		SDL_Surface* gBackground;
->>>>>>> 1ea872a081e30795224b78ed0219f4b880d59e7f
 		SDL_Rect gBack;//where field background will go in window
 		SDL_Surface* gMenuSheet;//sprite sheet containing menu images
 		SDL_Rect gMenuBack;//where the menu background is loacted in sprite sheet
@@ -1175,10 +1144,6 @@ int battleScene::battle(int wildLevel)
 										inMenu = false;
 										inMoves = true;
 									}
-<<<<<<< HEAD
-									else if(temp1 == 6) quit = true;//if user has chosen to run
-									else if(temp1 == 7){//if user has chose to view list of pokemon
-=======
 									else if(temp1 == 6){
 										quit = (*myTrainer).run();
 										if(quit){
@@ -1200,7 +1165,6 @@ int battleScene::battle(int wildLevel)
 										}
 									}
 									else if(temp1 == 7){
->>>>>>> 1ea872a081e30795224b78ed0219f4b880d59e7f
 										inMenu = false;
 										inPokemon = true;
 									}
@@ -1330,12 +1294,8 @@ int battleScene::battle(int wildLevel)
 									break;
 								}
 								case SDLK_SPACE:
-<<<<<<< HEAD
 								{//return to options menu when a pokemon is selected
-=======
-								{	
 									nextPoke = selected;
->>>>>>> 1ea872a081e30795224b78ed0219f4b880d59e7f
 									int temp2 = menuOption("inPokemon");
 									int anyPoke = (*myTrainer).switchPoke(nextPoke);
 									if(anyPoke==-1){
