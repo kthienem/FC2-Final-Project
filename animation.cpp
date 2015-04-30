@@ -1,10 +1,7 @@
-/* Patrick Drumm, Kristopher Thieneman
- *
- * This file uses SDL graphics to work on the animation of a character walking
- * across the screen. Two bmp files are loaded in, one containing the images 
- * needed to create the animation and a background image used to test that 
- * unwanted portions of the animation image are made transparent to the 
- * background.
+/* This file acts as the game manager, and much more. This function not only handles all of the graphics functionality while in roaming mode, but it also instantiates the Player, and all Battles.
+ * This file uses SDL2 graphics to blit a plethora of loaded media onto the window. The most commonly seen graphics are the main map(consisting of a number of paths and small towns) and the character who roams the map. 
+ * The game loads in colors and their frequencies from cellPixelColors.txt -using readColorCodes- and then the character uses cellComp() to determine where he can and cannot walk. cellComp() is also used to determine if the adjacent cell has some kind of special functionality(such as a door or a person).
+ * In addition to the main map, two other notable background images that will be seen by the user are the Pokecenter and the gym.
  */
 
 #include <iostream>
@@ -32,9 +29,9 @@ const int WALKING_ANIMATION_FRAMES = 4;//number of frames used to create animati
 enum pokeMaps
 {
 	POKE_MAP_ROUTE1,	//=0
-	POKE_CENTER_MAP,
-	POKE_CENTER_YES_MAP,
-	POKE_CENTER_NO_MAP,
+	POKE_CENTER_MAP,	//=1
+	POKE_CENTER_YES_MAP,	//=2
+	POKE_CENTER_NO_MAP,	//etc.
 	POKE_CENTER_HEALING_MAP,
 	POKE_GYM_MAP,
 	POKE_GYM_ANSWERS_MAP,
@@ -58,7 +55,7 @@ enum pokeMaps
 	POKE_MENU_SAVED,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
 };
-//Color code contents
+//Color code contents. We use colorCodes(a vector of maps) to store the colors and their frequency for each of the cells listed in the enum below
 enum cellColorCode
 {
 	BRIDGE_CELL,
@@ -108,7 +105,7 @@ enum cellColorCode
 	TRAINER_YELLOW_CELL,
 	COLOR_CELL_SIZE
 };
-
+// The thresholds below are used within cellComp. When the program is determining whether the character can take its next step, the program loops through each of these cells and determines what the cell is. For example, first the cell will be compared to the bridge colors and frequencies stored in colorCodes[BRIDGE_CELL]. If there is at least a 55% match in pixels between colorCodes[BRIDGE_CELL] and the character's next step, then the program will determine that the next step is indeed a bridge and the character may walk there.
 double cellColorThreshold[50]={	.55,	// bridge
 				.63,	// cave entrance
 				.55,	// flower
@@ -156,10 +153,10 @@ double cellColorThreshold[50]={	.55,	// bridge
 				.63	// trainer yellow cap
 };
 
-bool init();		//initialize the display window
-bool loadMedia();	//load the images to be used
-void close();		//free memory and delete the window
-SDL_Surface* loadSurface(string path);//optimize the loaded images
+bool init();				//initialize the display window
+bool loadMedia();			//load the images to be used
+void close();				//free memory and delete the window
+SDL_Surface* loadSurface(string path);	//optimize the loaded images
 
 void putpixel( int, int, int );				// inputs: x,y,color
 uint32_t getpixel( int, int, SDL_Surface*);		// output: color; inputs: x,y,surface
@@ -167,8 +164,8 @@ double cellComp( int,int,map<int,int>,SDL_Surface* );	// compare a known cell wi
 void writeColorCodes(int,int,SDL_Surface*);		// writes the pixel-color frequencies for a given cell, used to write cellPixelColors.txt
 vector<map<int,int> > readColorCodes();			// read in cell color frequencies from cellPixelColors.txt
 
-void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect, int, int);
-void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect,Player*);
+void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect, int, int);	// for a full iteration, this function will begin with the normal surface on the window. It will then slowly blit a transparent black square over and over that becomes less and less transparent until the screen is black. It then does this process in reverse. This creates a fade out and fade in effect
+void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect,Player*);	// this function is used when the character enters the pokecenter and talks to the nurse. An option then appears on the window to heal all of your Pokemon
 SDL_Rect determineWarpLoc(SDL_Rect);			// given your location in the gym, this returns your new(warped) location
 void talkToPillar(SDL_Rect,int *,int *);		// if you talk to both of the pillars, the keys to the warp pads are revealed
 void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int, int, int, int);	// displays one of various messages depending on the integer inputs
@@ -184,27 +181,29 @@ SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the imag
 SDL_Surface* gSpriteSheet = NULL;	//pointer to the image contatining the pieces needed for the animation
 SDL_Rect* gCurrentClip = NULL;		//pointer to the current portion of gSpriteSheet being dislayed
 
-//Intro stuff
-SDL_Surface* gIntroSprites = NULL;	//pointer to the image contatining the pieces needed for the animation
-SDL_Rect gTorchic[6];
-SDL_Surface* gIntroBackground = NULL;
-SDL_Rect gIntroTrees;
-SDL_Surface* gIntroTitleSprites = NULL;	//pointer to the image contatining the pieces needed for the animation
-SDL_Rect gPokeTitle[6];
+//Intro Sequence Media
+SDL_Surface* gIntroSprites = NULL;	//pointer to the image contatining the pieces needed for the animation of the running torchic
+SDL_Rect gTorchic[6];			//stores rectangles that encompass each of the six different torchic sprites
+SDL_Surface* gIntroBackground = NULL;	//pointer to the image contatining the pieces needed for the animation of the trees and grass in the background
+SDL_Rect gIntroTrees;			//stores rectangle that encompasses the trees and grass, shifted along the x axis in introSequence()
+SDL_Surface* gIntroTitleSprites = NULL;	//pointer to the image contatining the pieces needed for the animation of the POKEMON title image
+SDL_Rect gPokeTitle[6];			//stores rectangles that encompass each of the six different POKEMON title sprites
 
-
-SDL_Surface* gPokeMaps[ POKE_MAP_SIZE ];
-SDL_Surface* gBackground = NULL;	//pointer to the image that is used as the background
+// Main game - map and character sprites
+SDL_Surface* gPokeMaps[ POKE_MAP_SIZE ];	//contains each of the maps and messages that are displayed on the screen
+SDL_Surface* gBackground = NULL;		//pointer to the image that is used as the background
 
 SDL_Rect gWalkLeft[WALKING_ANIMATION_FRAMES];	//series of frames from gSpriteSheet to animate walking left
 SDL_Rect gWalkRight[WALKING_ANIMATION_FRAMES];	//animate walking right
 SDL_Rect gWalkUp[WALKING_ANIMATION_FRAMES];	//animate walking up the screen
 SDL_Rect gWalkDown[WALKING_ANIMATION_FRAMES];	//animate walking down the screen
 
-SDL_Rect gFishLeft[WALKING_ANIMATION_FRAMES];	//series of frames from gSpriteSheet to animate walking left
-SDL_Rect gFishRight[WALKING_ANIMATION_FRAMES];	//animate walking right
-SDL_Rect gFishUp[WALKING_ANIMATION_FRAMES];	//animate walking up the screen
-SDL_Rect gFishDown[WALKING_ANIMATION_FRAMES];	//animate walking down the screen
+SDL_Rect gFishLeft[WALKING_ANIMATION_FRAMES];	//series of frames from gSpriteSheet to animate fishing left
+SDL_Rect gFishRight[WALKING_ANIMATION_FRAMES];	//animate fishing right
+SDL_Rect gFishUp[WALKING_ANIMATION_FRAMES];	//animate fishing up
+SDL_Rect gFishDown[WALKING_ANIMATION_FRAMES];	//animate fishing down
+
+
 
 int main()
 {
