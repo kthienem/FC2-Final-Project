@@ -28,50 +28,46 @@ class Player {
 	public:
 		Player(int=1); // constructor
 		void learnNewMove(int);
-		void Battle(); // initiate battle sequence
 		void Menu(); // initiate menu interface
 		void Roam(); // initiate field interface (free roam)
 		void add_pokemon(int, int, int); //add new pokemon, first int is pokemon number and second is player
-		void add_wild(Pokemon&); //
-		int checkValidPoke(int);
-		int noValid();
-		int noValid_other();
-		int whatToDo();
-		int switchPoke(int);
-		int run();
-		int fight_comp();
-		int fight(int);
-		int catchPoke();
-		int getmyHealth();
-		int getmyMaxHealth();
-		int getopHealth();
-		int getopMaxHealth();
+		int checkValidPoke(int); //checks if user pokmeon is koed or not return 1 if the pokemon is not ko and therefore valid, 0 otherwise 
+		int noValid(); //checks for valid (not KOed) user pokemon and prints out what position they are in 
+		int noValid_other(); //checks for opponent valid pokmon and subs them out, used for trainer battles
+		int switchPoke(int); //takes input and tries to play that pokemon, if no valid pokemon it returns -1 for whited out, -2 for there are valid, but you didn't choose one, and the position of the valid pokemon if one is picked
+		int run(); //run sequence 70% chance of running away
+		int fight_comp(); //computer fight sequence that picks a random move
+		int fight(int); //uses the inputed values as the user's move
+		int catchPoke(); //random chance of catching a pokemon based 
+		int getmyHealth(); //return health of current pokemon
+		int getmyMaxHealth(); //return max health of current pokemon
+		int getopHealth(); //get op currhelth
+		int getopMaxHealth(); //get op maxhealth
 		int mycheckKO(int); //check a certain poke for a ko used to see what switchable pokemon
-		int opcheckKO(int);
+		int opcheckKO(int); //check if op is koed
 		int myCurrentPoke(); //get current pokemon's number
 		int opCurrentPoke(); //get current pokemon's number for op
-		int myLevel();
-		int anyLevel(int);
-		int opLevel();
+		int myLevel(); //return my level
+		int anyLevel(int); //return level of any pokemon
+		int opLevel(); //return level of opponent
 		int NextOp(); //checks if this opint is less than size to see if it can switch to that pokemon for them
-		int whatPokeinParty(int);
-		int getMoveNum(int);
-		int getNumPoke();
-		void wild_battle(int);
-		void fish_battle(int);
-		void pokeCenter(int);
-		void player_battle(int,int);
-		void create_trainer(int,int);
-		void save_pokemon_stats();
-		void load_pokemon_stats();
-		void push_poke(string); //myPoke.push_back(new Pokemon);
-		int rand_between(int, int);
+		int whatPokeinParty(int); //get pokemon number for any poke in the party
+		int getMoveNum(int); //get move number for move of choice
+		int getNumPoke(); //get number of current pokemon
+		void wild_battle(int); //load a wild pokemon in to otherPoke
+		void fish_battle(int); //load a fish pokemon in to otherPoke
+		void pokeCenter(int); //heals all the pokemon with a input for if the player whited out or not, if they white out then it erases current exp
+		void player_battle(int,int); //load a player battle
+		void create_trainer(int,int); //loads ceratin trainers based of what inputs
+		void save_pokemon_stats(); //creates save file
+		void load_pokemon_stats(); //loads in data and creates pokemon
+		int rand_between(int, int); //creates a random number between first input and second
 	private:
 		int createPokemon; // number of pokemon owned by player
 		vector <Pokemon*> myPoke; //array for pointers
 		vector <Pokemon*> otherPoke; //array for pointers
 		int cp; //current pokemon
-		int op;
+		int op; //op's current pokemon
 };
 Player::Player(int newGame){
 	srand(time(NULL));
@@ -82,11 +78,6 @@ Player::Player(int newGame){
 	else{
 		load_pokemon_stats();
 	}
-}
-void Player::Battle(){
-//	wild_battle();
-//	pokeCenter();
-//	player_battle();	
 }
 //function for adding a new pokemon into players array
 void Player::add_pokemon(int PokeNum, int person, int levelDesired){ //person 1 or 0 for player or npc
@@ -151,16 +142,6 @@ void Player::add_pokemon(int PokeNum, int person, int levelDesired){ //person 1 
 		otherPoke.push_back(newPoke_ptr);
 	}
 }
-//adds wild pokmeon into player array
-void Player::add_wild(Pokemon& wildPoke_ptr){
-	if(createPokemon < 5){ //make sure there is room!
-	myPoke.push_back(&wildPoke_ptr);
-	}
-	else{
-		cout << "No more room" << endl;
-	}
-}
-
 void Player::Roam() {
 	cout << "Roam" << endl;
 }
@@ -347,11 +328,6 @@ int Player::rand_between(int a, int b){ // used for semi-randomness
 int Player::getNumPoke(){
 	return myPoke.size();
 }
-int Player::whatToDo(){
-	int choice;
-	cout << "What would you like to do: 1 fight, 2 catch, 3 run";
-	cin >> choice;	// uses this to control game flow 
-}
 int Player::fight(int userMove){
 	cout << "Level " << (*myPoke[cp]).getlevel() << " " <<(*myPoke[cp]).getname() << " attacked with " << (*myPoke[cp]).attackname(userMove-1) << endl;
 	(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
@@ -394,11 +370,11 @@ int Player::fight_comp(){
 }
 int Player::run(){
 	int runChance = rand()%10;
-		if(runChance > 2){ //50percent maybe later based of speed	
+		if(runChance > 2){ //70percent maybe later based of speed	
 			cout << endl << "Ran away!" << endl << endl;
 			return 1; //end encouter
 		}
-		return 0;
+		return 0; //did not run away
 }
 int Player::switchPoke(int newPoke){
 	cout << endl;
