@@ -334,8 +334,10 @@ int Player::fight(int userMove){
 	(*myPoke[cp]).attack(userMove,otherPoke[op]); // test using attack 1
 	//check their ko and give exp
 	if((*otherPoke[op]).getKO()){
-		(*myPoke[cp]).incExp((*otherPoke[op]).getlevel()*7 + 10); //+25 exp
-		cout << "Gained " << ((*otherPoke[op]).getlevel()*7 + 10) << " exp!" << endl;
+		int expinc = ((*otherPoke[op]).getlevel()*7 + 10); //exp based off level
+		cout << "Gained " << expinc <<" exp!" << endl;
+		(*myPoke[cp]).incExp(expinc); //increase exp
+		cout << "Need " << ((*myPoke[cp]).getmaxLevelExp() - expinc) << " more exp till next level." << endl;
 		return 1; //return 1 for a KO
 	}
 	return 0;
