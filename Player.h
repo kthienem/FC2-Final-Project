@@ -1,6 +1,7 @@
 // Player.h
 // Interface file for Pokemon Player class
-//delete uncommented code and have it display in wild battle and in wild fish name and level of pokemon that appeard
+// creates battles and has all the functions neccessary for displaying output and dealing damage and reporting results
+
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <vector>
