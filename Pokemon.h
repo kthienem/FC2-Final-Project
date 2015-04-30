@@ -119,8 +119,8 @@ void Pokemon::levelUp() {
 	maxDef += (rand() % 4) + 1; // increment defense by a random stat amount
 	maxSpeed += (rand() % 4) + 1; // increment speed
 
-	if(level == moveLevel){ //at level 5 learn new moves
-		cout << "Learned new move: " << myMoves[4].display() << " Replaced move: " << myMoves[0].display() << endl;
+	if(level == moveLevel){ //at level 5 learn new moves	
+		cout << "Learned new move: " << myMoves[4].display() << endl << "Replaced move: " << myMoves[0].display() << endl;
 		myMoves[0] = myMoves[1]; // first move is removed
 		myMoves[1] = myMoves[2];
 		myMoves[2] = myMoves[3];

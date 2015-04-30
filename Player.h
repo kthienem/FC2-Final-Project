@@ -337,7 +337,7 @@ int Player::fight(int userMove){
 		int expinc = ((*otherPoke[op]).getlevel()*7 + 10); //exp based off level
 		cout << "Gained " << expinc <<" exp!" << endl;
 		(*myPoke[cp]).incExp(expinc); //increase exp
-		cout << "Need " << ((*myPoke[cp]).getmaxLevelExp() - expinc) << " more exp till next level." << endl;
+		cout << "Need " << ((*myPoke[cp]).getmaxLevelExp() - (*myPoke[cp]).getexp()) << " more exp till next level." << endl;
 		return 1; //return 1 for a KO
 	}
 	return 0;
