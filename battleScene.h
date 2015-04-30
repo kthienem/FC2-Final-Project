@@ -19,6 +19,7 @@ using namespace std;
 const int SCREEN_WIDTH = 768;
 const int SCREEN_HEIGHT = 576;
 
+<<<<<<< HEAD
 enum Names{//used to index arrays that contain information about pokemon images
 	BLANK,			//0
 	RATTATA,		//1
@@ -37,6 +38,26 @@ enum Names{//used to index arrays that contain information about pokemon images
 	ODDISH,			//14
 	DROWZEE,		//15
 	ABRA,				//16
+=======
+enum Names{
+	BLANK,
+	RATTATA,
+	SNORLAX,
+	PIDGEY,
+	ZUBAT,
+	MACHOP,
+	MANKEY,
+	PIKACHU,
+	ELECTABUZZ,
+	SQUIRTLE,
+	SLOWPOKE,
+	CHARMANDER,
+	PONYTA,
+	BULBASAUR,
+	ODDISH,
+	DROWZEE,
+	ABRA,
+>>>>>>> 1ea872a081e30795224b78ed0219f4b880d59e7f
 	NAMES
 };
 
@@ -88,17 +109,27 @@ class battleScene{
 		bool loadMedia();//load images to be used along with SDL_Rects
 		void close();//free memory and delete window
 		SDL_Surface* loadSurface(string path);//optimize loaded images
-		void battle();//runs battle scene
+		int battle(int);//runs battle scene
 		void moveArrow(string);//moves arrow to appropriate position
 		int menuOption(string);//directs player to proper screen depending on their menu choice
 		void pokemonMenu(int);//function to update screen to list of player's pokemon
 
 	private:
+<<<<<<< HEAD
 		int battleType;//the type of battle that the player is entering, wild, trainer, etc.
 		Player* myTrainer;//an object of type Player to access the player's pokemon and their stats
 		SDL_Window* gWindow;//window that images are updated to
 		SDL_Surface* gScreenSurface;//the screen surface that images are blitted to
 		SDL_Surface* gBackground;//points to image of battle background
+=======
+		int battleType;
+		int nextPoke;
+		int return_value;
+		Player* myTrainer;
+		SDL_Window* gWindow;
+		SDL_Surface* gScreenSurface;
+		SDL_Surface* gBackground;
+>>>>>>> 1ea872a081e30795224b78ed0219f4b880d59e7f
 		SDL_Rect gBack;//where field background will go in window
 		SDL_Surface* gMenuSheet;//sprite sheet containing menu images
 		SDL_Rect gMenuBack;//where the menu background is loacted in sprite sheet
@@ -1079,7 +1110,7 @@ SDL_Surface* battleScene::loadSurface(string path)
 	return optimizedSurface;
 }
 
-void battleScene::battle()
+int battleScene::battle(int wildLevel)
 {
 	int turn = 0;//used to determine if it is the players turn or not
 	//boolean variables to determine what state the screen should be in
@@ -1103,7 +1134,13 @@ void battleScene::battle()
 			SDL_Event e;//variable for keyboard events entered by user
 			gCurrentArrowPos = gArrowPosition[0];
 			if(battleType == 0){
-     				(*myTrainer).wild_battle(); //load wild pokemon to fight
+     				(*myTrainer).wild_battle(wildLevel); //load wild pokemon to fight
+			}
+			else if(battleType == -1){
+				(*myTrainer).fish_battle(wildLevel);
+			}
+			else{
+				(*myTrainer).player_battle(battleType,wildLevel);
 			}
 			while(!quit){//while the player has not clicked the red x
 				while(SDL_PollEvent(&e) != 0){
@@ -1138,10 +1175,60 @@ void battleScene::battle()
 										inMenu = false;
 										inMoves = true;
 									}
+<<<<<<< HEAD
 									else if(temp1 == 6) quit = true;//if user has chosen to run
 									else if(temp1 == 7){//if user has chose to view list of pokemon
+=======
+									else if(temp1 == 6){
+										quit = (*myTrainer).run();
+										if(quit){
+											return_value = 4;
+										}
+										else{
+											int theyKoUs = (*myTrainer).fight_comp();
+											if(theyKoUs){
+												inMenu = false;
+												inPokemon = true;
+												inMoves = false;
+												if((*myTrainer).switchPoke(0) == -1){
+													quit = 1;	
+													(*myTrainer).pokeCenter(1);
+													return_value = 1;
+												}
+												continue;
+											}
+										}
+									}
+									else if(temp1 == 7){
+>>>>>>> 1ea872a081e30795224b78ed0219f4b880d59e7f
 										inMenu = false;
 										inPokemon = true;
+									}
+									else if(temp1 == 8){
+										if(battleType <= 0){
+											quit = (*myTrainer).catchPoke();
+											if(quit){
+												return_value = 3; //caught
+											}
+											else if((*myTrainer).getNumPoke()==6){
+												continue;
+												//do nothing continue
+											}
+											else{
+												int usko = (*myTrainer).fight_comp();
+												if(usko){
+													inMenu = false;
+													inPokemon = true;
+													inMoves = false;
+													if((*myTrainer).switchPoke(0) == -1){
+														quit = 1;	
+														(*myTrainer).pokeCenter(1);
+														return_value = 1;
+													}
+													continue;
+												}
+											}
+										}
 									}
 									break;
 								}
@@ -1178,9 +1265,48 @@ void battleScene::battle()
 									int temp2 = menuOption("inMoves");
 									inMenu = true;
 									inMoves = false;
-									quit = (*myTrainer).fight(temp2);
-									if(!quit){
-										quit = (*myTrainer).fight_comp(); //have computer attack	
+									if(battleType <= 0){	
+										quit = (*myTrainer).fight(temp2);
+										if(!quit){
+											int ko2_us = (*myTrainer).fight_comp(); //have computer attack	
+											if(ko2_us){
+												inMenu = false;
+												inMoves = false;
+												inPokemon = true;
+												if((*myTrainer).switchPoke(0) == -1){
+													quit = 1;	
+													(*myTrainer).pokeCenter(1); //1 for whiteout so erase all current exp
+													return_value = 1;
+												}
+												gCurrentArrowPos = gArrowPosition[0];
+											}
+										}
+										else{ //quit = 1
+											return_value = 2; //we koed them
+										}
+									}
+									else{ //trainer case where we need to check ko's
+										int ko_them = (*myTrainer).fight(temp2);
+										quit = 0;
+										if(ko_them){
+											if(!((*myTrainer).NextOp())){
+												return_value = 2; //defeated enemy trainer
+												quit = 1;
+											}
+										}
+										if(!quit){
+											int ko_us = (*myTrainer).fight_comp();
+											if(ko_us){
+												inMenu = false;
+												inMoves = false;
+												inPokemon = true; 
+												if((*myTrainer).switchPoke(0) == -1){
+													quit = 1;	
+													(*myTrainer).pokeCenter(1); //whiteout
+													return_value = 1;
+												}
+											}
+										}
 									}
 									break;
 								}
@@ -1204,10 +1330,30 @@ void battleScene::battle()
 									break;
 								}
 								case SDLK_SPACE:
+<<<<<<< HEAD
 								{//return to options menu when a pokemon is selected
+=======
+								{	
+									nextPoke = selected;
+>>>>>>> 1ea872a081e30795224b78ed0219f4b880d59e7f
 									int temp2 = menuOption("inPokemon");
-									inMenu = true;
-									inPokemon = false;
+									int anyPoke = (*myTrainer).switchPoke(nextPoke);
+									if(anyPoke==-1){
+										return_value = 1; //whited out
+										(*myTrainer).pokeCenter(1);
+										quit = 1;
+									}
+									else if(anyPoke==-2){
+										inMenu = false;
+										inMoves = false;
+										inPokemon = true; 
+									}
+									else{
+										inMoves = false;	
+										inMenu = true;
+										inPokemon = false;
+									}
+									gCurrentArrowPos = gArrowPosition[0];
 									break;
 								}
 								default:
@@ -1275,7 +1421,7 @@ void battleScene::battle()
 			}
     }
   }
-
+	return(return_value);
 }
 
 void battleScene::moveArrow(string dir)
@@ -1396,6 +1542,7 @@ int battleScene::menuOption(string state)
 		return 7;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[2].x && gCurrentArrowPos.y == gArrowPosition[2].y){
+		return 8;
 	}
 	else if(gCurrentArrowPos.x == gArrowPosition[3].x && gCurrentArrowPos.y == gArrowPosition[3].y){
 		return 6;

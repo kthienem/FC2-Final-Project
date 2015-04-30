@@ -75,7 +75,7 @@ class Pokemon{
 		int currHealth;
 		int level;
 		int exp;
-		int maxLevelExp;
+		int maxLevelExp; // experience needed to level up
 		int maxAttack;
 		int currAttack;
 		int maxDef;
@@ -84,8 +84,8 @@ class Pokemon{
 		int currSpeed;
 		int KO;	// boolean var
 		int moveLevel; // level at which Pokemon learns fifth move
-		string type;
-		string name;
+		string type; // Pokemon elemental type
+		string name; // Pokemon name
 		string weak; // type Pokemon is weak to
 		vector <string> attackName;//how can we still utilize this given the Moves class?
 		vector <Moves> myMoves;// then we can use for example myMoves[2].attack()
@@ -95,10 +95,6 @@ Pokemon::Pokemon(){
 	srand(time(NULL)); // seed rand
 	maxLevelExp = 50; //genaric maxlevelexp	
 }
-//non-default for loading a pokemon
-//Pokemon::Pokemon(int,int,int,int,int,int,int,int,int,int,int,int,string,string,string){ //check if knows 5 move
-
-//}
 
 void Pokemon::setnum(int n) {
 	num = n;
@@ -115,27 +111,14 @@ void Pokemon::heal(){ //pokeCenter and other healing uses
 
 void Pokemon::levelUp() {
 	level++; // increment level by 1
-	cout << endl << "Level UP!!!" << "Now level: " << level << endl << endl;
 	maxHealth+=7; // increment max health
 	currHealth+=7; // leveling up heals by 7
 	exp = exp - maxLevelExp; // set exp to the overflow 
 	maxLevelExp+=30; //increase max exp to next level up
-	maxAttack += rand() % 5; // add a random attack stat amount
-	// Don't increment current attack?
-	maxDef += rand() % 5; // increment defense by a random stat amount
-	// Don't increment current def?
-	maxSpeed += rand() % 5; // increment speed
-	// Don't increment current Speed?
-	// KO does not change
-	
-	// If necessary, add a new move
-/*
-	myMoves[0] = myMoves[1];
-	myMoves[1] = myMoves[2];
-	myMoves[2] = myMoves[3];
-	myMoves.pop_back(); // remove move from back
-	myMoves.push_back(newmove); // add new move to the back
-*/
+	maxAttack += (rand() % 4) + 1; // add a random attack stat amount
+	maxDef += (rand() % 4) + 1; // increment defense by a random stat amount
+	maxSpeed += (rand() % 4) + 1; // increment speed
+
 	if(level == moveLevel){ //at level 5 learn new moves
 		cout << "Learned new move: " << myMoves[4].display() << " Replaced move: " << myMoves[0].display() << endl;
 		myMoves[0] = myMoves[1]; // first move is removed
@@ -158,39 +141,24 @@ void Pokemon::setcurrHealth(int h) {
 	if(h > 0) 
 		currHealth = h; // sets new health
 	else
-		currHealth = 0;
+		currHealth = 0; // fallback value
 }
 
 void Pokemon::inccurrHealth(int add) {
 	currHealth += add; //inc health for potion and other increases
 }
-/*void Pokemon::attack(int moveNum){ //attack function that calls certain moveNumber
-	int userNum; //input by user, can be removed
-	while (userNum != -1){ //just a way to check each attack
-		cout << "What attack would you like to use (1-4): "; //1-2 right now
-		cin >> userNum; //user enters attack
-	if(userNum > 0 && userNum < 5){ //makes sure attack is in vector and 1 - 4
-		cout << "Move number "<< userNum <<" is " << myMoves[userNum-1].display() << endl;
-		int damage = myMoves[userNum-1].attack(maxAttack); //calculate damage eventually take into account weaknesses and such
-		cout << "The attack did " << damage << " damage!" << endl; //display results
-		subHealth(damage); // subtract health based on damage dealt
-		}
-	}
-}*/
 
 void Pokemon::attack(int attackNum,Pokemon* poke_damage_ptr){ //attack function that calls certain moveNumber
-		//cout << "Move number "<< attackNum <<" is " << myMoves[attackNum-1].display() << endl;
 		int damage = myMoves[attackNum-1].attack(maxAttack); //calculate damage eventually take into account weaknesses and such
 		cout << "Attack power: " << damage << endl; //display results
 		(*poke_damage_ptr).subHealth(damage); // subtract health based on damage dealt
 	}
 
 void Pokemon::subHealth(int dam) {
-	//cout << "Health was: " << getcurrHealth() << endl;
 	int damage = dam - currDef; // calculate damage
-	cout << "Resisted " << getcurrDef() << " damage!" << endl; 
+	cout << "Resisted " << getcurrDef() << " damage!" << endl; // account for defense
 	if(damage > 0) {
-		cout << "Actual damage: " << (damage) << endl;
+		cout << "Actual damage: " << (damage) << endl; // display damage
 		setcurrHealth((getcurrHealth() - damage)); // reduce current health
 	}
 	else {
@@ -201,7 +169,7 @@ void Pokemon::subHealth(int dam) {
 		KO = 1; // if health falls below 0, Pokemon becomes KO'd
 		cout << "KO" << endl;
 	}
-	//cout << "Health is now: " << getcurrHealth() << endl;
+	cout << endl;
 }
 
 void Pokemon::addHealth(int add) {
@@ -209,6 +177,8 @@ void Pokemon::addHealth(int add) {
 		setcurrHealth((getcurrHealth() + add)); // increments health
 	}	
 }
+
+/* Getters and setters for Pokemon data members */
 
 void Pokemon::setlevel(int lv) {
 	level = lv;
@@ -226,6 +196,7 @@ int Pokemon::incExp(int e) {
 	exp+=e; //add e to exp
 	if(exp >= maxLevelExp){
 		levelUp();
+		cout << "Level Up! Now Level: " << level << endl << endl;
 	}
 	return exp;
 }
@@ -334,24 +305,24 @@ string Pokemon::attackname(int moveNum){
 }
 
 void Pokemon::learnNewMove(){
-		myMoves[0] = myMoves[1]; // first move is removed
-        myMoves[1] = myMoves[2];
+		myMoves[0] = myMoves[1]; // first move is replaced
+        myMoves[1] = myMoves[2]; // move other moves back one usable spot
         myMoves[2] = myMoves[3];
-        myMoves[3] = myMoves[4];	
+        myMoves[3] = myMoves[4]; // move in fifth slot moved to usable fourth slot	
 }
 
 void Pokemon::setMoves(int mv1, int mv2, int mv3, int mv4, int mv5) {
 
-	Moves move1(mv1), move2(mv2), move3(mv3), move4(mv4), move5(mv5);
+	Moves move1(mv1), move2(mv2), move3(mv3), move4(mv4), move5(mv5); // assign moves based on enum values
 
 	myMoves.push_back(move1); // push moves into myMoves
 	myMoves.push_back(move2);
 	myMoves.push_back(move3);
-	myMoves.push_back(move4);
+	myMoves.push_back(move4); // last usable move slot
 	myMoves.push_back(move5); // potential move to learn
 }
 
-int Pokemon::getMoveNum(int move) {
+int Pokemon::getMoveNum(int move) { // returns enum values of specified move number
 	switch (move) {
 		case 0:
 			return myMoves[0].getmovenum();

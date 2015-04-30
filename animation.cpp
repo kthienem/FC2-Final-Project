@@ -52,6 +52,8 @@ enum pokeMaps
 	POKE_MESSAGE_CANT_PAUSE,
 	POKE_MESSAGE_LOAD_GAME,
 	POKE_MESSAGE_FISHING,
+	POKE_MESSAGE_RAN_AWAY,
+	POKE_MESSAGE_CAUGHT_POKE,
 	POKE_MENU_MAIN,
 	POKE_MENU_SAVED,
 	POKE_MAP_SIZE	//=number of variables above. used to index gPokeMaps
@@ -159,23 +161,23 @@ bool loadMedia();	//load the images to be used
 void close();		//free memory and delete the window
 SDL_Surface* loadSurface(string path);//optimize the loaded images
 
-void putpixel( int, int, int );			// inputs: x,y,color
-uint32_t getpixel( int, int, SDL_Surface*);	// output: color; inputs: x,y,surface
-double cellComp( int,int,map<int,int>,SDL_Surface* );// output: %match; inputs: x1,y1,cellColormap,surface
-void writeColorCodes(int,int,SDL_Surface*);
-vector<map<int,int> > readColorCodes();
+void putpixel( int, int, int );				// inputs: x,y,color
+uint32_t getpixel( int, int, SDL_Surface*);		// output: color; inputs: x,y,surface
+double cellComp( int,int,map<int,int>,SDL_Surface* );	// compare a known cell will the next "step"
+void writeColorCodes(int,int,SDL_Surface*);		// writes the pixel-color frequencies for a given cell, used to write cellPixelColors.txt
+vector<map<int,int> > readColorCodes();			// read in cell color frequencies from cellPixelColors.txt
 
 void transitionGraphic(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect, int, int);
 void healMyPokemon(SDL_Window *, SDL_Surface *, SDL_Surface*, SDL_Surface*, SDL_Rect*, SDL_Rect,SDL_Rect,SDL_Rect,Player*);
-SDL_Rect determineWarpLoc(SDL_Rect);
-void talkToPillar(SDL_Rect,int *,int *);
-void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int, int);
-bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect, Player*);
-void saveGame(SDL_Rect, SDL_Rect);
-void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);
-void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);
-int introSequence(SDL_Rect,SDL_Rect,SDL_Rect);
-int goFish(SDL_Rect,SDL_Rect,SDL_Rect,char);
+SDL_Rect determineWarpLoc(SDL_Rect);			// given your location in the gym, this returns your new(warped) location
+void talkToPillar(SDL_Rect,int *,int *);		// if you talk to both of the pillars, the keys to the warp pads are revealed
+void dispMessage(SDL_Rect, SDL_Rect, int, int, int, int, int, int, int);	// displays one of various messages depending on the integer inputs
+bool pauseMenu(SDL_Rect, SDL_Rect, SDL_Rect, Player*);	// load up pause menu, includes interaction within menu
+void saveGame(SDL_Rect, SDL_Rect);			// write stats of Player(and his Pokemon) and Player's map location
+void loadGame(SDL_Rect**, SDL_Rect*, SDL_Rect*);	// load stats of Player and previous map location
+void battleCutScene(SDL_Rect, SDL_Rect, SDL_Rect);	// flashes a black screen to signal user is entering battle
+int introSequence(SDL_Rect,SDL_Rect,SDL_Rect);		// display introductory sequence with load/save menu(you can trip torchic if you want!)
+int goFish(SDL_Rect,SDL_Rect,SDL_Rect,char);		// user will pull out fishing pole and attempt to catch a water pokemon
 
 SDL_Window* gWindow = NULL;		//pointer to the images displayed on the screen
 SDL_Surface* gScreenSurface = NULL;	//pointer to the surface containing the images to be displayed
@@ -227,10 +229,6 @@ int main()
 			characterRect.y = 14;	//place at center of screen
 			characterRect.w = 50;			//size of portion of sprite sheet taken up by character
 			characterRect.h = 50;			//size of portion of sprite sheet taken up by character
-		//	characterRect.x = MAP_SCREEN_WIDTH/2 - 9;	//place at center of screen
-		//	characterRect.y = MAP_SCREEN_HEIGHT/2 + 14;	//place at center of screen
-		//	characterRect.w = 50;			//size of portion of sprite sheet taken up by character
-		//	characterRect.h = 50;			//size of portion of sprite sheet taken up by character
 
 
 			SDL_Rect stretch2windowRect;			//rectangle to stretch the background image to fit to window
@@ -280,6 +278,7 @@ int main()
 			int isGym= 0;
 			int isWarpTile= 0;
 			int caughtFish=0;
+			int battleResult= 0;
 
 			int gymAnswers=0;
 			int firstPillarx=0;
@@ -323,7 +322,7 @@ int main()
 								if( gCurrentClip!=&gWalkUp[0] ) {	// ie. if he is NOT already walking up, change the direction he is facing to up
 									gCurrentClip= &gWalkUp[0];
 								}else if(mapZoomRect.x==1 && mapZoomRect.y==1 && characterRect.y==14 && (characterRect.x==247 || characterRect.x==279)){
-														dispMessage(characterRect, mapZoomRect, isCave, 0, 1, 0, 0);
+														dispMessage(characterRect, mapZoomRect, isCave, 0, 1, 0, 0, 0, 0);
 								} else {	// else, make him continue walking up
 									if( mapZoomRect.y-15 < topEdge ) isOB=1;
 									if( isOB==0 ){
@@ -337,9 +336,9 @@ int main()
 											if( i== DOOR_BLUE_N_CELL || i== DOOR_BLUE_SE_CELL || i== DOOR_GREEN_S_CELL || i== DOOR_RED_NW_CELL || i== DOOR_RED_S_CELL || i== DOOR_WOOD_CELL || i== DOOR_MART_CELL){
 												if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface)) {
 													if( i==DOOR_MART_CELL )
-														dispMessage(characterRect, mapZoomRect, isCave, 1, 0, 0, 0);
+														dispMessage(characterRect, mapZoomRect, isCave, 1, 0, 0, 0, 0, 0);
 													else
-														dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0, 0);
+														dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0, 0, 0, 0);
 												}
 												
 											}else if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ) {
@@ -417,7 +416,7 @@ int main()
 									}
 									if(isCave) {
 										if(mapZoomRect.x<=833) {
-											dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0, 0);
+											dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 0, 0, 0, 0);
 											SDL_Delay(3000);
 										}else{
 											int prevCave= caveChoice;
@@ -592,7 +591,6 @@ int main()
 								break;
 
 							case SDLK_SPACE://space bar
-				//				writeColorCodes(trainerCellx+cellShift,trainerCelly, gScreenSurface);
 						// Check for cell cases
 							// PokeCenter healer
 								if( gCurrentClip==&gWalkUp[0] ){
@@ -603,17 +601,75 @@ int main()
 										talkToPillar(characterRect, &gymAnswers, &firstPillarx);
 								// Gym leader
 									if( cellColorThreshold[GYM_LEADER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[GYM_LEADER_CELL], gScreenSurface) ){
+										int wildLevel=0;
+									// base wild pokemon level off of current map location
+										if(mapZoomRect.x+(characterRect.x/2) < 300)
+											wildLevel= 1;
+										else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+											wildLevel= 2;
+										else if(mapZoomRect.x+(characterRect.x/2) < 800)
+											wildLevel= 3;
+										else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+											wildLevel= 4;
+										else if(mapZoomRect.y+(characterRect.y/2) < 350)
+											wildLevel= 6;
+										else
+											wildLevel= Nick.myLevel();
 										battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 										battleScene battleName(&Nick, gWindow,6);
-										battleName.battle();
+										battleResult=battleName.battle(wildLevel);
+										if(battleResult==3) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 0, 1);
+										if(battleResult==4) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 1, 0);
+										else if(battleResult==1){
+											mapZoomRect.x = 0;	//begin image in middle of map
+											mapZoomRect.y = 0;
+											characterRect.x = 360;	//place at entrance
+											characterRect.y = 270;	//place at entrance
+											gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+											gCurrentClip= &gWalkUp[0];
+											isPokeCenter=1;
+											leaveMap1x=375;
+											leaveMap1y=270;
+											leaveMap3x=849;
+											leaveMap3y=65;
+										}
 									}
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[i], gScreenSurface) ){
+											int wildLevel=0;
+										// base wild pokemon level off of current map location
+											if(mapZoomRect.x+(characterRect.x/2) < 300)
+												wildLevel= 1;
+											else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+												wildLevel= 2;
+											else if(mapZoomRect.x+(characterRect.x/2) < 800)
+												wildLevel= 3;
+											else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+												wildLevel= 4;
+											else if(mapZoomRect.y+(characterRect.y/2) < 350)
+												wildLevel= 6;
+											else
+												wildLevel= Nick.myLevel();
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
-											battleName.battle();
+											battleResult=battleName.battle(wildLevel);
+											if(battleResult==3) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 0, 1);
+											if(battleResult==4) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 1, 0);
+											else if(battleResult==1){
+												mapZoomRect.x = 0;	//begin image in middle of map
+												mapZoomRect.y = 0;
+												characterRect.x = 360;	//place at entrance
+												characterRect.y = 270;	//place at entrance
+												gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+												gCurrentClip= &gWalkUp[0];
+												isPokeCenter=1;
+												leaveMap1x=375;
+												leaveMap1y=270;
+												leaveMap3x=849;
+												leaveMap3y=65;
+											}
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx, trainerCelly-cellShift, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -623,10 +679,39 @@ int main()
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[i], gScreenSurface) ){
+											int wildLevel=0;
+										// base wild pokemon level off of current map location
+											if(mapZoomRect.x+(characterRect.x/2) < 300)
+												wildLevel= 1;
+											else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+												wildLevel= 2;
+											else if(mapZoomRect.x+(characterRect.x/2) < 800)
+												wildLevel= 3;
+											else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+												wildLevel= 4;
+											else if(mapZoomRect.y+(characterRect.y/2) < 350)
+												wildLevel= 6;
+											else
+												wildLevel= Nick.myLevel();
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
-											battleName.battle();
+											battleResult=battleName.battle(wildLevel);
+											if(battleResult==3) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 0, 1);
+											if(battleResult==4) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 1, 0);
+											else if(battleResult==1){
+												mapZoomRect.x = 0;	//begin image in middle of map
+												mapZoomRect.y = 0;
+												characterRect.x = 360;	//place at entrance
+												characterRect.y = 270;	//place at entrance
+												gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+												gCurrentClip= &gWalkUp[0];
+												isPokeCenter=1;
+												leaveMap1x=375;
+												leaveMap1y=270;
+												leaveMap3x=849;
+												leaveMap3y=65;
+											}
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx, trainerCelly+cellShift, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -636,10 +721,39 @@ int main()
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[i], gScreenSurface) ){
+											int wildLevel=0;
+										// base wild pokemon level off of current map location
+											if(mapZoomRect.x+(characterRect.x/2) < 300)
+												wildLevel= 1;
+											else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+												wildLevel= 2;
+											else if(mapZoomRect.x+(characterRect.x/2) < 800)
+												wildLevel= 3;
+											else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+												wildLevel= 4;
+											else if(mapZoomRect.y+(characterRect.y/2) < 350)
+												wildLevel= 6;
+											else
+												wildLevel= Nick.myLevel();
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
-											battleName.battle();
+											battleResult=battleName.battle(wildLevel);
+											if(battleResult==3) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 0, 1);
+											if(battleResult==4) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 1, 0);
+											else if(battleResult==1){
+												mapZoomRect.x = 0;	//begin image in middle of map
+												mapZoomRect.y = 0;
+												characterRect.x = 360;	//place at entrance
+												characterRect.y = 270;	//place at entrance
+												gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+												gCurrentClip= &gWalkUp[0];
+												isPokeCenter=1;
+												leaveMap1x=375;
+												leaveMap1y=270;
+												leaveMap3x=849;
+												leaveMap3y=65;
+											}
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx-cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -649,10 +763,39 @@ int main()
 								// Trainers
 									for(int i=TRAINER_BRUNETTE_CELL; i<=TRAINER_YELLOW_CELL; i++)
 										if( cellColorThreshold[i] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[i], gScreenSurface) ){
+											int wildLevel=0;
+										// base wild pokemon level off of current map location
+											if(mapZoomRect.x+(characterRect.x/2) < 300)
+												wildLevel= 1;
+											else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+												wildLevel= 2;
+											else if(mapZoomRect.x+(characterRect.x/2) < 800)
+												wildLevel= 3;
+											else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+												wildLevel= 4;
+											else if(mapZoomRect.y+(characterRect.y/2) < 350)
+												wildLevel= 6;
+											else
+												wildLevel= Nick.myLevel();
 											battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 											if(i==TRAINER_BRUNETTE_CELL) i++;	// ensures that brunette 1 and 2 are always read into battle as same user. If brunette 1 is matched, this will skip brunette 2 which works to our advantage because then we do not need to worry about a single brunette trainer matching twice
 											battleScene battleName(&Nick, gWindow,i-TRAINER_BRUNETTE_CELL);
-											battleName.battle();
+											battleResult=battleName.battle(wildLevel);
+											if(battleResult==3) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 0, 1);
+											if(battleResult==4) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 1, 0);
+											else if(battleResult==1){
+												mapZoomRect.x = 0;	//begin image in middle of map
+												mapZoomRect.y = 0;
+												characterRect.x = 360;	//place at entrance
+												characterRect.y = 270;	//place at entrance
+												gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+												gCurrentClip= &gWalkUp[0];
+												isPokeCenter=1;
+												leaveMap1x=375;
+												leaveMap1y=270;
+												leaveMap3x=849;
+												leaveMap3y=65;
+											}
 										}
 								// Water
 									if( cellColorThreshold[WATER_CELL] <= cellComp(trainerCellx+cellShift, trainerCelly, colorCodes[WATER_CELL], gScreenSurface) ){
@@ -663,7 +806,7 @@ int main()
 				
 							case SDLK_p:	// Pause Menu
 								if(isPokeCenter || isGym)
-									dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 1, 0);	// If inside, don't let the user pause!
+									dispMessage(characterRect, mapZoomRect, isCave, 0, 0, 1, 0, 0, 0);	// If inside, don't let the user pause!
 								else
 									quit=pauseMenu(characterRect, stretch2windowRect, mapZoomRect,&Nick);	// Outside, so let the user pause
 								break;
@@ -674,19 +817,78 @@ int main()
 
 
 						if(caughtFish==1){
+								int wildLevel=0;
+							// base wild pokemon level off of current map location
+								if(mapZoomRect.x+(characterRect.x/2) < 300)
+									wildLevel= 1;
+								else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+									wildLevel= 2;
+								else if(mapZoomRect.x+(characterRect.x/2) < 800)
+									wildLevel= 3;
+								else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+									wildLevel= 4;
+								else if(mapZoomRect.y+(characterRect.y/2) < 350)
+									wildLevel= 6;
+								else
+									wildLevel= Nick.myLevel();
 							battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 							battleScene battleName(&Nick, gWindow,-1);
-							battleName.battle();
+							battleResult=battleName.battle(wildLevel);
+							if(battleResult==3) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 0, 1);
+							if(battleResult==4) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 1, 0);
+							else if(battleResult==1){
+										mapZoomRect.x = 0;	//begin image in middle of map
+										mapZoomRect.y = 0;
+										characterRect.x = 360;	//place at entrance
+										characterRect.y = 270;	//place at entrance
+										gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+										gCurrentClip= &gWalkUp[0];
+										isPokeCenter=1;
+										leaveMap1x=375;
+										leaveMap1y=270;
+										leaveMap3x=849;
+										leaveMap3y=65;
+							}
 						}else if(caughtFish==2){
-							dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 1);
+							dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 1, 0, 0);
 						}
 
 						if(steponWildGrass){
 							if(rand()%100 < 15){
+								int wildLevel=0;
+							// base wild pokemon level off of current map location
+								if(mapZoomRect.x+(characterRect.x/2) < 300)
+									wildLevel= 1;
+								else if(mapZoomRect.x+(characterRect.x/2) < 700 && mapZoomRect.y+(characterRect.y) < 400 )
+									wildLevel= 2;
+								else if(mapZoomRect.x+(characterRect.x/2) < 800)
+									wildLevel= 3;
+								else if(mapZoomRect.x+(characterRect.x/2) < 1900)
+									wildLevel= 4;
+								else if(mapZoomRect.y+(characterRect.y/2) < 350)
+									wildLevel= 6;
+								else
+									wildLevel= Nick.myLevel();
+							// battle sequence!
 								battleCutScene(characterRect, stretch2windowRect, mapZoomRect);
 								battleScene battleName(&Nick, gWindow,0);
-								battleName.battle();
-					//		transitionGraphic(gWindow, gScreenSurface, gBackground, gSpriteSheet, gCurrentClip, characterRect, stretch2windowRect, mapZoomRect);
+								battleResult=battleName.battle(wildLevel);
+								if(battleResult==3) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 0, 1);
+								else if(battleResult==4) dispMessage(characterRect, mapZoomRect, 0, 0, 0, 0, 0, 1, 0);
+								else if(battleResult==1){
+											mapZoomRect.x = 0;	//begin image in middle of map
+											mapZoomRect.y = 0;
+											characterRect.x = 360;	//place at entrance
+											characterRect.y = 270;	//place at entrance
+											gBackground = gPokeMaps[ POKE_CENTER_MAP ];
+											gCurrentClip= &gWalkUp[0];
+											isPokeCenter=1;
+											leaveMap1x=375;
+											leaveMap1y=270;
+											leaveMap3x=849;
+											leaveMap3y=65;
+								}
+		//cout<<"You....."<<battleResult<<endl;
 							}
 						}
 				
@@ -745,6 +947,8 @@ int main()
 					exitingBuilding=0;
 					isWarpTile=0;
 					caughtFish=0;
+					battleResult=0;
+
 
 				}
 			}//end game loop
@@ -895,6 +1099,16 @@ bool loadMedia()
 
 	gPokeMaps[ POKE_MESSAGE_LOAD_GAME ] = loadSurface("pokeFrameLoadSaveIntro.png");//load background image
 	if(gPokeMaps[ POKE_MESSAGE_LOAD_GAME ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_RAN_AWAY ] = loadSurface("pokeFrameRanAway.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_RAN_AWAY ] == NULL){//if not loaded properly return unsuccessful 
+		success = false;
+	}
+
+	gPokeMaps[ POKE_MESSAGE_CAUGHT_POKE ] = loadSurface("pokeFrameWildCaught.png");//load background image
+	if(gPokeMaps[ POKE_MESSAGE_CAUGHT_POKE ] == NULL){//if not loaded properly return unsuccessful 
 		success = false;
 	}
 
@@ -1242,7 +1456,7 @@ double cellComp( int x1, int y1, map<int,int> cellCode, SDL_Surface *surface ){
 void writeColorCodes(int x, int y, SDL_Surface *surface){
 
 	ofstream outFile;
-	outFile.open( "trainerBrunette2.txt", ios::out );
+	outFile.open( "foo.txt", ios::out );
 	map<int,int> colors;
 
 	for( int i=0; i<32; i++ ) {	
@@ -1330,7 +1544,7 @@ void healMyPokemon(SDL_Window *window, SDL_Surface *screen, SDL_Surface *gBackgr
 								break;
 							case SDLK_SPACE://space bar
 								if( gBackground == gPokeMaps[ POKE_CENTER_YES_MAP ] ) {
-									(*Nick).pokeCenter();//heals all pokemon
+									(*Nick).pokeCenter(0);//heals all pokemon non whiteout case
 									gBackground = gPokeMaps[ POKE_CENTER_HEALING_MAP ];
 									SDL_BlitScaled(gBackground, &mapZoomRect, gScreenSurface, &stretch2windowRect);//put the background image onto gScreenSurface
 									SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);//put the character image onto gScreenSurface
@@ -1499,7 +1713,7 @@ void talkToPillar(SDL_Rect characterRect, int *gymAnswers, int *firstPillarx ) {
 	}
 }
 
-void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int isMart, int isStart, int isInside, int isFishing) {
+void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int isMart, int isStart, int isInside, int isFishing, int ranAway, int caughtPoke) {
 
 	SDL_Rect stretchRect4;			//rectangle used for
 	stretchRect4.w = (MAP_SCREEN_WIDTH/6)*4;			//size of portion of sprite sheet taken up by character
@@ -1520,6 +1734,10 @@ void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int i
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_MART ], NULL, gScreenSurface, &stretchRect4);
 	else if(isInside)
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_CANT_PAUSE ], NULL, gScreenSurface, &stretchRect4);
+	else if(ranAway)
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_RAN_AWAY ], NULL, gScreenSurface, &stretchRect4);
+	else if(caughtPoke)
+		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_CAUGHT_POKE ], NULL, gScreenSurface, &stretchRect4);
 	else if(mapZoomRect.x<529)
 		SDL_BlitScaled(gPokeMaps[ POKE_MESSAGE_1 ], NULL, gScreenSurface, &stretchRect4);
 	else if(characterRect.x>535){
@@ -1532,7 +1750,7 @@ void dispMessage(SDL_Rect characterRect, SDL_Rect mapZoomRect, int isCave, int i
 		SDL_BlitScaled(gPokeMaps[ message ], NULL, gScreenSurface, &stretchRect4);
 	}
 	SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
-	SDL_Delay(4000);
+	SDL_Delay(3000);
 }
 
 bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect mapZoomRect, Player *Nick_ptr) {
@@ -1605,7 +1823,17 @@ bool pauseMenu(SDL_Rect characterRect, SDL_Rect stretch2windowRect, SDL_Rect map
 					case SDLK_SPACE://space bar
 					//Pokemon
 						if(stretchRect5.y==(stretchRect4.y+16)+0*stretchRect5.h){
-
+							battleScene battleName(Nick_ptr, gWindow,-1);
+							battleName.init();
+							battleName.loadMedia();
+							battleName.pokemonMenu(0);
+							SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
+							SDL_Delay(2000);
+							SDL_BlitScaled(gPokeMaps[ POKE_MAP_ROUTE1 ], &mapZoomRect, gScreenSurface, &stretch2windowRect);
+							SDL_BlitScaled(gSpriteSheet, gCurrentClip, gScreenSurface, &characterRect);
+							SDL_BlitScaled(gPokeMaps[ POKE_MENU_MAIN ], NULL, gScreenSurface, &stretchRect4);
+							SDL_BlitSurface(transsurface,NULL,gScreenSurface,&stretch2windowRect);
+							SDL_UpdateWindowSurface(gWindow);//update the window with the current surface
 					//Save
 						}else if(stretchRect5.y==(stretchRect4.y+16)+1*stretchRect5.h){
 							saveGame(characterRect, mapZoomRect);
