@@ -94,6 +94,8 @@ class battleScene{
 		void pokemonMenu(int);//function to update screen to list of player's pokemon
 
 	private:
+		int return_value;
+		int nextPoke;
 		int battleType;//the type of battle that the player is entering, wild, trainer, etc.
 		Player* myTrainer;//an object of type Player to access the player's pokemon and their stats
 		SDL_Window* gWindow;//window that images are updated to
