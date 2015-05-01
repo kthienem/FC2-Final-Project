@@ -1622,7 +1622,7 @@ SDL_Rect determineWarpLoc( SDL_Rect characterRect ) {
 	}else if(characterRect.y==gymWarpRow[2]){
 		if(characterRect.x==gymWarpCol[0]){
 			characterRect.y= gymWarpRow[2];
-			characterRect.x= gymWarpCol[7];
+			characterRect.x= gymWarpCol[6];
 		}
 		else if(characterRect.x==gymWarpCol[1]){
 			characterRect.y= gymWarpRow[1];
